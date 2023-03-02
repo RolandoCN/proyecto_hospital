@@ -3,15 +3,69 @@
 @section('content')
     <section class="content-header">
         <h1>
-            Formulario del Paciente
+            Busqueda del Paciente
         </h1>
 
     </section>
 
     <section class="content">
 
-        <form class="form-horizontal" onsubmit="return validaForm()" autocomplete="off" method="post"
-            action="{{ url('/guardar-paciente') }}">
+        <div id="content_consulta" >
+            <div class="box ">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Buscar Paciente</h3>
+                </div>
+  
+                <div class="box-body ">
+                    <form id="frm_buscarPersona" class="form-horizontal" action="" autocomplete="off">
+                    {{ csrf_field() }}
+                    <div class="box-body">
+                        <div id="smsAlert"></div>
+                        <div class="form-group">
+                        <label for="inputEmail3" id="label_crit" class="col-sm-2 control-label" >Criterio:</label>
+                        <div class="col-sm-10" style="font-weight: normal;">                     
+                            <select data-placeholder="Busqueda por Cédula o Nombres del Paciente" style="width: 100%;" class="form-control select2" onchange="buscarPaciente()" id="cmb_paciente" name="cmb_paciente">
+                                        
+                            </select>
+                        </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+            
+                    <div id="cont_contribuyente" class="table-responsive table_resultado">
+                    <table class="table table-bordered table-hover text-center" id="table_paciente">
+                        <thead class="th">
+                        <tr>
+                            <th>Id</th>
+                            <th>Identificacion</th>
+                            <th>Nombres Completos</th>
+                            <th>Fecha Nacimiento</th>
+                            <th style="width: 10px">Opciones</th>
+                        </tr>
+                        </thead>
+    
+                        <tbody style="font-weight: normal" id="pac_body">
+                            <tr>
+                            <td colspan="5">Ningún dato disponible en esta tabla</td>
+                            </tr>
+                        </tbody>
+    
+                    </table>
+                    </div>
+    
+                
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+
+        <div id="data_form_actualizar"  style="display:none">
+            <form class="form-horizontal" id="form_actualiza_pac" autocomplete="off" method="put"
+           >
             {{ csrf_field() }}
             <div class="box">
                 <div class="box-header with-border">
@@ -75,9 +129,9 @@
 
                         <label for="inputPassword3" class="col-sm-2 control-label">Provincia (Reside)</label>
                         <div class="col-sm-4" >
-                            <select data-placeholder="Seleccione Un Provincia" style="width: 100%;" class="form-control select2" name="provincia_res" id="provincia_res" onchange="seleccProvReside()">
+                            <select data-placeholder="Seleccione Un Provincia" style="width: 100%;" class="form-control select2" name="provincia_res" id="provincia_res" onchange="seleccProvResideEdit()">
                                 @foreach ($provincia as $dato)
-                                    <option value="{{ $dato->idprovincia }}" {{ (old("provincia_res") == $dato->id ? "selected":"") }}>{{ $dato->descripcion }}</option>
+                                    <option class="option_pro" value="{{ $dato->idprovincia }}" {{ (old("provincia_res") == $dato->id ? "selected":"") }}>{{ $dato->descripcion }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -88,7 +142,7 @@
 
                         <label for="inputPassword3" class="col-sm-2 control-label">Cantón (Reside)</label>
                         <div class="col-sm-4">
-                            <select data-placeholder="Seleccione Un Canton" style="width: 100%;" class="form-control select2" name="canton_res" id="canton_res" onchange="seleccCantonReside()">
+                            <select data-placeholder="Seleccione Un Canton" style="width: 100%;" class="form-control select2" name="canton_res" id="canton_res" onchange="seleccCantonResideEdit()">
                              
                             </select>
                         </div>
@@ -383,47 +437,23 @@
                 <div class="box-header with-border">
                     <div class="form-group">
                         <div class="col-sm-12 text-center" >
-                            <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+                            <button type="submit" class="btn btn-success btn-sm">Actualizar</button>
 
-                            <button type="button" class="btn btn-danger btn-sm">Cancelar</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="cancelar()">Cancelar</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-
-
+            </form>
+           
+        </div>
 
     </section>
 
-    <script src="/js/test.js"></script>
-
-    <script>
-       
-       
-
-    </script>
+    
 @endsection
 @section('scripts')
-<script>
-     
-    let error=$('#error').val()
-    let creado=$('#creado').val()
-    // alert(error)
+<script src="/js/test.js"></script>
    
-    if(error!=undefined){
-       
-        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");
-        // return
-    }
-
-    
-    
-    else if(creado!=undefined){
-        // alert(creado)
-        alertNotificar(creado,"success");
-        // return
-    }
-</script>
 
 @endsection

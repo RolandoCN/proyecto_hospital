@@ -32,6 +32,27 @@
         folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="{{ asset('dist/css/skins/_all-skins.min.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('bower_components/select2/dist/css/select2.min.css') }}">
+
+    <!-- PNotify -->
+    <link href="{{asset('bower_components/pnotify/dist/pnotify.css')}}" rel="stylesheet">
+    <link href="{{asset('bower_components/pnotify/dist/pnotify.buttons.css')}}" rel="stylesheet">
+    <link href="{{asset('bower_components/pnotify/dist/pnotify.nonblock.css')}}" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css">
+
+    <style>
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #555;
+            line-height: 28px;
+            text-align: left;
+            margin-left: -9px;
+            border-color:#d2d6de
+        }
+    </style>
+
     <!-- Scripts -->
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
 
@@ -66,7 +87,7 @@
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <img src="../../dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                                <span class="hidden-xs">Alexander Pierce</span>
+                                <span class="hidden-xs">{{ Auth::user()->name }}</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
@@ -74,7 +95,7 @@
                                     <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                                     <p>
-                                        Alexander Pierce - Web Developer
+                                        {{ Auth::user()->name }} - Web Developer
                                         <small>Member since Nov. 2012</small>
                                     </p>
                                 </li>
@@ -99,14 +120,19 @@
                                         <a href="#" class="btn btn-default btn-flat">Profile</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                        <a href="{{ route('logout') }}" class="btn btn-default btn-flat"
+                                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">Sign out</a>
+
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                            {{ csrf_field() }}
+                                        </form>
                                     </div>
                                 </li>
                             </ul>
                         </li>
                        
                     </ul>
-                </div>
+                </div> 
             </nav>
         </header>
 
@@ -122,7 +148,7 @@
                         <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                     </div>
                     <div class="pull-left info">
-                        <p>Alexander Pierce</p>
+                        <p>{{ Auth::user()->name }}</p>
                         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
@@ -141,7 +167,7 @@
                         {{-- <ul class="treeview-menu" style="display:block"> --}}
                         <ul class="treeview-menu" >
                             <li class=""><a href="../../registro-paciente"><i class="fa fa-circle-o"></i> Registro Paciente</a></li>
-                            <li><a href="../../home"><i class="fa fa-circle-o"></i> Consultar Pacientes</a></li>
+                            <li><a href="../../busqueda"><i class="fa fa-circle-o"></i> Consultar Pacientes</a></li>
                         </ul>
                     </li>
                    
@@ -392,12 +418,44 @@
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('../../dist/js/demo.js') }}"></script>
+
+    <script src="{{ asset('../../bower_components/select2/dist/js/select2.full.min.js') }}"></script>
+
+    {{-- PNotify --}}
+    <script src="{{asset('bower_components/pnotify/dist/pnotify.js')}}"></script>
+    <script src="{{asset('bower_components/pnotify/dist/pnotify.buttons.js')}}"></script>
+
+    <script src="{{ asset('https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js') }}"></script>
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js') }}"></script>
+    
     <script>
         $(document).ready(function() {
             // $('.sidebar-menu').tree()
            
         })
+        $('.select2').select2()
+
+
+        function alertNotificar(texto, tipo,time=7000){
+            PNotify.removeAll()
+            new PNotify({
+                title: 'Mensaje de Información',
+                text: texto,
+                type: tipo,
+                hide: true,
+                delay: time,
+                styling: 'bootstrap3',
+                addclass: ''
+            });
+        }
+
     </script>
+
+    @yield('scripts')
 
 </body>
 
