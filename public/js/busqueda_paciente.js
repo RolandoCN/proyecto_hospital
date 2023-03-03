@@ -1,63 +1,4 @@
-function validaForm(){
-    // let nombre=$('#nombre').val()
-    // let apellido=$('#apellidos').val()
-
-    // if(nombre=="" || nombre==null){
-    //     alert("Ingrese un nombre")
-    //     $('#nombre').focus()
-    //     return false
-    // }
-
-    // if(apellido=="" || apellido==null){
-    //     alert("Ingrese un apellido")
-    //     $('#apellidos').focus()
-    //     return false
-    // }
-
-
-    return true
-}
-
-function seleccProvReside(){
-    
-    $('#canton_res').find('option').remove().end();
-    var idprovincia=$('#provincia_res').val();
-
-    $('#canton_res').html('');
-    $('#canton_res').append(`<option class="cmb_arriendo" value=""></option>`);
-    $("#canton_res").trigger("chosen:updated"); // actualizamos el combo 
-    $.get('/obtener-canton-prov/'+idprovincia, function(data){
-      
-        $.each(data.canton_pr,function(i,item){
-            $('#canton_res').append(`<option class="cmb_arriendo" value="${item.idcanton}">${item.descripcion}</option>`).change();
-        });
-    })   
-   
-    $("#canton_res").trigger("chosen:updated"); // actualizamos el combo 
-}
-
-function seleccCantonReside(){
-    
-    $('#parroquia_res').find('option').remove().end();
-    var idcanton=$('#canton_res').val();
-
-    if(idcanton==null || idcanton==""){
-        return
-    }
-
-    $('#parroquia_res').html('');
-    $('#parroquia_res').append(`<option class="cmb_arriendo" value=""></option>`);
-    $("#parroquia_res").trigger("chosen:updated"); // actualizamos el combo 
-    $.get('/obtener-parroquia-canton/'+idcanton, function(data){
-      
-        $.each(data.parroquia_canton,function(i,item){
-            $('#parroquia_res').append(`<option class="cmb_arriendo" value="${item.idparroquia}">${item.descripcion}</option>`).change();
-        });
-    })   
-   
-    $("#parroquia_res").trigger("chosen:updated"); // actualizamos el combo 
-}
-
+//Busqueda del paciente por cedula o nombre
 $('#cmb_paciente').select2({
     placeholder: 'Seleccione una opción',
     ajax: {
@@ -84,7 +25,9 @@ function buscarPaciente(){
 
     $('#pac_body').html('');
 	$('#table_paciente').DataTable().destroy();
-	$('#table_paciente tbody').empty();  
+	$('#table_paciente tbody').empty(); 
+    
+    limpiarCampos()
 
     $.get('/info-paciente/'+idPac, function(data){
         if(data.error==true){
@@ -146,6 +89,75 @@ function cargar_estilos_datatable(idtabla){
 	$('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});	
 }
 
+function limpiarCampos(){
+    $('#cedula_pac').val('')
+    $('#nombres').val('')
+    $('#apellidos').val('')
+    $('#genero').val('').trigger('change.select2')
+    $('#identidad_genero').val('').trigger('change.select2')
+    $('#direccion_domiciliaria').val('')
+    $('#provincia_res').val('').trigger('change.select2')
+    $('#provincia_nac').val('').trigger('change.select2')
+
+    $('#canton_res').val('').trigger('change.select2')
+    $('#parroquia_res').val('').trigger('change.select2')
+
+    $('#fecha_nac').val('')
+    $('#cedula_rep_afil').val('')
+
+    $('#name_rep_afil').val('')
+    $('#parentesco_rep_afil').val('').trigger('change.select2')
+    $('#parentesco').val('')
+    $('#seguro1').val('').trigger('change.select2')
+
+    $('#seguro2').val('').trigger('change.select2')
+    $('#zona').val('').trigger('change.select2')
+    $('#nombre_padre').val('')
+    $('#nombre_madre').val('')
+
+    $('#lugar_naci').val('')
+    $('#discapacidad').val('').trigger('change.select2')
+    $('#tipo_disc').val('').trigger('change.select2')
+    $('#porce_dis').val('')
+
+    $('#estado_civil').val('').trigger('change.select2')
+
+    $('#nivel_inst').val('').trigger('change.select2')
+
+    $('#grado_cultural').val('').trigger('change.select2')
+    $('#orientacion').val('').trigger('change.select2')
+    $('#nacionalidad').val('')
+
+    $('#ocupacion').val('')
+    $('#lugar_empleo').val('')
+    $('#llamar_emerg').val('')
+    $('#telefono').val('')
+
+    $('#direccion').val('')
+    $('#email').val('')
+}
+
+
+function seleccDisc(){
+    let dis=$('#discapacidad').val()
+    $('#tipo_disc').html('');
+    $("#tipo_disc").trigger("chosen:updated"); // actualizamos el combo 
+
+    if(dis=="Si"){
+        $('#tipo_disc').append(`<option value="Mental">Mental</option>`).change();
+        $('#tipo_disc').append(`<option value="Auditiva">Auditiva</option>`).change();
+        $('#tipo_disc').append(`<option value="Física">Física</option>`).change();
+        $('#tipo_disc').append(`<option value="Visual">Visual</option>`).change();
+        $('#tipo_disc').append(`<option value="Otro">Otro</option>`).change();
+    }else if(dis=="No"){
+        $('#tipo_disc').append(`<option value="Ninguna">Ninguna</option>`).change();
+    }
+    
+   
+   
+    $("#tipo_disc").trigger("chosen:updated"); // actualizamos el combo 
+}
+
 function actualizarPac(idPac){
     $.get('/info-paciente/'+idPac, function(data){
         $('#data_form_actualizar').show(200)
@@ -154,7 +166,8 @@ function actualizarPac(idPac){
         $('#cedula_pac').val(data.paciente[0].cedula)
         $('#nombres').val(data.paciente[0].nombres)
         $('#apellidos').val(data.paciente[0].apellidos)
-        $('#genero').val(data.paciente[0].genero)
+        $('#genero').val(data.paciente[0].sexo).trigger('change.select2')
+        $('#identidad_genero').val(data.paciente[0].identidad_genero).trigger('change.select2')
         $('#direccion_domiciliaria').val(data.paciente[0].direccion_domiciliaria)
 
         $('#provincia_res').val(data.paciente[0].idprovincia_reside).trigger('change.select2')
@@ -169,20 +182,20 @@ function actualizarPac(idPac){
         $('#name_rep_afil').val(data.paciente[0].nombre_rep_afiliado)
         $('#parentesco_rep_afil').val(data.paciente[0].parentesco_rep).trigger('change.select2')
         $('#parentesco').val(data.paciente[0].parentesco)
-        $('#orientacion').val(data.paciente[0].orientacion)
-        $('#seguro1').val(data.paciente[0].seguro1)
+        $('#orientacion').val(data.paciente[0].orientacion).trigger('change.select2')
+        $('#seguro1').val(data.paciente[0].seguro1).trigger('change.select2')
 
-        $('#seguro2').val(data.paciente[0].seguro2)
-        $('#zona').val(data.paciente[0].zona)
+        $('#seguro2').val(data.paciente[0].seguro2).trigger('change.select2')
+        $('#zona').val(data.paciente[0].zona).trigger('change.select2')
         $('#nombre_padre').val(data.paciente[0].nombre_padre)
         $('#nombre_madre').val(data.paciente[0].nombre_madre)
 
         $('#lugar_naci').val(data.paciente[0].lugar_nacimiento)
-        $('#discapacidad').val(data.paciente[0].discapacidad)
-        $('#tipo_disc').val(data.paciente[0].tipo_discapacidad)
+        $('#discapacidad').val(data.paciente[0].discapacidad).trigger('change.select2')
+        $('#tipo_disc').val(data.paciente[0].tipo_discapacidad).trigger('change.select2')
         $('#porce_dis').val(data.paciente[0].porcentaje_disc)
 
-        $('#estado_civil').val(data.paciente[0].estado_civil)
+        $('#estado_civil').val(data.paciente[0].estado_civil).trigger('change.select2')
 
         $('#nivel_inst').val(data.paciente[0].idnivel_instruccion).trigger('change.select2')
 
@@ -198,10 +211,13 @@ function actualizarPac(idPac){
         $('#email').val(data.paciente[0].correo_elec)
 
         globalThis.idPacEditar=data.paciente[0].idpaciente 
+        calcularEdad()
+        seleccDisc()
        
     })
 
 }
+
 
 function seleccProvResideEdit(){
     
@@ -257,8 +273,7 @@ function seleccCantonResideEdit(){
 
 $("#form_actualiza_pac").submit(function(e){
     e.preventDefault();
-         
-    
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -284,8 +299,7 @@ $("#form_actualiza_pac").submit(function(e){
                 alertNotificar(data.mensaje,'error');
                 return;                      
             }
-            // $('#baja_modal').modal('hide');
-            // regresar();
+          
             alertNotificar(data.mensaje,"success");
             $('#data_form_actualizar').hide(200)
             $('#content_consulta').show(200)
@@ -304,4 +318,18 @@ function cancelar(){
     $('#content_consulta').show(200)
 
     $('html,body').animate({scrollTop:$('#content_consulta').offset().top},400);
+}
+
+function calcularEdad() {
+            
+    fecha = $('#fecha_nac').val();
+    var hoy = new Date();
+    var cumpleanos = new Date(fecha);
+    var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+    var m = hoy.getMonth() - cumpleanos.getMonth();
+
+    if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+        edad--;
+    }
+    $('#edad').val(edad);
 }

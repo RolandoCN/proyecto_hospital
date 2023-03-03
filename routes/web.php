@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PacienteController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,17 +18,22 @@ use Illuminate\Support\Facades\Route;
 // });
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/registro-paciente', [App\Http\Controllers\HomeController::class, 'test']);
-Route::get('/obtener-canton-prov/{idprov}', [App\Http\Controllers\HomeController::class, 'obtenerCantones']);
-Route::get('/obtener-parroquia-canton/{idcanton}', [App\Http\Controllers\HomeController::class, 'obtenerParroquias']);
-Route::post('/guardar-paciente', [App\Http\Controllers\HomeController::class, 'guardar']);
-Route::get('/busqueda', [App\Http\Controllers\HomeController::class, 'busqueda'])->name('home');
-Route::get('/buscarPaciente', [App\Http\Controllers\HomeController::class, 'busquedaPaciente']);
-Route::get('/info-paciente/{idpac}', [App\Http\Controllers\HomeController::class, 'infoPaciente']);
-Route::put('/actualiza-paciente/{idpac}', [App\Http\Controllers\HomeController::class, 'actualiza']);
+
+//Pacientes
+Route::get('/registro-paciente', [PacienteController::class, 'index']);
+Route::get('/obtener-canton-prov/{idprov}', [PacienteController::class, 'obtenerCantones']);
+Route::get('/obtener-parroquia-canton/{idcanton}', [PacienteController::class, 'obtenerParroquias']);
+Route::post('/guardar-paciente', [PacienteController::class, 'guardar']);
+Route::post('/guardar-generarf1', [PacienteController::class, 'guardarGeneraraF1']);
+Route::get('/busqueda', [PacienteController::class, 'busqueda'])->name('home');
+Route::get('/buscarPaciente', [PacienteController::class, 'busquedaPaciente']);
+Route::get('/info-paciente/{idpac}', [PacienteController::class, 'infoPaciente']);
+Route::put('/actualiza-paciente/{idpac}', [PacienteController::class, 'actualiza']);
 
 
 

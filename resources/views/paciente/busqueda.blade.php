@@ -109,12 +109,12 @@
                             <input type="text" class="form-control" id="apellidos"  name="apellidos" placeholder="Apellidos" maxlength="100">
                         </div>
 
-                        <label for="inputPassword3" class="col-sm-2 control-label">Género</label>
+                        <label for="inputPassword3" class="col-sm-2 control-label">Sexo</label>
                         <div class="col-sm-4">
                             <select class="form-control select2" style="width: 100%;" name="genero" id="genero">
-                                <option selected="selected" value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                                <option value="O">Otro</option>
+                                <option selected="selected" value="Hombre">Hombre</option>
+                                <option value="Mujer">Mujer</option>
+                              
                               
                             </select>
                         </div>
@@ -122,10 +122,27 @@
                     </div>
 
                     <div class="form-group">
+
+                        <label for="inputPassword3" class="col-sm-2 control-label">Identidad del Género</label>
+                        <div class="col-sm-4">
+                            <select class="form-control select2" style="width: 100%;" name="identidad_genero" id="identidad_genero">
+                                <option selected="selected" value="Ninguno">Ninguno</option>
+                                <option value="TransMasculino">TransMasculino</option>
+                                <option value="TransFemenino">TransFemenino</option>
+                              
+                            </select>
+                        </div>
+
                         <label for="inputPassword3" class="col-sm-2 control-label">Dirección</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" name="direccion_domiciliaria" id="direccion_domiciliaria" placeholder="Dirección" maxlength="100">
                         </div>
+
+                        
+
+                    </div>
+
+                    <div class="form-group">
 
                         <label for="inputPassword3" class="col-sm-2 control-label">Provincia (Reside)</label>
                         <div class="col-sm-4" >
@@ -136,10 +153,6 @@
                             </select>
                         </div>
 
-                    </div>
-
-                    <div class="form-group">
-
                         <label for="inputPassword3" class="col-sm-2 control-label">Cantón (Reside)</label>
                         <div class="col-sm-4">
                             <select data-placeholder="Seleccione Un Canton" style="width: 100%;" class="form-control select2" name="canton_res" id="canton_res" onchange="seleccCantonResideEdit()">
@@ -147,16 +160,18 @@
                             </select>
                         </div>
 
+                       
+
+                    </div>
+
+                    <div class="form-group">
+
                         <label for="inputPassword3" class="col-sm-2 control-label">Parroquia (Reside)</label>
                         <div class="col-sm-4">
                             <select data-placeholder="Seleccione Un Parroquia" style="width: 100%;" class="form-control select2" name="parroquia_res" id="parroquia_res" >
                              
                             </select>
                         </div>
-
-                    </div>
-
-                    <div class="form-group">
 
                         <label for="inputPassword3" class="col-sm-2 control-label">Provincia (Nacimiento)</label>
                         <div class="col-sm-4">
@@ -167,10 +182,18 @@
                                 @endforeach
                             </select>
                         </div>
+                      
+                    </div>
 
+                    <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">Fecha Nacimiento</label>
                         <div class="col-sm-4">
-                            <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" placeholder="Parroquia">
+                            <input type="date" onchange="calcularEdad()"  class="form-control" id="fecha_nac" name="fecha_nac" placeholder="Parroquia">
+                        </div>
+
+                        <label for="inputPassword3" class="col-sm-2 control-label">Edad (Años)</label>
+                        <div class="col-sm-4">
+                            <input type="number" readonly class="form-control" id="edad" name="edad" placeholder="Edad">
                         </div>
 
                     </div>
@@ -299,7 +322,7 @@
 
                         <label for="inputPassword3" class="col-sm-2 control-label">Discapacidad</label>
                         <div class="col-sm-4">
-                            <select class="form-control select2" style="width: 100%;"  name="discapacidad" id="discapacidad">
+                            <select class="form-control select2" style="width: 100%;"  name="discapacidad" id="discapacidad" onchange="seleccDisc()">
                                 <option selected="selected" value="No">No</option>
                                 <option value="Si">Si</option>
                             </select>
@@ -453,7 +476,9 @@
     
 @endsection
 @section('scripts')
-<script src="/js/test.js"></script>
+<script src="/js/busqueda_paciente.js"></script>
    
-
+<script>
+  
+</script>
 @endsection
