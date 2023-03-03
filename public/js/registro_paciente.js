@@ -284,7 +284,7 @@ function ocultarError1(){
     $('#error_seguro2').hide()
     $('#error_zona').hide()
     $('#error_nombre_padre').hide()
-    $('#error_nombre_madre').hide()
+    $('#error_lugar_naci').hide()
 }
 
 function ocultarError(estado){
