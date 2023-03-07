@@ -49,9 +49,18 @@
             line-height: 28px;
             text-align: left;
             margin-left: -9px;
-            border-color:#d2d6de
+            /* border-color:#d2d6de */
+        }
+
+        .select2-container .select2-selection--single{
+            height: 35px;
+        }
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #E3E3E3;
         }
     </style>
+
+    
 
     <!-- Scripts -->
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}

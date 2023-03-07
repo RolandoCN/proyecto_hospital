@@ -2,16 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PacienteController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Http\Controllers\VehiculosCombustible\VehiculoController;
+use App\Http\Controllers\VehiculosCombustible\TareasController;
+use App\Http\Controllers\VehiculosCombustible\MovimientoVehController;
+use App\Http\Controllers\VehiculosCombustible\DespachoCombustibleController;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -34,6 +29,38 @@ Route::get('/busqueda', [PacienteController::class, 'busqueda'])->name('home');
 Route::get('/buscarPaciente', [PacienteController::class, 'busquedaPaciente']);
 Route::get('/info-paciente/{idpac}', [PacienteController::class, 'infoPaciente']);
 Route::put('/actualiza-paciente/{idpac}', [PacienteController::class, 'actualiza']);
+
+
+//*****************************VEHICULOS COMBUSTIBLES****************//
+
+//VEHICULOS
+Route::get('/registro-vehiculo', [VehiculoController::class, 'index']);
+Route::get('/listado-vehiculo', [VehiculoController::class, 'listar']);
+Route::post('/guardar-vehiculo', [VehiculoController::class, 'guardar']);
+Route::get('/editar-vehiculo/{id}', [VehiculoController::class, 'editar']);
+Route::put('/actualizar-vehiculo/{id}', [VehiculoController::class, 'actualizar']);
+Route::get('/eliminar-vehiculo/{id}', [VehiculoController::class, 'eliminar']);
+
+//TAREAS
+Route::get('/tareas-vehiculo', [TareasController::class, 'index']);
+Route::get('/listado-tarea', [TareasController::class, 'listar']);
+Route::post('/guardar-tarea', [TareasController::class, 'guardar']);
+Route::get('/editar-tarea/{id}', [TareasController::class, 'editar']);
+Route::put('/actualizar-tarea/{id}', [TareasController::class, 'actualizar']);
+Route::get('/eliminar-tarea/{id}', [TareasController::class, 'eliminar']);
+
+//ENTRADA-SALIDA
+Route::get('/entrada-salida-vehiculo', [MovimientoVehController::class, 'index']);
+Route::get('/carga-tarea/{idvehi}', [MovimientoVehController::class, 'tareaVehiculo']);
+Route::post('/guardar-movimiento', [MovimientoVehController::class, 'guardar']);
+Route::get('/listado-movimiento', [MovimientoVehController::class, 'listar']);
+Route::get('/eliminar-movimiento/{id}', [MovimientoVehController::class, 'eliminar']);
+
+//DESPACHO COMBUSTIBLE
+Route::get('/despacho-combustible', [DespachoCombustibleController::class, 'index']);
+Route::post('/guardar-cab-despacho', [DespachoCombustibleController::class, 'guardarCabecera']);
+Route::get('/listado-desp', [DespachoCombustibleController::class, 'listar']);
+
 
 
 
