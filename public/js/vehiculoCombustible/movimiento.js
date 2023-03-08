@@ -98,16 +98,18 @@ $("#form_registro_tarea").submit(function(e){
             var img_data = canvas_img_data.replace(/^data:image\/(png|jpg);base64,/, "");
 
             FrmData.append("b64_firma",img_data);
+
+            console.log(FrmData)
             $.ajax({
                     
                 type: tipo,
                 url: url_form,
                 method: tipo,             
                 data: FrmData,
-                    dataType: 'json',
-                    contentType:false,
-                    cache:false,
-                    processData:false,
+                dataType: 'json',
+                contentType:false,
+                cache:false,
+                processData:false,
             
 
                 success: function(data){

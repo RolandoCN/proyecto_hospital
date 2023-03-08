@@ -60,7 +60,13 @@ Route::get('/eliminar-movimiento/{id}', [MovimientoVehController::class, 'elimin
 Route::get('/despacho-combustible', [DespachoCombustibleController::class, 'index']);
 Route::post('/guardar-cab-despacho', [DespachoCombustibleController::class, 'guardarCabecera']);
 Route::get('/listado-desp', [DespachoCombustibleController::class, 'listar']);
-
-
-
-
+Route::get('/precio-detalle-comb/{idVeh}/{idGas}', [DespachoCombustibleController::class, 'detallePrecioComb']);
+Route::get('/precio-comb-gas/{idCom}/{idGas}', [DespachoCombustibleController::class, 'PrecioCombGaso']);
+Route::post('/guardar-detalle-desp', [DespachoCombustibleController::class, 'guardarDetalle']);
+Route::get('/detalle-listado-des/{idCabDesp}', [DespachoCombustibleController::class, 'listarDetalleDesp']);
+Route::get('/detalle-desp/editar/{idDetalle}', [DespachoCombustibleController::class, 'editarDetalle']);
+Route::put('/actualizar-detalle-desp/{idDetalle}', [DespachoCombustibleController::class, 'actualizarDetalle']);
+Route::get('/eliminar-detalle-desp/{idDetalle}', [DespachoCombustibleController::class, 'eliminarDetalle']);
+Route::get('/listar-tarea-veh/{idVeh}/{fecha}', [DespachoCombustibleController::class, 'listarTareaVeh']);
+Route::post('/aprobar-despacho-firma', [DespachoCombustibleController::class, 'aprobarDespacho']);
+Route::get('/despacho-pdf/{id}', [DespachoCombustibleController::class, 'despachoPdfGasolinera']);

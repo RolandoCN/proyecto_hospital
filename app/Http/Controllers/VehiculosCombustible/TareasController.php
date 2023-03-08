@@ -14,7 +14,7 @@ class TareasController extends Controller
 
     public function index(){
         $persona=Persona::all();
-        $vehiculo=Vehiculo::all();
+        $vehiculo=Vehiculo::where('estado','A')->get();
       
         return view('combustible.tarea',[
             "persona"=>$persona,
