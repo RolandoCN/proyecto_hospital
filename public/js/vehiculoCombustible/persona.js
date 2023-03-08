@@ -1,46 +1,38 @@
-function mayus(e) {
-    e.value = e.value.toUpperCase();
-}
 
-$("#form_registro_tarea").submit(function(e){
+
+$("#form_registro_persona").submit(function(e){
     e.preventDefault();
     
     //validamos los campos obligatorios
-    let vehiculo=$('#vehiculo_tarea').val()
-    let choferSalvo=$('#choferSalvo').val()
-    let fecha_ini=$('#fecha_ini').val()
-    let fecha_fin=$('#fecha_fin').val()
-    let motivo=$('#motivo').val()
+    let cedula=$('#cedula_persona').val()
+    let nombres=$('#nombres').val()
+    let apellidos=$('#apellidos').val()
+    let telefono=$('#telefono').val()
         
-    
-    if(vehiculo=="" || vehiculo==null){
-        alertNotificar("Seleccione el vehículo","error")
+    if(cedula=="" || cedula==null){
+        alertNotificar("Debe ingresar la cédula","error")
+        $('#cedula_persona').focus()
         return
     } 
 
-    if(choferSalvo=="" || choferSalvo==null){
-        alertNotificar("Seleccione el chofer","error")
+    if(nombres=="" || nombres==null){
+        alertNotificar("Ingrese los nombres","error")
+        $('#nombres').focus()
         return
     } 
 
-    if(fecha_ini=="" || fecha_ini==null){
-        alertNotificar("Seleccione la fecha de inicio","error")
-        $('#fecha_ini').focus()
+    if(apellidos=="" || apellidos==null){
+        alertNotificar("Ingrese los apellidos","error")
+        $('#apellidos').focus()
         return
     } 
 
-    if(fecha_ini > fecha_fin){
-        alertNotificar("La fecha de inicio debe ser menor a la fecha final","error")
-        $('#fecha_ini').focus()
+    if(telefono=="" || telefono==null){
+        alertNotificar("Ingrese el telefono","error")
+        $('#telefono').focus()
         return
     } 
 
-
-    if(motivo=="" || motivo==null){
-        alertNotificar("Ingrese el motivo","error")
-        $('#motivo').focus()
-        return
-    } 
 
     $.ajaxSetup({
         headers: {
@@ -53,13 +45,13 @@ $("#form_registro_tarea").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-tarea"
+        url_form="/guardar-persona"
     }else{
         tipo="PUT"
-        url_form="/actualizar-tarea/"+IdTareaEditar
+        url_form="/actualizar-persona/"+idPersonaEditar
     }
   
-    var FrmData=$("#form_registro_tarea").serialize();
+    var FrmData=$("#form_registro_persona").serialize();
     console.log(FrmData)
     $.ajax({
             
@@ -80,8 +72,8 @@ $("#form_registro_tarea").submit(function(e){
             limpiarCampos()
             alertNotificar(data.mensaje,"success");
             $('#form_ing').hide(200)
-            $('#listado_veh').show(200)
-            llenar_tabla_tarea()
+            $('#listado_persona').show(200)
+            llenar_tabla_persona()
                             
         }, error:function (data) {
             console.log(data)
@@ -93,41 +85,34 @@ $("#form_registro_tarea").submit(function(e){
 })
 
 function limpiarCampos(){
-    $('#codigo').val('')
-    $('#placa').val('')
-    $('#descripcion').val('')
-    $('#marcacombo').val('').trigger('change.select2')
-    $('#tipousocombo').val('').trigger('change.select2')
-    $('#fabricacion').val('')
-    $('#cmb_tipocombustible').val('').trigger('change.select2')
-    $('#cmb_tipomedicion').val('').trigger('change.select2')
-    $('#chasis').val('')
-    $('#modelo').val('')
-    $('#departamento').val('').trigger('change.select2')
+    $('#cedula_persona').val('')
+    $('#nombres').val('')
+    $('#apellidos').val('')
+    $('#telefono').val('')
 }
 
-function llenar_tabla_tarea(){
-    var num_col = $("#tabla_tarea thead tr th").length; //obtenemos el numero de columnas de la tabla
-	$("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
+function llenar_tabla_persona(){
+    var num_col = $("#tabla_persona thead tr th").length; //obtenemos el numero de columnas de la tabla
+	$("#tabla_persona tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-tarea/", function(data){
+    $.get("/listado-persona/", function(data){
         console.log(data)
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
-            $("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
+            $("#tabla_persona tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
             return;   
         }
         if(data.error==false){
             
             if(data.resultado.length <= 0){
-                $("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
+                $("#tabla_persona tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
                 alertNotificar("No se encontró datos","error");
                 return;  
             }
          
-            $('#tabla_tarea').DataTable({
+            $('#tabla_persona').DataTable({
                 "destroy":true,
                 pageLength: 10,
                 autoWidth : true,
@@ -146,18 +131,18 @@ function llenar_tabla_tarea(){
                 ],
                 data: data.resultado,
                 columns:[
-                        {data: "vehiculo.placa"},
-                        {data: "motivo" },
-                        {data: "fecha_solicitud"},
-                        {data: "estado"},
-                        {data: "estado"},
+                        {data: "cedula"},
+                        {data: "nombres" },
+                        {data: "apellidos"},
+                        {data: "telefono"},
+                        {data: "telefono"},
                 ],    
                 "rowCallback": function( row, data ) {
                     $('td', row).eq(4).html(`
                                   
-                                            <button type="button" class="btn btn-primary btn-xs" onclick="editarTarea(${data.id_tarea })">Editar</button>
+                                            <button type="button" class="btn btn-primary btn-xs" onclick="editarPersona(${data.idpersona })">Editar</button>
                                                                                 
-                                            <a onclick="btn_eliminar_tarea(${data.id_tarea })" class="btn btn-danger btn-xs"> Eliminar </a>
+                                            <a onclick="btn_eliminar_tarea(${data.idpersona })" class="btn btn-danger btn-xs"> Eliminar </a>
                                        
                                     
                     `); 
@@ -165,7 +150,7 @@ function llenar_tabla_tarea(){
             });
         }
     }).fail(function(){
-        $("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
+        $("#tabla_persona tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
     });
 
@@ -179,8 +164,8 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 
-function editarTarea(id_tarea){
-    $.get("/editar-tarea/"+id_tarea, function(data){
+function editarPersona(idpersona){
+    $.get("/editar-persona/"+idpersona, function(data){
         console.log(data)
       
         if(data.error==true){
@@ -188,20 +173,19 @@ function editarTarea(id_tarea){
             return;   
         }
         if(data.resultado==null){
-            alertNotificar("La tarea ya no se puede editar","error");
+            alertNotificar("La persona ya no se puede editar","error");
             return;   
         }
 
-      
-        $('#vehiculo_tarea').val(data.resultado.id_vehiculo).trigger('change.select2')
-        $('#choferSalvo').val(data.resultado.id_chofer).trigger('change.select2')
-        $('#fecha_ini').val(data.resultado.fecha_inicio)
-        $('#fecha_fin').val(data.resultado.fecha_fin)
-        $('#motivo').val(data.resultado.motivo)
+
+        $('#cedula_persona').val(data.resultado.cedula)
+        $('#nombres').val(data.resultado.nombres)
+        $('#apellidos').val(data.resultado.apellidos)
+        $('#telefono').val(data.resultado.telefono)
        
 
         visualizarForm('E')
-        globalThis.IdTareaEditar=id_tarea
+        globalThis.idPersonaEditar=idpersona
 
 
 
@@ -214,14 +198,14 @@ function editarTarea(id_tarea){
 
 function visualizarForm(tipo){
     $('#form_ing').show(200)
-    $('#listado_veh').hide(200)
+    $('#listado_persona').hide(200)
     globalThis.AccionForm="";
     if(tipo=='N'){
-        $('#titulo_form').html("Registro Tarea")
+        $('#titulo_form').html("Registro Persona")
         $('#nombre_btn_form').html('Registrar')
         AccionForm="R"
     }else{
-        $('#titulo_form').html("Actualización Tarea")
+        $('#titulo_form').html("Actualización Persona")
         $('#nombre_btn_form').html('Actualizar')
         AccionForm="E"
     }
@@ -229,13 +213,13 @@ function visualizarForm(tipo){
 
 function visualizarListado(){
     $('#form_ing').hide(200)
-    $('#listado_veh').show(200)
+    $('#listado_persona').show(200)
     limpiarCampos()
 }
 
-function btn_eliminar_tarea(id_tarea){
+function btn_eliminar_tarea(idpersona){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-tarea/"+id_tarea, function(data){
+        $.get("/eliminar-persona/"+idpersona, function(data){
             console.log(data)
           
             if(data.error==true){
@@ -244,7 +228,7 @@ function btn_eliminar_tarea(id_tarea){
             }
     
             alertNotificar(data.mensaje,"success");
-            llenar_tabla_tarea()
+            llenar_tabla_persona()
            
         }).fail(function(){
            

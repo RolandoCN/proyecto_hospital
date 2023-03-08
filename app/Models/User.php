@@ -12,6 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $table = 'users';
+    protected $primaryKey  = 'id';
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,4 +45,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function persona(){
+        return $this->belongsTo('App\Models\Persona', 'id_persona', 'idpersona')->where('estado','A');
+    }
+
+    public function perfil(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\UsuarioPerfil', 'id', 'id_usuario')
+        ->with('nombre_perfil');
+    }
+
 }

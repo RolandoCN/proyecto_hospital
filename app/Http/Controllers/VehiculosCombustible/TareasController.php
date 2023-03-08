@@ -13,7 +13,7 @@ class TareasController extends Controller
 
 
     public function index(){
-        $persona=Persona::all();
+        $persona=Persona::where('estado','A')->get();
         $vehiculo=Vehiculo::where('estado','A')->get();
       
         return view('combustible.tarea',[
@@ -97,6 +97,7 @@ class TareasController extends Controller
             $guarda_tarea->id_vehiculo=$request->vehiculo_tarea;
             $guarda_tarea->id_chofer=$request->choferSalvo;
             $guarda_tarea->fecha_inicio=$request->fecha_ini;
+            $guarda_tarea->fecha_fin=$request->fecha_fin;
             $guarda_tarea->motivo=$request->motivo;
             $guarda_tarea->id_usuario_solicita=auth()->user()->id;
             $guarda_tarea->fecha_solicitud=date('Y-m-d H:i:s');
@@ -169,6 +170,7 @@ class TareasController extends Controller
             $actualiza_tarea->id_vehiculo=$request->vehiculo_tarea;
             $actualiza_tarea->id_chofer=$request->choferSalvo;
             $actualiza_tarea->fecha_inicio=$request->fecha_ini;
+            $actualiza_tarea->fecha_fin=$request->fecha_fin;
             $actualiza_tarea->motivo=$request->motivo;
             $actualiza_tarea->id_usuario_solicita=auth()->user()->id;
             $actualiza_tarea->fecha_solicitud=date('Y-m-d H:i:s');

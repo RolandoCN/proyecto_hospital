@@ -73,11 +73,11 @@
 
         <header class="main-header">
             <!-- Logo -->
-            <a href="../../index2.html" class="logo">
+            <a href="/" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>A</b>LT</span>
+                <span class="logo-mini"><b>S</b>ALI</span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>Admin</b>LTE</span>
+                <span class="logo-lg"><b>Sis</b>Alim</span>
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top">
@@ -96,7 +96,7 @@
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <img src="../../dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                                <span class="hidden-xs">{{ Auth::user()->name }}</span>
+                                <span class="hidden-xs">{{ Auth::user()->persona->nombres }}</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <!-- User image -->
@@ -104,7 +104,7 @@
                                     <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                                     <p>
-                                        {{ Auth::user()->name }} - Web Developer
+                                        {{ Auth::user()->persona->nombres }} - Web Developer
                                         <small>Member since Nov. 2012</small>
                                     </p>
                                 </li>
@@ -125,6 +125,7 @@
                                 </li>
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
+
                                     <div class="pull-left">
                                         <a href="#" class="btn btn-default btn-flat">Profile</a>
                                     </div>
@@ -136,6 +137,8 @@
                                             {{ csrf_field() }}
                                         </form>
                                     </div>
+
+                                    
                                 </li>
                             </ul>
                         </li>
@@ -157,44 +160,35 @@
                         <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                     </div>
                     <div class="pull-left info">
-                        <p>{{ Auth::user()->name }}</p>
+                        <p>{{ Auth::user()->persona->nombres }}</p>
                         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
                
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu tree" data-widget="tree" style="margin-top: 12px">
-                  
-                    {{-- <li class="treeview menu-open"> --}}
+                                    
+                    @foreach(listarMenuSession() as $menu)
                         <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-dashboard"></i> <span>Administracion</span>
+                        <a href="">
+                            <i class="{{$menu['icono'] <> null ? $menu['icono'] : "fa fa-desktop"}}"></i>
+                            <span>{{$menu['gestion']}}</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
-                        </a>
-                        {{-- <ul class="treeview-menu" style="display:block"> --}}
-                        <ul class="treeview-menu" >
-                            <li class=""><a href="../../registro-paciente"><i class="fa fa-circle-o"></i> Registro Paciente</a></li>
-                            <li><a href="../../busqueda"><i class="fa fa-circle-o"></i> Consultar Pacientes</a></li>
-                        </ul>
-                    </li>
-                   
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-pie-chart"></i>
-                            <span>Charts</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
+                            
+                           
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="../charts/chartjs.html"><i class="fa fa-circle-o"></i> ChartJS</a></li>
-                            <li><a href="../charts/morris.html"><i class="fa fa-circle-o"></i> Morris</a></li>
-                            <li><a href="../charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
-                            <li><a href="../charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
+                            @foreach($menu['rutas'] as $gestion)
+
+                                <li><a href="{{url($gestion->menu->url)}}"><i class="fa fa-circle-o"></i> {{($gestion->menu->descripcion)}}</a></li>
+                            <li>
+                               
+                            @endforeach
                         </ul>
-                    </li>
+                        </li>
+                    @endforeach
                     
                 </ul>
             </section>

@@ -5,17 +5,14 @@
     
     <section class="content-header">
         <h1>
-            Gestión Tareas Vehículos
+            Gestión Persona
         </h1>
 
     </section>
 
-
-   
-
     <section class="content" id="content_form">
 
-        <div class="box" id="listado_veh">
+        <div class="box" id="listado_persona">
             <div class="box-header with-border">
                 <h3 class="box-title">Listado </h3>
 
@@ -36,13 +33,13 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table id="tabla_tarea" width="100%"class="table table-bordered table-striped">
+                    <table id="tabla_persona" width="100%"class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Vehículo</th>
-                                <th>Detalle</th>
-                                <th>Fecha Solicitud</th>
-                                <th>Estado</th>
+                                <th>Cédula</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Teléfono</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
@@ -63,7 +60,7 @@
 
 
         <div id="form_ing" style="display:none">
-            <form class="form-horizontal" id="form_registro_tarea" autocomplete="off" method="post"
+            <form class="form-horizontal" id="form_registro_persona" autocomplete="off" method="post"
                 action="">
                 {{ csrf_field() }}
                 <div class="box">
@@ -80,67 +77,60 @@
                     </div>
                     <div class="box-body">
 
+                        
                         <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Vehículo</label>
+                            <label for="inputPassword3" class="col-sm-3 control-label">Cédula</label>
                             <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" >
-                                
-                                    @foreach ($vehiculo as $dato)
-                                        <option value=""></option>
-                                        <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>
-                                    @endforeach
-                                </select>
-                            
-                            
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Chofer</label>
-                            <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="choferSalvo" id="choferSalvo" >
-                                
-                                    @foreach ($persona as $dato)
-                                        <option value=""></option>
-                                        <option value="{{ $dato->idpersona}}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
-                                    @endforeach
-                                </select>
-                            
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Inicio</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una descripción" id="fecha_ini" name="fecha_ini">
-                            </div>
-                            
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Fin</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una fecha" id="fecha_fin" name="fecha_fin">
+                                <input type="number" minlength="1" maxlength="10" onKeyPress="if(this.value.length==10) return false;"  class="form-control" id="cedula_persona" name="cedula_persona" placeholder="Cedula">
+                                <span class="invalid-feedback" role="alert" style="color:red; display:none
+                                " id="error_cedula">
+                                    <strong id="txt_error_cedula"></strong>
+                                </span>
                             </div>
                             
                         </div>
 
                         <div class="form-group">
 
-                            <label for="inputPassword3" class="col-sm-3 control-label">Motivo</label>
+                            <label for="inputPassword3" class="col-sm-3 control-label">Nombres</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" placeholder="Ingrese el motivo" name="motivo" id="motivo"></textarea>
+                                <input type="text" minlength="1" maxlength="100" onKeyPress="if(this.value.length==100) return false;" class="form-control" id="nombres" name="nombres" placeholder="Nombres">
+                                <span class="invalid-feedback" role="alert" style="color:red; display:none
+                                " id="error_nombres">
+                                    <strong id="txt_error_nombres"></strong>
+                                </span>
                             </div>
-
                            
                         </div>
 
-                      
-                        
+
+                        <div class="form-group">
+
+                            <label for="inputPassword3" class="col-sm-3 control-label">Apellidos</label>
+                            <div class="col-sm-8">
+                                <input type="text" minlength="1" maxlength="100" onKeyPress="if(this.value.length==100) return false;"  class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos">
+                                <span class="invalid-feedback" role="alert" style="color:red; display:none
+                                " id="error_apellidos">
+                                    <strong id="txt_error_apellidos"></strong>
+                                </span>
+                            </div>
+                           
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="inputPassword3" class="col-sm-3 control-label">Teléfono</label>
+                            <div class="col-sm-8">
+                                <input type="text" minlength="1" maxlength="10" onKeyPress="if(this.value.length==10) return false;"  class="form-control" id="telefono" name="telefono" placeholder="Teléfono">
+                                <span class="invalid-feedback" role="alert" style="color:red; display:none
+                                " id="error_telefono">
+                                    <strong id="txt_error_telefonos"></strong>
+                                </span>
+                            </div>
+                           
+                        </div>
+
+
                         <hr>
                         <div class="form-group">
                             <div class="col-sm-12 text-center" >
@@ -151,12 +141,10 @@
                                 <button type="button" onclick="visualizarListado()" class="btn btn-danger btn-sm">Cancelar</button>
                             </div>
                         </div>
-
                         
                     </div>
 
                 </div>
-
             
             </form>
         </div>
@@ -164,19 +152,13 @@
 
     </section>
 
-    
-    <script>
-       
-       
-
-    </script>
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/tarea.js"></script>
+    <script src="/js/vehiculoCombustible/persona.js"></script>
 
     <script>
-        llenar_tabla_tarea()
+        llenar_tabla_persona()
         limpiarCampos()
     </script>
 

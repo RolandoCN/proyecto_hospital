@@ -5,17 +5,14 @@
     
     <section class="content-header">
         <h1>
-            Gestión Tareas Vehículos
+            Administración de Gestión Menú
         </h1>
 
     </section>
 
-
-   
-
     <section class="content" id="content_form">
 
-        <div class="box" id="listado_veh">
+        <div class="box" id="listado_gestion_menu">
             <div class="box-header with-border">
                 <h3 class="box-title">Listado </h3>
 
@@ -36,19 +33,18 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table id="tabla_tarea" width="100%"class="table table-bordered table-striped">
+                    <table id="tabla_gestion_menu" width="100%"class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Vehículo</th>
-                                <th>Detalle</th>
-                                <th>Fecha Solicitud</th>
-                                <th>Estado</th>
+                                <th>#</th>
+                                <th>Gestión</th>
+                                <th>Menú</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="4"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -63,7 +59,7 @@
 
 
         <div id="form_ing" style="display:none">
-            <form class="form-horizontal" id="form_registro_tarea" autocomplete="off" method="post"
+            <form class="form-horizontal" id="form_gestion_menu" autocomplete="off" method="post"
                 action="">
                 {{ csrf_field() }}
                 <div class="box">
@@ -81,66 +77,37 @@
                     <div class="box-body">
 
                         <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Vehículo</label>
+
+                            <label for="inputPassword3" class="col-sm-3 control-label">Gestión</label>
                             <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" >
+                                <select data-placeholder="Seleccione Una Gestión" style="width: 100%;" class="form-control select2" name="gestion" id="gestion" >
                                 
-                                    @foreach ($vehiculo as $dato)
+                                    @foreach ($gestion as $dato)
                                         <option value=""></option>
-                                        <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>
+                                        <option value="{{ $dato->id_gestion}}" >{{ $dato->descripcion }} </option>
                                     @endforeach
                                 </select>
-                            
-                            
+                               
                             </div>
-
-                        </div>
-
-                        <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Chofer</label>
-                            <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="choferSalvo" id="choferSalvo" >
-                                
-                                    @foreach ($persona as $dato)
-                                        <option value=""></option>
-                                        <option value="{{ $dato->idpersona}}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
-                                    @endforeach
-                                </select>
-                            
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Inicio</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una descripción" id="fecha_ini" name="fecha_ini">
-                            </div>
-                            
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Fin</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una fecha" id="fecha_fin" name="fecha_fin">
-                            </div>
-                            
-                        </div>
-
-                        <div class="form-group">
-
-                            <label for="inputPassword3" class="col-sm-3 control-label">Motivo</label>
-                            <div class="col-sm-8">
-                                <textarea class="form-control" placeholder="Ingrese el motivo" name="motivo" id="motivo"></textarea>
-                            </div>
-
                            
                         </div>
 
-                      
-                        
+
+                        <div class="form-group">
+
+                            <label for="inputPassword3" class="col-sm-3 control-label">Menú</label>
+                            <div class="col-sm-8">
+                                <select data-placeholder="Seleccione Un Menú" style="width: 100%;" class="form-control select2" name="menu" id="menu" >
+                                
+                                    @foreach ($menu as $dato)
+                                        <option value=""></option>
+                                        <option value="{{ $dato->id_menu}}" >{{ $dato->descripcion }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                           
+                        </div>
+
                         <hr>
                         <div class="form-group">
                             <div class="col-sm-12 text-center" >
@@ -151,12 +118,10 @@
                                 <button type="button" onclick="visualizarListado()" class="btn btn-danger btn-sm">Cancelar</button>
                             </div>
                         </div>
-
                         
                     </div>
 
                 </div>
-
             
             </form>
         </div>
@@ -164,20 +129,14 @@
 
     </section>
 
-    
-    <script>
-       
-       
-
-    </script>
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/tarea.js"></script>
+    <script src="/js/vehiculoCombustible/gestionMenu.js"></script>
 
     <script>
-        llenar_tabla_tarea()
-        limpiarCampos()
+        llenar_tabla_gestion_menu()
+        // limpiarCampos()
     </script>
 
 

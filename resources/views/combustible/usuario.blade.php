@@ -5,17 +5,14 @@
     
     <section class="content-header">
         <h1>
-            Gestión Tareas Vehículos
+            Gestión Usuario
         </h1>
 
     </section>
 
-
-   
-
     <section class="content" id="content_form">
 
-        <div class="box" id="listado_veh">
+        <div class="box" id="listado_user">
             <div class="box-header with-border">
                 <h3 class="box-title">Listado </h3>
 
@@ -36,19 +33,18 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table id="tabla_tarea" width="100%"class="table table-bordered table-striped">
+                    <table id="tabla_usuario" width="100%"class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Vehículo</th>
-                                <th>Detalle</th>
-                                <th>Fecha Solicitud</th>
-                                <th>Estado</th>
+                                <th>#</th>
+                                <th>Nombres</th>
+                                <th>Perfil</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="4"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -63,7 +59,7 @@
 
 
         <div id="form_ing" style="display:none">
-            <form class="form-horizontal" id="form_registro_tarea" autocomplete="off" method="post"
+            <form class="form-horizontal" id="form_registro_user" autocomplete="off" method="post"
                 action="">
                 {{ csrf_field() }}
                 <div class="box">
@@ -80,67 +76,36 @@
                     </div>
                     <div class="box-body">
 
+                        
                         <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Vehículo</label>
+                            <label for="inputPassword3" class="col-sm-3 control-label">Persona</label>
                             <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" >
-                                
-                                    @foreach ($vehiculo as $dato)
-                                        <option value=""></option>
-                                        <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>
-                                    @endforeach
-                                </select>
-                            
-                            
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Chofer</label>
-                            <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="choferSalvo" id="choferSalvo" >
+                                <select data-placeholder="Seleccione Una Persona" style="width: 100%;" class="form-control select2" name="idpersona" id="idpersona" >
                                 
                                     @foreach ($persona as $dato)
                                         <option value=""></option>
                                         <option value="{{ $dato->idpersona}}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
                                     @endforeach
                                 </select>
-                            
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Inicio</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una descripción" id="fecha_ini" name="fecha_ini">
-                            </div>
-                            
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Fin</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una fecha" id="fecha_fin" name="fecha_fin">
                             </div>
                             
                         </div>
 
                         <div class="form-group">
 
-                            <label for="inputPassword3" class="col-sm-3 control-label">Motivo</label>
+                            <label for="inputPassword3" class="col-sm-3 control-label">Perfil</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" placeholder="Ingrese el motivo" name="motivo" id="motivo"></textarea>
+                                <select data-placeholder="Seleccione Una Perfil" style="width: 100%;" class="form-control select2" name="idperfil" id="idperfil" >
+                                
+                                    @foreach ($perfil as $dato)
+                                        <option value=""></option>
+                                        <option value="{{ $dato->id_perfil}}" >{{ $dato->descripcion }} {{ $dato->apellidos }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-
                            
                         </div>
 
-                      
-                        
                         <hr>
                         <div class="form-group">
                             <div class="col-sm-12 text-center" >
@@ -151,12 +116,10 @@
                                 <button type="button" onclick="visualizarListado()" class="btn btn-danger btn-sm">Cancelar</button>
                             </div>
                         </div>
-
                         
                     </div>
 
                 </div>
-
             
             </form>
         </div>
@@ -164,20 +127,14 @@
 
     </section>
 
-    
-    <script>
-       
-       
-
-    </script>
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/tarea.js"></script>
+    <script src="/js/vehiculoCombustible/usuario.js"></script>
 
     <script>
-        llenar_tabla_tarea()
-        limpiarCampos()
+        llenar_tabla_usuario()
+        // limpiarCampos()
     </script>
 
 

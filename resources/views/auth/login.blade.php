@@ -43,9 +43,9 @@
             <form action="{{ route('login') }}" method="post">
               @csrf
                 <div class="form-group has-feedback">
-                  <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Usuario">
+                  <input id="tx_login" type="text" class="form-control @error('tx_login') is-invalid @enderror" name="tx_login" value="{{ old('tx_login') }}" required autocomplete="tx_login" autofocus placeholder="Usuario">
                   <span class="glyphicon glyphicon-envelope form-control-feedback" ></span>
-                  @error('email')
+                  @error('tx_login')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
