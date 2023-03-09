@@ -20,7 +20,7 @@ Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'i
 
 Auth::routes();
 
-Route::middleware(['validarRuta'])->group(function() { //middleware para validar el acceso a las rutas
+// Route::middleware(['validarRuta'])->group(function() { //middleware para validar el acceso a las rutas
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -83,7 +83,7 @@ Route::middleware(['validarRuta'])->group(function() { //middleware para validar
 
 
     //USUARIO
-    Route::get('/usuario', [UsuarioController::class, 'index']);
+    Route::get('/usuario', [UsuarioController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-usuario', [UsuarioController::class, 'listar']);
     Route::post('/guardar-usuario', [UsuarioController::class, 'guardar']);
     Route::get('/editar-usuario/{id}', [UsuarioController::class, 'editar']);
@@ -129,4 +129,4 @@ Route::middleware(['validarRuta'])->group(function() { //middleware para validar
     Route::post('/aprobar-despacho-firma', [DespachoCombustibleController::class, 'aprobarDespacho']);
     Route::get('/despacho-pdf/{id}', [DespachoCombustibleController::class, 'despachoPdfGasolinera']);
 
-});
+// });
