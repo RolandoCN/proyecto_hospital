@@ -2,7 +2,7 @@
 
 @section('content')
 
-    
+    <link rel="stylesheet" href="{{asset('plugins/sweetalert/sweetalert.css')}}">
     <section class="content-header">
         <h1>
             Gestión Usuario
@@ -129,7 +129,7 @@
 
 @endsection
 @section('scripts')
-
+    <script src="{{asset('plugins/sweetalert/sweetalert.js')}}"></script>
     <script src="/js/vehiculoCombustible/usuario.js"></script>
 
     <script>

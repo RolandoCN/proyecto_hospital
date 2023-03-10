@@ -29,12 +29,14 @@ $("#form_registro_tarea").submit(function(e){
         return
     } 
 
-    if(fecha_ini > fecha_fin){
-        alertNotificar("La fecha de inicio debe ser menor a la fecha final","error")
-        $('#fecha_ini').focus()
-        return
-    } 
-
+    if(fecha_fin!=""){
+        if(fecha_ini > fecha_fin){
+            alertNotificar("La fecha de inicio debe ser menor a la fecha final","error")
+            $('#fecha_ini').focus()
+            return
+        } 
+    }
+       
 
     if(motivo=="" || motivo==null){
         alertNotificar("Ingrese el motivo","error")
@@ -93,17 +95,12 @@ $("#form_registro_tarea").submit(function(e){
 })
 
 function limpiarCampos(){
-    $('#codigo').val('')
-    $('#placa').val('')
-    $('#descripcion').val('')
-    $('#marcacombo').val('').trigger('change.select2')
-    $('#tipousocombo').val('').trigger('change.select2')
-    $('#fabricacion').val('')
-    $('#cmb_tipocombustible').val('').trigger('change.select2')
-    $('#cmb_tipomedicion').val('').trigger('change.select2')
-    $('#chasis').val('')
-    $('#modelo').val('')
-    $('#departamento').val('').trigger('change.select2')
+   
+    $('#vehiculo_tarea').val('').trigger('change.select2')
+    $('#choferSalvo').val('').trigger('change.select2')
+    $('#fecha_ini').val('')
+    $('#fecha_fin').val('')
+    $('#motivo').val('')
 }
 
 function llenar_tabla_tarea(){
@@ -191,12 +188,17 @@ function editarTarea(id_tarea){
             alertNotificar("La tarea ya no se puede editar","error");
             return;   
         }
-
+        //si no ingreso fecha de fin de la tarea manadamos limpio el input
+        if(data.resultado.fecha_fin_ing=="N"){
+            $('#fecha_fin').val('')
+        }else{
+            $('#fecha_fin').val(data.resultado.fecha_fin)
+        }
       
         $('#vehiculo_tarea').val(data.resultado.id_vehiculo).trigger('change.select2')
         $('#choferSalvo').val(data.resultado.id_chofer).trigger('change.select2')
         $('#fecha_ini').val(data.resultado.fecha_inicio)
-        $('#fecha_fin').val(data.resultado.fecha_fin)
+       
         $('#motivo').val(data.resultado.motivo)
        
 

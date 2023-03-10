@@ -15,7 +15,7 @@ class MovimientoVehController extends Controller
 
 
     public function index(){
-        $persona=Persona::all();
+        $persona=Persona::where('estado','A')->get();
         $vehiculo=Vehiculo::where('estado','A')->get();
       
         return view('combustible.patio',[

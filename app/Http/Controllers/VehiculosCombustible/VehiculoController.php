@@ -9,6 +9,7 @@ use App\Models\VehiculoCombustible\TipoUso;
 use App\Models\VehiculoCombustible\Departamento;
 use App\Models\VehiculoCombustible\Vehiculo;
 use \Log;
+use DB;
 use Illuminate\Http\Request;
 
 class VehiculoController extends Controller
@@ -17,10 +18,10 @@ class VehiculoController extends Controller
 
     public function index(){
         $marca=Marca::all();
-        $tipo_combust=TipoCombustible::all();
-        $tipo_medic=TipoMedicion::all();
-        $tipo_uso=TipoUso::all();
-        $departamento=Departamento::all();
+        $tipo_combust=TipoCombustible::where('estado','A')->get();
+        $tipo_medic=TipoMedicion::where('estado','A')->get();
+        $tipo_uso=TipoUso::where('estado','A')->get();
+        $departamento=Departamento::where('estado','A')->get();
         return view('combustible.vehiculo',[
             "marca"=>$marca,
             "tipo_combust"=>$tipo_combust,
@@ -290,6 +291,41 @@ class VehiculoController extends Controller
 
     public function eliminar($id){
         try{
+
+            //verificamos que no este asociado a un tarea, movimiento y despacho en estado activo
+            $veri_Tarea=DB::table('vc_tarea')
+            ->where('id_vehiculo',$id)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Tarea)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo está asociado a una tarea y no se puede eliminar'
+                ]);
+            }
+
+            $veri_Movimiento=DB::table('vc_movimiento')
+            ->where('id_vehiculo',$id)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Movimiento)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo está asociado a un ingreso/salida y no se puede eliminar'
+                ]);
+            }
+
+            $veri_Despacho=DB::table('vc_detalle_despacho')
+            ->where('id_vehiculo',$id)
+            ->where('estado','!=', 'Eliminado')
+            ->first();
+            if(!is_null($veri_Despacho)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo está asociado a un despacho de combustible y no se puede eliminar'
+                ]);
+            }
+            
             $veh=Vehiculo::find($id);
             $veh->usuario_actualiza=auth()->user()->id;
             $veh->fecha_actualizacion=date('Y-m-d H:i:s');

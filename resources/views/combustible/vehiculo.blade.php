@@ -11,8 +11,6 @@
     </section>
 
 
-   
-
     <section class="content" id="content_form">
 
         <div class="box" id="listado_veh">
@@ -122,7 +120,7 @@
 
                             <label for="inputPassword3" class="col-sm-2 control-label">Tipo Uso</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="Seleccione Una Marca" style="width: 100%;" class="form-control select2" name="cmb_tipouso" id="tipousocombo" >
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" name="cmb_tipouso" id="tipousocombo" >
                                 
                                     @foreach ($tipo_uso as $dato)
                                         <option value="{{ $dato->id_tipouso }}" >{{ $dato->detalle }}</option>
@@ -152,7 +150,7 @@
                             
                             <label for="inputPassword3" class="col-sm-2 control-label">Tipo Combustible</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="Seleccione Una Marca" style="width: 100%;" class="form-control select2" name="cmb_tipocombustible" id="cmb_tipocombustible" >
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" name="cmb_tipocombustible" id="cmb_tipocombustible" >
                                 
                                     @foreach ($tipo_combust as $dato)
                                         <option value="{{ $dato->id_tipocombustible }}" >{{ $dato->detalle }}</option>
@@ -175,7 +173,7 @@
 
                             <label for="inputPassword3" class="col-sm-2 control-label">Tipo Medición</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="Seleccione Un Provincia" style="width: 100%;" class="form-control select2" id="cmb_tipomedicion"  name="cmb_tipomedicion" >
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" id="cmb_tipomedicion"  name="cmb_tipomedicion" >
                                                                     
                                     @foreach ($tipo_medic as $dato)
                                         <option value="{{ $dato->id_tipomedicion }}">{{ $dato->detalle }}</option>

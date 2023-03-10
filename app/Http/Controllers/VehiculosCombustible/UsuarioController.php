@@ -10,6 +10,7 @@ use App\Models\VehiculoCombustible\UsuarioPerfil;
 use \Log;
 use DB;
 use Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class UsuarioController extends Controller
@@ -287,6 +288,97 @@ class UsuarioController extends Controller
             }
         });
         return $transaction;
+    }
+
+    public function cambiarClave(Request $request){
+      
+        try {
+            $validator = Validator::make($request->all(), [
+                'clave_actual' => 'required|min:6|string|regex:/^[a-zA-Z0-9_\-@$&#.]{6,18}$/',
+                'clave_nueva' => 'required|min:6|string|regex:/^[a-zA-Z0-9_\-@$&#.]{6,18}$/',
+            ]);
+            if ($validator->fails()) {    
+                return response()->json([
+                    'error' => true, 
+                    'detalle' => 'Contraseña debe tener mínimo 6 caracteres'
+                ]);
+
+            }
+            $usuario= auth()->User();
+
+            if (Hash::check($request['clave_actual'], $usuario->password)){
+            
+                if($request['clave_nueva']==$request['clave_nueva_confirm']){
+
+                    if (Hash::check($request['clave_nueva'], $usuario->password)){
+
+                        return response()->json([
+                            'error'=>true,
+                            'detalle' => 'La nueva contraseña no puede ser igual a la anterior'
+                        ]);
+
+                    }else{
+
+                        $usuario->password=bcrypt($request['clave_nueva']);
+                        if($usuario->save()){
+                            return response()->json(['error'=>false,'detalle'=>'Contraseña actualizada exitosamente']);
+                        }
+                        else{
+                            return response()->json(['error'=>true,'detalle'=>'Error, inténtelo nuevamente']);
+                        }
+
+                    }
+                    
+                }else{
+                    return response()->json(['error'=>true,'detalle'=>'Las contraseñas no coinciden']);
+                } 
+            }else{
+                return response()->json(['error'=>true,'detalle'=>'La contraseña actual ingresada no es la correcta por favor verificar']);
+            }
+
+        } catch (\Throwable $th) {
+            Log::error('UsuarioController,CambiarContrasenia:' . $th->getMessage()); 
+            return response()->json(['error'=>true,'detalle'=>'Incovenientes al procesar la solicitud, intente nuevamente']);
+
+        }
+    }
+
+    public function resetearPassword($idusuario){
+        try{
+            $existe=User::where('id',$idusuario)
+            ->where('estado','A')
+            ->first();
+
+            if(is_null($existe)){
+                return response()->json([
+                    "error"=>true,
+                    "mensaje"=>"No se encontró la información del usuario"
+                ]);
+            }
+
+            $contrasenia_reseteada=$existe->tx_login;
+
+            $existe->password=Hash::make($contrasenia_reseteada);
+            $existe->estado='A';
+            $existe->id_actualizado=auth()->user()->id_usuario;
+            $existe->fe_actualiza=date('Y-m-d H:i:s');
+
+            if($existe->save()){
+                return response()->json([
+                    "error"=>false,
+                    "mensaje"=>"La contraseña ha sido reseteada exitosamente"
+                ]);
+            }else{
+                return response()->json([
+                    "error"=>true,
+                    "mensaje"=>"No se pudo resetear la contraseña"
+                ]);
+            }
+        } catch (\Throwable $th) {
+            Log::error('UsuarioController,resetearPassword:' . $th->getMessage()); 
+            return response()->json(['error'=>true,'detalle'=>'Incovenientes al procesar la solicitud, intente nuevamente']);
+
+        }
     }
 
 }

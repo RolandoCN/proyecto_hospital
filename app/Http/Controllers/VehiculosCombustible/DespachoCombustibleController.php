@@ -20,10 +20,10 @@ class DespachoCombustibleController extends Controller
 
 
     public function index(){
-        $persona=Persona::all();
-        $gasolinera=Gasolinera::all();
+        $persona=Persona::where('estado','A')->get();
+        $gasolinera=Gasolinera::where('estado','A')->get();
         $vehiculo=Vehiculo::where('estado','A')->get();
-        $tipo_comb=TipoCombustible::all();
+        $tipo_comb=TipoCombustible::where('estado','A')->get();
         return view('combustible.despacho_comb',[
             "persona"=>$persona,
             "gasolinera"=>$gasolinera,
@@ -35,7 +35,7 @@ class DespachoCombustibleController extends Controller
 
     public function listar(){
         try{
-            $cab=CabeceraDespacho::with('gasolinera')->where('estado','!=','Eliminada')->get();
+            $cab=CabeceraDespacho::with('gasolinera')->where('estado','!=','Eliminado')->get();
             return response()->json([
                 'error'=>false,
                 'resultado'=>$cab
@@ -117,6 +117,144 @@ class DespachoCombustibleController extends Controller
         }
     }
 
+    public function editarCabecera($idCab){
+        try{
+            $detalleDespEdit=CabeceraDespacho::where('idcabecera_despacho', $idCab)
+            ->where('estado','!=','Eliminado')->first();
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$detalleDespEdit
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('DespachoCombustibleController => editarCabecera => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
+
+    public function actualizarCabecera(Request $request, $id){
+      
+        $messages = [
+            
+            'cmb_gasolinera.required' => 'Debe seleccionar la gasolinera',
+            'fecha_desp.required' => 'Debe seleccionar la fecha',
+                 
+        ];
+           
+
+        $rules = [
+            'cmb_gasolinera' => "required",
+            'fecha_desp' => "required",
+                                
+        ];
+
+        $this->validate($request, $rules, $messages);
+        try{
+
+            //si ya se han realizado despacho no dejamos actualizar
+            $tiene_despacho_act=DB::table('vc_detalle_despacho')
+            ->where('idcabecera_despacho',$id)
+            ->where('estado','!=','Eliminado')
+            ->first();
+            if(!is_null($tiene_despacho_act)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se puede actualizar, ya que tiene despachos asociados'
+                ]);
+            }
+
+
+            $actualiza_cabec_des= CabeceraDespacho::find($id);
+            $actualiza_cabec_des->id_gasolinera=$request->cmb_gasolinera;
+            $actualiza_cabec_des->fecha=$request->fecha_desp;
+            $actualiza_cabec_des->idusuario_act=auth()->user()->id;
+            $actualiza_cabec_des->fecha_actualiza=date('Y-m-d H:i:s');
+            $actualiza_cabec_des->estado="Activo";
+
+            //validar no se repita
+            $valida_exis=CabeceraDespacho::where('id_gasolinera',$actualiza_cabec_des->id_gasolinera)
+            ->where('fecha',$actualiza_cabec_des->fecha)
+            ->where('estado','Activo')
+            ->where('idcabecera_despacho','!=', $id)
+            ->first();
+           
+            if(!is_null($valida_exis)){
+            
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La información ya existe'
+                ]);
+                
+            }
+           
+            if($actualiza_cabec_des->save()){
+                return response()->json([
+                    'error'=>false,
+                    'mensaje'=>'Información registrada exitosamente'
+                ]);
+            }else{
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo registrar la información'
+                ]);
+            }
+
+
+
+
+        }catch (\Throwable $e) {
+            Log::error('DespachoCombustibleController => guardar => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
+
+    public function eliminarCabecera($id){
+        try{
+            //verificamos que no tenga detalle en estado activo
+            $veri_detalle=DB::table('vc_detalle_despacho')
+            ->where('idcabecera_despacho',$id)
+            ->where('estado','!=','Eliminado')
+            ->first();
+            if(!is_null($veri_detalle)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se puede eliminar, ya que tiene despachos asociados'
+                ]);
+            }
+
+            $elim_cabecera=CabeceraDespacho::find($id);
+            $elim_cabecera->idusuario_act=auth()->user()->id;
+            $elim_cabecera->fecha_actualiza=date('Y-m-d H:i:s');
+            $elim_cabecera->estado="Eliminado";
+            if($elim_cabecera->save()){
+                return response()->json([
+                    'error'=>false,
+                    'mensaje'=>'Información eliminada exitosamente'
+                ]);
+            }else{
+                return response()->json([
+                    'error'=>false,
+                    'mensaje'=>'No se pudo eliminar la información'
+                ]);
+            }
+               
+        }catch (\Throwable $e) {
+            Log::error('DespachoCombustibleController => eliminarDetalle => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error, intentelo más tarde'
+            ]);
+            
+        }
+    }
+
     public function detallePrecioComb($idVeh, $idGasol){
         try{
 
@@ -126,6 +264,11 @@ class DespachoCombustibleController extends Controller
             $precioCombGas=DB::table('vc_gasolinera_comb')->where('id_gasolinera',$idGasol)
             ->where('id_tipocombustible', $datoVeh->id_tipocombustible)
             ->first();
+            if(is_null($precioCombGas)){
+                $precioCom=null;
+            }else{
+                $precioCom=$precioCombGas->precio_x_galon;
+            }
 
             $tipoMed=DB::table('vc_tipomedicion')->where('id_tipomedicion',$datoVeh->id_tipomedicion)
             ->first();
@@ -133,7 +276,7 @@ class DespachoCombustibleController extends Controller
             return response()->json([
                 'error'=>false,
                 'idTipoCom'=>$datoVeh->id_tipocombustible,
-                'precioCombGas'=>$precioCombGas->precio_x_galon,
+                'precioCombGas'=>$precioCom,
                 'tipoMed'=>$tipoMed
             ]);
             
@@ -150,14 +293,18 @@ class DespachoCombustibleController extends Controller
     public function PrecioCombGaso($idTipoComb, $idGasol){
         try{
 
-            
             $precioCombGas=DB::table('vc_gasolinera_comb')
             ->where('id_gasolinera',$idGasol)
             ->where('id_tipocombustible', $idTipoComb)
             ->first();
+            if(is_null($precioCombGas)){
+                $precioCom=null;
+            }else{
+                $precioCom=$precioCombGas->precio_x_galon;
+            }
             return response()->json([
                 'error'=>false,
-                'precioCombGas'=>$precioCombGas->precio_x_galon
+                'precioCombGas'=>$precioCom
             ]);
             
         }catch (\Throwable $e) {
@@ -396,8 +543,8 @@ class DespachoCombustibleController extends Controller
             $bucartarea=Tarea::where('id_vehiculo',$idVeh)
             ->where('estado','!=','Eliminada')
             ->where(function($query)use($fechaDesp){
-                $query->Where('fecha_inicio','<=',$fechaDesp)
-                ->Where('fecha_fin','>=',$fechaDesp);
+                $query->WhereDate('fecha_inicio','<=',$fechaDesp)
+                ->WhereDate('fecha_fin','>=',$fechaDesp);
             })
             ->get();
             return response()->json([
@@ -452,7 +599,7 @@ class DespachoCombustibleController extends Controller
             $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
             ->where('idcabecera_despacho',$idCab)->where('estado','Aprobado')
             ->orderBy('fecha_hora_despacho', 'desc')->get();
-            
+
             if(sizeof($detalle)<=0){
               return back()->with(['mensajePInfoDespacho'=>'Aún no se han registrado despacho','estadoP'=>'danger']);
             }
@@ -464,7 +611,7 @@ class DespachoCombustibleController extends Controller
                     $fecha = strftime("%d de %B de %Y", strtotime($fecha));
 
             
-            $nombre="despacho";
+            $nombre="despacho"; 
             
             //creamos el objeto
             $pdf=new PDF();

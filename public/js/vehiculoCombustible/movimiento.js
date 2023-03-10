@@ -299,7 +299,7 @@ function cargartarea(){
         else{
         
             if(data.resultado.length===0){
-            
+                $('#chofer').val('').trigger('change.select2')
                 var tarea="no";
                 $('#tareasguard').val(tarea); 
                 $("#table_dato_salida").show(700);
@@ -315,6 +315,9 @@ function cargartarea(){
             else{
                 var tarea="si";
                 $('#tareasguard').val(tarea); 
+
+                //cargamos el chofer que se realizo la tarea
+                $('#chofer').val(data.resultado[0].id_chofer).trigger('change.select2')
             } 
         
             $("#table_dato_salida").show(700);
@@ -325,8 +328,6 @@ function cargartarea(){
                     `<tr>
                         <td style="color:black">${i+1}</td>
                         <td style="color:black">${item.motivo}</td>
-                        
-                        
                         
                     </tr>`);
             

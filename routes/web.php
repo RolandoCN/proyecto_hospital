@@ -12,6 +12,10 @@ use App\Http\Controllers\VehiculosCombustible\UsuarioController;
 use App\Http\Controllers\VehiculosCombustible\GestionController;
 use App\Http\Controllers\VehiculosCombustible\MenuController;
 use App\Http\Controllers\VehiculosCombustible\GestionMenuController;
+use App\Http\Controllers\VehiculosCombustible\GasolineraController;
+use App\Http\Controllers\VehiculosCombustible\GasolineraCombustibleController;
+use App\Http\Controllers\VehiculosCombustible\CombustibleController;
+use App\Http\Controllers\VehiculosCombustible\ReportesCombustibleController;
 
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
@@ -56,6 +60,9 @@ Auth::routes();
     Route::get('/eliminar-rol/{id}', [PerfilController::class, 'eliminar']);
     Route::get('/acceso-perfil/{id}', [PerfilController::class, 'accesoPerfil']);
     Route::get('/acceso-por-perfil/{menu}/{tipo}/{perfil}', [PerfilController::class, 'mantenimientoAccesoPerfil']);
+    Route::get('/dato-perfil', [PerfilController::class, 'datoPerfil']);
+    
+    
 
     //GESTION
     Route::get('/gestion', [GestionController::class, 'index']);
@@ -89,6 +96,8 @@ Auth::routes();
     Route::get('/editar-usuario/{id}', [UsuarioController::class, 'editar']);
     Route::put('/actualizar-usuario/{id}', [UsuarioController::class, 'actualizar']);
     Route::get('/eliminar-usuario/{id}', [UsuarioController::class, 'eliminar']);
+    Route::post('/cambiar-clave', [UsuarioController::class, 'cambiarClave']);
+    Route::get('/resetear-password/{id}', [UsuarioController::class, 'resetearPassword']);
 
 
     //VEHICULOS
@@ -114,9 +123,39 @@ Auth::routes();
     Route::get('/listado-movimiento', [MovimientoVehController::class, 'listar']);
     Route::get('/eliminar-movimiento/{id}', [MovimientoVehController::class, 'eliminar']);
 
+
+    //GASOLINERAS
+    Route::get('/gasolinera', [GasolineraController::class, 'index']);
+    Route::get('/listado-gasolinera', [GasolineraController::class, 'listar']);
+    Route::post('/guardar-gasolinera', [GasolineraController::class, 'guardar']);
+    Route::get('/editar-gasolinera/{id}', [GasolineraController::class, 'editar']);
+    Route::put('/actualizar-gasolinera/{id}', [GasolineraController::class, 'actualizar']);
+    Route::get('/eliminar-gasolinera/{id}', [GasolineraController::class, 'eliminar']);
+
+    //COMBUSTIBLES
+    Route::get('/combustible', [CombustibleController::class, 'index']);
+    Route::get('/listado-combustible', [CombustibleController::class, 'listar']);
+    Route::post('/guardar-combustible', [CombustibleController::class, 'guardar']);
+    Route::get('/editar-combustible/{id}', [CombustibleController::class, 'editar']);
+    Route::put('/actualizar-combustible/{id}', [CombustibleController::class, 'actualizar']);
+    Route::get('/eliminar-combustible/{id}', [CombustibleController::class, 'eliminar']);
+
+
+    //GASOLINERA-COMBUSTIBLE
+    Route::get('/gasolinera-combustible', [GasolineraCombustibleController::class, 'index']);
+    Route::get('/listado-gasolinera-combustible', [GasolineraCombustibleController::class, 'listar']);
+    Route::post('/guardar-gasolinera-combustible', [GasolineraCombustibleController::class, 'guardar']);
+    Route::get('/editar-gasolinera-combustible/{id}', [GasolineraCombustibleController::class, 'editar']);
+    Route::put('/actualizar-gasolinera-combustible/{id}', [GasolineraCombustibleController::class, 'actualizar']);
+    Route::get('/eliminar-gasolinera-combustible/{id}', [GasolineraCombustibleController::class, 'eliminar']);
+
+
     //DESPACHO COMBUSTIBLE
     Route::get('/despacho-combustible', [DespachoCombustibleController::class, 'index']);
     Route::post('/guardar-cab-despacho', [DespachoCombustibleController::class, 'guardarCabecera']);
+    Route::get('/editar-cab-despacho/{id}', [DespachoCombustibleController::class, 'editarCabecera']);
+    Route::put('/actualizar-cab-despacho/{id}', [DespachoCombustibleController::class, 'actualizarCabecera']);
+    Route::get('/eliminar-cab-despacho/{id}', [DespachoCombustibleController::class, 'eliminarCabecera']);
     Route::get('/listado-desp', [DespachoCombustibleController::class, 'listar']);
     Route::get('/precio-detalle-comb/{idVeh}/{idGas}', [DespachoCombustibleController::class, 'detallePrecioComb']);
     Route::get('/precio-comb-gas/{idCom}/{idGas}', [DespachoCombustibleController::class, 'PrecioCombGaso']);
@@ -128,5 +167,14 @@ Auth::routes();
     Route::get('/listar-tarea-veh/{idVeh}/{fecha}', [DespachoCombustibleController::class, 'listarTareaVeh']);
     Route::post('/aprobar-despacho-firma', [DespachoCombustibleController::class, 'aprobarDespacho']);
     Route::get('/despacho-pdf/{id}', [DespachoCombustibleController::class, 'despachoPdfGasolinera']);
+
+
+    //FORMULARIO REPORTES
+    Route::get('/reportes-formularios', [ReportesCombustibleController::class, 'index']);
+    Route::get('/listado-reportes', [ReportesCombustibleController::class, 'listado']);
+    Route::post('/guardar-reportes', [ReportesCombustibleController::class, 'guardar']);
+    Route::get('/descargar-reporte-form/{id}', [ReportesCombustibleController::class, 'descargar']);
+   
+
 
 // });

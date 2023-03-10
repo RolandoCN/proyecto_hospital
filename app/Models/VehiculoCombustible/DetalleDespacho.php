@@ -11,7 +11,8 @@ class DetalleDespacho extends Model
     public $timestamps = false;
 
     public function vehiculo(){
-        return $this->belongsTo('App\Models\VehiculoCombustible\Vehiculo', 'id_vehiculo', 'id_vehiculo');
+        return $this->belongsTo('App\Models\VehiculoCombustible\Vehiculo', 'id_vehiculo', 'id_vehiculo')
+        ->with('departamento');
     }
 
     public function tipocombustible(){

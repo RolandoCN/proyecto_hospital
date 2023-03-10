@@ -5,17 +5,15 @@ use App\Http\Controllers\Controller;
 use App\Models\VehiculoCombustible\Perfil;
 use App\Models\VehiculoCombustible\PerfilAcceso;
 use App\Models\VehiculoCombustible\Menu;
-use App\Models\VehiculoCombustible\Vehiculo;
-use App\Models\VehiculoCombustible\Tarea;
+use App\Models\VehiculoCombustible\GestionMenu;
+use App\Models\User;
 use \Log;
 use Illuminate\Http\Request;
 
 class PerfilController extends Controller
 {
     public function index(){
-        $rutaLlamada = \Request::route()->uri;
-        dd($rutaLlamada);
-        
+       
         return view('combustible.perfil');
     }
 
@@ -202,13 +200,16 @@ class PerfilController extends Controller
     }
 
     public function mantenimientoAccesoPerfil($idmenu, $tipo, $idperfil){
-      
+       
         try{
             //agregamos
             if($tipo=="A"){
+                //obtenemos el id de la gestion del menu
+                $idGestion=GestionMenu::where('id_menu', $idmenu)->pluck('id_gestion')->first();
                 $acceso_perf= new PerfilAcceso();
                 $acceso_perf->id_perfil=$idperfil;
                 $acceso_perf->id_menu=$idmenu;
+                $acceso_perf->id_gestion=$idGestion;
                 $acceso_perf->save();
                 return response()->json([
                     'error'=>false,
@@ -263,5 +264,17 @@ class PerfilController extends Controller
             
         }
     }
+
+    public function datoPerfil(){
+        $data=User::with('persona','perfil')->where('id',auth()->user()->id)->first();
+       
+        return response()->json([
+            "error"=>false,
+            "data"=>$data
+        ]);
+
+      
+    }
+
 
 }

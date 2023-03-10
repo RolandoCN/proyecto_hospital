@@ -14,7 +14,6 @@ class Tarea extends Model
         return $this->belongsTo('App\Models\VehiculoCombustible\Vehiculo', 'id_vehiculo', 'id_vehiculo');
     }
 
-
     public function chofer(){
         return $this->belongsTo('App\Models\Persona', 'id_chofer', 'idpersona');
     }

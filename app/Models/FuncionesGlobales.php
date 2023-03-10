@@ -30,7 +30,7 @@
             ->where('id_gestion', $dataGestion->id_gestion)
             ->get();
 
-            if(!is_null($consultaAcceso)){
+            if(sizeof($consultaAcceso)>0){
                 $nombreGestion=App\Models\VehiculoCombustible\Gestion::where('id_gestion', $dataGestion->id_gestion)->first();
 
                 array_push($lista_modulo,["gestion"=>$nombreGestion->descripcion,"icono"=>$nombreGestion->icono, "rutas"=>$consultaAcceso]);

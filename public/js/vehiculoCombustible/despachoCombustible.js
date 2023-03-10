@@ -36,7 +36,7 @@ $("#frm_registro_cab_desp").submit(function(e){
         url_form="/guardar-cab-despacho"
     }else{
         tipo="PUT"
-        url_form="/actualizar-tarea/"+IdTareaEditar
+        url_form="/actualizar-cab-despacho/"+idCabeEditar
     }
   
     var FrmData=$("#frm_registro_cab_desp").serialize();
@@ -73,17 +73,9 @@ $("#frm_registro_cab_desp").submit(function(e){
 })
 
 function limpiarCampos(){
-    $('#codigo').val('')
-    $('#placa').val('')
-    $('#descripcion').val('')
-    $('#marcacombo').val('').trigger('change.select2')
-    $('#tipousocombo').val('').trigger('change.select2')
-    $('#fabricacion').val('')
-    $('#cmb_tipocombustible').val('').trigger('change.select2')
-    $('#cmb_tipomedicion').val('').trigger('change.select2')
-    $('#chasis').val('')
-    $('#modelo').val('')
-    $('#departamento').val('').trigger('change.select2')
+    $('#cmb_gasolinera').val('').trigger('change.select2')
+    $('#fecha_desp').val('')
+   
 }
 
 function llenar_tabla_tarea(){
@@ -132,6 +124,9 @@ function llenar_tabla_tarea(){
                 ],    
                 "rowCallback": function( row, data ) {
                     $('td', row).eq(2).html(`
+
+                                            <a onclick="editar_cab(${data.idcabecera_despacho })" class="btn btn-warning btn-xs"> Editar </a>
+
                                             <a onclick="detalle_despacho('${data.idcabecera_despacho}','${data.id_gasolinera}','${data.gasolinera.descripcion}','${data.fecha}')" class="btn btn-primary btn-xs"> Detalle </a>  
 
                                             <a onclick="imprimir_desp(${data.idcabecera_despacho })" class="btn btn-success btn-xs"> Imprimir </a>
@@ -158,8 +153,8 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 
-function editarTarea(idcabecera_despacho){
-    $.get("/editar-tarea/"+idcabecera_despacho, function(data){
+function editar_cab(idcabecera_despacho){
+    $.get("/editar-cab-despacho/"+idcabecera_despacho, function(data){
         console.log(data)
       
         if(data.error==true){
@@ -171,15 +166,11 @@ function editarTarea(idcabecera_despacho){
             return;   
         }
 
-      
-        $('#vehiculo_tarea').val(data.resultado.id_vehiculo).trigger('change.select2')
-        $('#choferSalvo').val(data.resultado.id_chofer).trigger('change.select2')
-        $('#fecha_ini').val(data.resultado.fecha_inicio)
-        $('#motivo').val(data.resultado.motivo)
-       
+        $('#cmb_gasolinera').val(data.resultado.id_gasolinera).trigger('change.select2')
+        $('#fecha_desp').val(data.resultado.fecha)
 
         visualizarForm('E')
-        globalThis.IdTareaEditar=idcabecera_despacho
+        globalThis.idCabeEditar=idcabecera_despacho
 
 
 
@@ -217,7 +208,7 @@ function imprimir_desp(idCab){
 
 function eliminar_cabecera_desp(idcabecera_despacho){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-tarea/"+idcabecera_despacho, function(data){
+        $.get("/eliminar-cab-despacho/"+idcabecera_despacho, function(data){
             console.log(data)
           
             if(data.error==true){
@@ -282,7 +273,7 @@ function capturaDatosVeh(){
             var preciogas="";
             $('#totalmodal').attr('readonly','readonly');
             alertNotificar("La gasolinera no tiene asignado un precio para el tipo de combustible","info")
-           
+            return
         }
         else{
             var preciogas=data.precioCombGas

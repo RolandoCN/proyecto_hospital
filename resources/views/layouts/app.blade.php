@@ -42,7 +42,20 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css">
 
+    <link rel="stylesheet" href="{{asset('css/spinners.css')}}">
+
     <style>
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choic {
+            background-color: #337ab7 !important;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            cursor: default;
+            float: left;
+            margin-right: 5px;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
 
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             color: #555;
@@ -75,9 +88,9 @@
             <!-- Logo -->
             <a href="/" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>S</b>ALI</span>
+                <span class="logo-mini"><b>S</b>Vehi</span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>Sis</b>Alim</span>
+                <span class="logo-lg"><b>Sis</b>Vehi</span>
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top">
@@ -104,34 +117,21 @@
                                     <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                                     <p>
-                                        {{ Auth::user()->persona->nombres }} - Web Developer
-                                        <small>Member since Nov. 2012</small>
+                                        {{ Auth::user()->persona->nombres }}  {{ Auth::user()->persona->apellidos }}
+                                        {{-- <small>Member since Nov. 2012</small> --}}
                                     </p>
                                 </li>
                                 <!-- Menu Body -->
-                                <li class="user-body">
-                                    <div class="row">
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Followers</a>
-                                        </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Sales</a>
-                                        </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Friends</a>
-                                        </div>
-                                    </div>
-                                    <!-- /.row -->
-                                </li>
+                               
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
 
                                     <div class="pull-left">
-                                        <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                        <a onclick="modal_perfil()" class="btn btn-default btn-flat">Perfil</a>
                                     </div>
                                     <div class="pull-right">
                                         <a href="{{ route('logout') }}" class="btn btn-default btn-flat"
-                                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">Sign out</a>
+                                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">Cerrar Sesión</a>
 
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
@@ -169,7 +169,8 @@
                 <ul class="sidebar-menu tree" data-widget="tree" style="margin-top: 12px">
                                     
                     @foreach(listarMenuSession() as $menu)
-                        <li class="treeview">
+                        <li class="treeview" id="{{$menu['gestion']}}">
+                       
                         <a href="">
                             <i class="{{$menu['icono'] <> null ? $menu['icono'] : "fa fa-desktop"}}"></i>
                             <span>{{$menu['gestion']}}</span>
@@ -408,6 +409,12 @@
         <div class="control-sidebar-bg"></div>
     </div>
 
+    @guest
+    @else
+        @include('auth.modal_perfil')
+        
+    @endguest
+
 
     <!-- jQuery 3 -->
     <script src="{{ asset('../../bower_components/jquery/dist/jquery.min.js') }}"></script>
@@ -434,8 +441,14 @@
     <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js') }}"></script>
     <script src="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js') }}"></script>
     <script src="{{ asset('https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js') }}"></script>
+    <script src="{{asset('js/usuario/perfil.js?v='.rand())}}"></script>
     
     <script>
+
+        function modal_perfil(){
+            $('#modal_perfil').modal({backdrop: 'static', keyboard: false})
+            // cargaInfoPerfil()
+        }
         $(document).ready(function() {
             // $('.sidebar-menu').tree()
            
@@ -456,9 +469,34 @@
             });
         }
 
+        function vistacargando(estado){
+            mostarOcultarVentanaCarga(estado,'');
+        }
+
+        function vistacargando(estado, mensaje){
+            mostarOcultarVentanaCarga(estado, mensaje);
+        }
+
+        function mostarOcultarVentanaCarga(estado, mensaje){
+            //estado --> M:mostrar, otra letra: Ocultamos la ventana
+            // mensaje --> el texto que se carga al mostrar la ventana de carga
+            if(estado=='M' || estado=='m'){
+                // console.log(mensaje);
+                $('#modal_cargando_title').html(mensaje);
+                $('#modal_cargando').show();
+                $('body').css('overflow', 'hidden');
+            }else{
+                $('#modal_cargando_title').html('Cargando');
+                $('#modal_cargando').hide();
+                $('body').css('overflow', '');
+            }
+        }
+
     </script>
 
     @yield('scripts')
+
+    @include('divcargando')
 
 </body>
 

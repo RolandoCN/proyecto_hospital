@@ -126,6 +126,8 @@ function llenar_tabla_usuario(){
                     $('td', row).eq(3).html(`
                                   
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarUsuario(${data.id})">Editar</button>
+
+                                            <button type="button" class="btn btn-warning btn-xs" onclick="resetearPassword(${data.id})">Resetear </button>
                                                                                 
                                             <a onclick="eliminarUsuario(${data.id})" class="btn btn-danger btn-xs"> Eliminar </a>
                                        
@@ -220,4 +222,41 @@ function eliminarUsuario(idusuario){
         });
     }
    
+}
+
+function resetearPassword(idusuario){
+    swal({
+        title: "¿Desea resetear la contraseña del usuario?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "Si, continuar",
+        cancelButtonText: "No, cancelar",
+        closeOnConfirm: false,
+        closeOnCancel: false
+    },
+    function(isConfirm) {
+        if (isConfirm) { 
+            //mmandamos a resetear
+            $.get("/resetear-password/"+idusuario, function(data){
+                console.log(data)
+                
+                if(data.error==true){
+                    alertNotificar(data.mensaje,"error");
+                    return;   
+                }
+        
+                alertNotificar(data.mensaje,"success");
+                if(data.desloguear=="S"){
+                    window.location.href="/"
+                }
+                llenar_tabla_usuario()
+                
+            }).fail(function(){
+            
+                alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+            });
+        }
+        sweetAlert.close();   // ocultamos la ventana de pregunta
+    }); 
 }

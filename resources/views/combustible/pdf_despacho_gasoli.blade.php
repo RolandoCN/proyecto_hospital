@@ -150,7 +150,7 @@
                         <td style="border-color: #D3D3D3"colspan="1" class="pad">
                             {{ $dato->fecha_hora_despacho }}</td>
                         <td style="border-color: #D3D3D3" colspan="1" class="pad">
-                            {{ $dato->chofer->nombres }}</td>
+                            {{ $dato->chofer->nombres }} {{ $dato->chofer->apellidos }}</td>
 
 
 
@@ -160,7 +160,7 @@
                                 
                             </td>
                         <td style="border-color: #D3D3D3" colspan="2" class="pad">
-                            {{ $dato->vehiculo['codigo_institucion'] . ' ' . $dato->vehiculo['descripcion'] . ' ' . $dato->vehiculo['placa'] }}
+                            {{ $dato->vehiculo['descripcion'] . ' ' .$dato->vehiculo['codigo_institucion'].' ['. $dato->vehiculo['placa'].']' }}
                         </td>
                         <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
                             {{ $dato->kilometraje }}</td>
@@ -170,27 +170,27 @@
                             @endif
                         </td>
                       
-                        {{-- <td style="border-color: #D3D3D3" colspan="2" class="pad">
+                        <td style="border-color: #D3D3D3" colspan="2" class="pad">
+
+                            @php
+                                $tareasVeh=\DB::table('vc_tarea')
+                                ->WhereDate('fecha_inicio','<=',$datos->fecha)
+                                ->WhereDate('fecha_fin','>=',$datos->fecha)
+                                ->where('estado','!=','Eliminada')
+                                ->where('id_vehiculo',$dato->id_vehiculo)
+                                ->get()
+                            @endphp
                             <ul style="margin-left: 0px">
-                                @if (isset($dato->vehiculo['tareas']))
-                                    @foreach ($dato->vehiculo['tareas'] as $tarea)
-                                        @if (strtotime($datos->fecha) >= strtotime($tarea->fecha_inicio) &&
-                                                strtotime($datos->fecha) <= strtotime($tarea->fecha_fin))
-                                            <li style="margin-left: 0px">{{ $tarea->detalle_tarea }}</li>
-                                        @endif
+                              
+                                    @foreach ($tareasVeh as $tarea)
+                                        <li style="margin-left: 0px">{{ $tarea->motivo }}</li>
                                     @endforeach
-                                @else
-                                    <td style="border-color: #D3D3D3" colspan="2" class="pad">
-                                        <ul style="margin-left: 0px">
-                                            <li>Sin tareas</li>
-                                        </ul>
-                                    </td>
-                                @endif
+                               
                             </ul>
                             
-                        </td> --}}
-                        <td style=";border-color: #D3D3D3" colspan="2" class="pad">
                         </td>
+                        {{-- <td style=";border-color: #D3D3D3" colspan="2" class="pad">
+                        </td> --}}
                
                         <td style=";border-color: #D3D3D3" colspan="1" class="pad">
                             {{ $dato->tipocombustible['detalle'] }}</td>

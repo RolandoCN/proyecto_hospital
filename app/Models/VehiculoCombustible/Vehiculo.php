@@ -18,5 +18,13 @@ class Vehiculo extends Model
         return $this->belongsTo('App\Models\VehiculoCombustible\TipoMedicion', 'id_tipomedicion', 'id_tipomedicion');
     }
 
+    public function tareas(){
+        return $this->hasMany('App\Models\VehiculoCombustible\Tarea', 'id_vehiculo', 'id_vehiculo')->where('estado','!=','Eliminada');
+    }
+
+    public function departamento(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\Departamento', 'id_departamento', 'iddepartamento');
+    }
+
 }
 ?>
