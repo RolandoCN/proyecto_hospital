@@ -31,7 +31,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Models/FuncionesGlobales.php"
+            "app/Models/FuncionesGlobales.php",
+            "app/Models/validaCedula.php"
         ]
     },
     "autoload-dev": {

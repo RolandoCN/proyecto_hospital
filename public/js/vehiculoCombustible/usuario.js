@@ -106,11 +106,11 @@ function llenar_tabla_usuario(){
                     url: '/json/datatables/spanish.json',
                 },
                 columnDefs: [
-                    { "width": "15%", "targets": 0 },
+                    { "width": "10%", "targets": 0 },
                     { "width": "30%", "targets": 1 },
-                    { "width": "30%", "targets": 2 },
-                    { "width": "25%", "targets": 3 },
-                                    
+                    { "width": "20%", "targets": 2 },
+                    { "width": "20%", "targets": 3 },
+                    { "width": "20%", "targets": 4 },                
                 ],
                 data: data.resultado,
                 columns:[
@@ -118,12 +118,14 @@ function llenar_tabla_usuario(){
                         {data: "id" },
                         {data: "id"},
                         {data: "id"},
+                        {data: "id"},
                 ],    
                 "rowCallback": function( row, data, index ) {
                     $('td', row).eq(0).html(index+1)
                     $('td', row).eq(1).html(data.persona.nombres+" "+data.persona.apellidos)
-                    $('td', row).eq(2).html(data.perfil.nombre_perfil.descripcion)
-                    $('td', row).eq(3).html(`
+                    $('td', row).eq(2).html(data.persona.cedula)
+                    $('td', row).eq(3).html(data.perfil.nombre_perfil.descripcion)
+                    $('td', row).eq(4).html(`
                                   
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarUsuario(${data.id})">Editar</button>
 

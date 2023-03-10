@@ -24,7 +24,7 @@ Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'i
 
 Auth::routes();
 
-// Route::middleware(['validarRuta'])->group(function() { //middleware para validar el acceso a las rutas
+Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -43,7 +43,7 @@ Auth::routes();
     //*****************************VEHICULOS COMBUSTIBLES****************//
 
     //PERSONA
-    Route::get('/persona', [PersonaController::class, 'index']);
+    Route::get('/persona', [PersonaController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-persona', [PersonaController::class, 'listar']);
     Route::post('/guardar-persona', [PersonaController::class, 'guardar']);
     Route::get('/editar-persona/{id}', [PersonaController::class, 'editar']);
@@ -52,7 +52,7 @@ Auth::routes();
 
 
     //ROLES
-    Route::get('/perfil', [PerfilController::class, 'index']);
+    Route::get('/perfil', [PerfilController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-rol', [PerfilController::class, 'listar']);
     Route::post('/guardar-rol', [PerfilController::class, 'guardar']);
     Route::get('/editar-rol/{id}', [PerfilController::class, 'editar']);
@@ -65,7 +65,7 @@ Auth::routes();
     
 
     //GESTION
-    Route::get('/gestion', [GestionController::class, 'index']);
+    Route::get('/gestion', [GestionController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-gestion', [GestionController::class, 'listar']);
     Route::post('/guardar-gestion', [GestionController::class, 'guardar']);
     Route::get('/editar-gestion/{id}', [GestionController::class, 'editar']);
@@ -73,7 +73,7 @@ Auth::routes();
     Route::get('/eliminar-gestion/{id}', [GestionController::class, 'eliminar']);
 
     //MENU
-    Route::get('/menu', [MenuController::class, 'index']);
+    Route::get('/menu', [MenuController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-menu', [MenuController::class, 'listar']);
     Route::post('/guardar-menu', [MenuController::class, 'guardar']);
     Route::get('/editar-menu/{id}', [MenuController::class, 'editar']);
@@ -81,7 +81,7 @@ Auth::routes();
     Route::get('/eliminar-menu/{id}', [MenuController::class, 'eliminar']);
 
     //GESTION-MENU
-    Route::get('/gestion-menu', [GestionMenuController::class, 'index']);
+    Route::get('/gestion-menu', [GestionMenuController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-gestion-menu', [GestionMenuController::class, 'listar']);
     Route::post('/guardar-gestion-menu', [GestionMenuController::class, 'guardar']);
     Route::get('/editar-gestion-menu/{id}', [GestionMenuController::class, 'editar']);
@@ -101,7 +101,7 @@ Auth::routes();
 
 
     //VEHICULOS
-    Route::get('/vehiculo', [VehiculoController::class, 'index']);
+    Route::get('/vehiculo', [VehiculoController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-vehiculo', [VehiculoController::class, 'listar']);
     Route::post('/guardar-vehiculo', [VehiculoController::class, 'guardar']);
     Route::get('/editar-vehiculo/{id}', [VehiculoController::class, 'editar']);
@@ -109,7 +109,7 @@ Auth::routes();
     Route::get('/eliminar-vehiculo/{id}', [VehiculoController::class, 'eliminar']);
 
     //TAREAS
-    Route::get('/tareas-vehiculo', [TareasController::class, 'index']);
+    Route::get('/tareas-vehiculo', [TareasController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-tarea', [TareasController::class, 'listar']);
     Route::post('/guardar-tarea', [TareasController::class, 'guardar']);
     Route::get('/editar-tarea/{id}', [TareasController::class, 'editar']);
@@ -117,7 +117,7 @@ Auth::routes();
     Route::get('/eliminar-tarea/{id}', [TareasController::class, 'eliminar']);
 
     //ENTRADA-SALIDA
-    Route::get('/entrada-salida-vehiculo', [MovimientoVehController::class, 'index']);
+    Route::get('/entrada-salida-vehiculo', [MovimientoVehController::class, 'index'])->middleware('validarRuta');
     Route::get('/carga-tarea/{idvehi}', [MovimientoVehController::class, 'tareaVehiculo']);
     Route::post('/guardar-movimiento', [MovimientoVehController::class, 'guardar']);
     Route::get('/listado-movimiento', [MovimientoVehController::class, 'listar']);
@@ -125,7 +125,7 @@ Auth::routes();
 
 
     //GASOLINERAS
-    Route::get('/gasolinera', [GasolineraController::class, 'index']);
+    Route::get('/gasolinera', [GasolineraController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-gasolinera', [GasolineraController::class, 'listar']);
     Route::post('/guardar-gasolinera', [GasolineraController::class, 'guardar']);
     Route::get('/editar-gasolinera/{id}', [GasolineraController::class, 'editar']);
@@ -133,7 +133,7 @@ Auth::routes();
     Route::get('/eliminar-gasolinera/{id}', [GasolineraController::class, 'eliminar']);
 
     //COMBUSTIBLES
-    Route::get('/combustible', [CombustibleController::class, 'index']);
+    Route::get('/combustible', [CombustibleController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-combustible', [CombustibleController::class, 'listar']);
     Route::post('/guardar-combustible', [CombustibleController::class, 'guardar']);
     Route::get('/editar-combustible/{id}', [CombustibleController::class, 'editar']);
@@ -142,7 +142,7 @@ Auth::routes();
 
 
     //GASOLINERA-COMBUSTIBLE
-    Route::get('/gasolinera-combustible', [GasolineraCombustibleController::class, 'index']);
+    Route::get('/gasolinera-combustible', [GasolineraCombustibleController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-gasolinera-combustible', [GasolineraCombustibleController::class, 'listar']);
     Route::post('/guardar-gasolinera-combustible', [GasolineraCombustibleController::class, 'guardar']);
     Route::get('/editar-gasolinera-combustible/{id}', [GasolineraCombustibleController::class, 'editar']);
@@ -151,7 +151,7 @@ Auth::routes();
 
 
     //DESPACHO COMBUSTIBLE
-    Route::get('/despacho-combustible', [DespachoCombustibleController::class, 'index']);
+    Route::get('/despacho-combustible', [DespachoCombustibleController::class, 'index'])->middleware('validarRuta');
     Route::post('/guardar-cab-despacho', [DespachoCombustibleController::class, 'guardarCabecera']);
     Route::get('/editar-cab-despacho/{id}', [DespachoCombustibleController::class, 'editarCabecera']);
     Route::put('/actualizar-cab-despacho/{id}', [DespachoCombustibleController::class, 'actualizarCabecera']);
@@ -170,11 +170,11 @@ Auth::routes();
 
 
     //FORMULARIO REPORTES
-    Route::get('/reportes-formularios', [ReportesCombustibleController::class, 'index']);
+    Route::get('/reportes-formularios', [ReportesCombustibleController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-reportes', [ReportesCombustibleController::class, 'listado']);
     Route::post('/guardar-reportes', [ReportesCombustibleController::class, 'guardar']);
     Route::get('/descargar-reporte-form/{id}', [ReportesCombustibleController::class, 'descargar']);
    
 
 
-// });
+});

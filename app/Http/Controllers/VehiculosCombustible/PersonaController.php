@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 
 class PersonaController extends Controller
 {
+    
+  
     public function index(){
       
         return view('combustible.persona');
@@ -75,6 +77,14 @@ class PersonaController extends Controller
 
         $this->validate($request, $rules, $messages);
         try{
+
+            $validaCedula=validarCedula($request->cedula_persona);
+            if($validaCedula==false){
+                return response()->json([
+                    "error"=>true,
+                    "mensaje"=>"El numero de identificacion ingresado no es valido"
+                ]);
+            }          
 
             $guarda_persona=new Persona();
             $guarda_persona->cedula=$request->cedula_persona;
@@ -145,6 +155,14 @@ class PersonaController extends Controller
         $this->validate($request, $rules, $messages);
         try{
 
+            $validaCedula=validarCedula($request->cedula_persona);
+            if($validaCedula==false){
+                return response()->json([
+                    "error"=>true,
+                    "mensaje"=>"El numero de identificacion ingresado no es valido"
+                ]);
+            }   
+            
             $guarda_persona= Persona::find($id);
             $guarda_persona->cedula=$request->cedula_persona;
             $guarda_persona->nombres=$request->nombres;

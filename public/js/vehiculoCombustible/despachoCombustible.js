@@ -779,7 +779,6 @@ function ver_detalledes(id){
         $('#conductormodalapr').html(data.resultado.chofer.nombres+" "+data.resultado.chofer.apellidos);
         $('#fechaaprmodalapr').html(data.resultado.fecha_hora_aprobacion);   
       
-        alert(data.resultado.estado)
         if(data.resultado.estado=="Aprobado"){
             $('#reprob').hide();
             $('#aprob').hide();

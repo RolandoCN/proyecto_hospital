@@ -338,10 +338,13 @@ class DespachoCombustibleController extends Controller
         $this->validate($request, $rules, $messages);
         try{
 
-        
+            $data_cabecera=CabeceraDespacho::find($request->idcabeceradespacho);
+            $fecha_cabecera=$data_cabecera->fecha;
+            
             $guarda_det_des=new DetalleDespacho();
             $guarda_det_des->id_vehiculo=$request->vehiculo_id;
             $guarda_det_des->idcabecera_despacho=$request->idcabeceradespacho;
+            $guarda_det_des->fecha_cabecera_despacho=$fecha_cabecera;
             $guarda_det_des->kilometraje=$request->kilometrajemodal;
             $guarda_det_des->horometraje=$request->horometrajemodal;
             $guarda_det_des->id_tipocombustible=$request->combustible_id;

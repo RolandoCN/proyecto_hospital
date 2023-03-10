@@ -45,3 +45,9 @@
         return $lista_modulo; // retornamos el menu solo con las gestiones que le pertenecen al usuario
 
     }
+
+    function hola(){
+        return true;
+    }
+
+    

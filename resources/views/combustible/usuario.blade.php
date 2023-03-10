@@ -38,13 +38,14 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nombres</th>
+                                <th>Usuario</th>
                                 <th>Perfil</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="4"><center>No hay Datos Disponibles</td>
+                                <td colspan="5"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
