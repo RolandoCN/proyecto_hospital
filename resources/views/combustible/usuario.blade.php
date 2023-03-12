@@ -131,7 +131,7 @@
 @endsection
 @section('scripts')
     <script src="{{asset('plugins/sweetalert/sweetalert.js')}}"></script>
-    <script src="/js/vehiculoCombustible/usuario.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/usuario.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_usuario()

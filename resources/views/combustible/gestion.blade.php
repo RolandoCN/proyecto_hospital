@@ -121,7 +121,8 @@
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/gestion.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/gestion.js?v='.rand())}}"></script>
+
 
     <script>
         llenar_tabla_gestion()

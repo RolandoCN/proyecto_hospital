@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\VehiculoCombustible\Gestion;
 use \Log;
 use Illuminate\Http\Request;
-
+use DB;
 class GestionController extends Controller
 {
     public function index(){
@@ -168,6 +168,18 @@ class GestionController extends Controller
 
     public function eliminar($id){
         try{
+            //verificamos que no este asociado a una gestion-menu
+            $veri_GestionMenu=DB::table('vc_gestion_menu')
+            ->where('id_gestion',$id)
+            ->where('estado','A')
+            ->first();
+            if(!is_null($veri_GestionMenu)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La gestión está relacionada, no se puede eliminar'
+                ]);
+            }
+         
             $gestion=Gestion::find($id);
             $gestion->id_usuario_act=auth()->user()->id;
             $gestion->fecha_actualiza=date('Y-m-d H:i:s');

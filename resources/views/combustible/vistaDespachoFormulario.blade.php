@@ -144,10 +144,10 @@
     </section>
 
 @endsection
-{{-- @include('combustible.modal_acceso_perfil') --}}
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/reportesFormulario.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/reportesFormulario.js?v='.rand())}}"></script>
+
 
     <script>
         llenar_tabla_reportes()

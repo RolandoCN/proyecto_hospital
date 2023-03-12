@@ -173,7 +173,7 @@
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/tarea.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/tarea.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_tarea()

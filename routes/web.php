@@ -28,17 +28,6 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-    //Pacientes
-    Route::get('/registro-paciente', [PacienteController::class, 'index']);
-    Route::get('/obtener-canton-prov/{idprov}', [PacienteController::class, 'obtenerCantones']);
-    Route::get('/obtener-parroquia-canton/{idcanton}', [PacienteController::class, 'obtenerParroquias']);
-    Route::post('/guardar-paciente', [PacienteController::class, 'guardar']);
-    Route::post('/guardar-generarf1', [PacienteController::class, 'guardarGeneraraF1']);
-    Route::get('/busqueda', [PacienteController::class, 'busqueda'])->name('home');
-    Route::get('/buscarPaciente', [PacienteController::class, 'busquedaPaciente']);
-    Route::get('/info-paciente/{idpac}', [PacienteController::class, 'infoPaciente']);
-    Route::put('/actualiza-paciente/{idpac}', [PacienteController::class, 'actualiza']);
-
 
     //*****************************VEHICULOS COMBUSTIBLES****************//
 

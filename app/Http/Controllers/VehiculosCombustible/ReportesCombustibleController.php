@@ -21,8 +21,7 @@ class ReportesCombustibleController extends Controller
             ->distinct('vc_departamento.iddepartamento')
             ->select('vc_departamento.iddepartamento as id','vc_departamento.descripcion as departamento')
             ->get();
-            // dd($departamento);
-
+            
             return view('combustible.vistaDespachoFormulario',[
                 "departamento"=>$departamento
             ]);
@@ -96,8 +95,7 @@ class ReportesCombustibleController extends Controller
                 if($request->formulario=="F6"){
                    
                     $nombrePDF="despachoCombustibleDepartamento6_".date('YmdHis').".pdf";// $nombrePDF  
-                    #Generamos el codigo externo del documento
-                    // $codExterno = "COMD".$this->generate_string(10);
+                 
                     //creamos el objeto
                     $pdf=new PDF();
                     //habilitamos la opcion php para mostrar la paginacion
@@ -107,6 +105,7 @@ class ReportesCombustibleController extends Controller
                     $crearpdf->setPaper("A4", "landscape");
         
                     $estadoarch = $crearpdf->stream();
+
                         
                     //lo guardamos en el disco temporal
                     Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
@@ -118,7 +117,6 @@ class ReportesCombustibleController extends Controller
                         $guadarDatos->formulario="Formulario 6";
                         $guadarDatos->fecha_generacion=date('Y-m-d H:i:s');
                         $guadarDatos->usuario_genera= auth()->user()->id;    
-                        // $guadarDatos->codigo_externo=$codExterno;
                         $guadarDatos->descripcion="Informe General desde ".$fecha_ini. " hasta ".$fecha_fin;
                         $guadarDatos->ruta=$nombrePDF;
                         $guadarDatos->estado="Generado";
@@ -138,8 +136,7 @@ class ReportesCombustibleController extends Controller
                 }else{
                    
                     $nombrePDF="despachoCombustibleDepartamento7_".date('YmdHis').".pdf";// $nombrePDF  
-                    #Generamos el codigo externo del documento
-                    // $codExterno = "COMD".$this->generate_string(10);
+                   
                     //creamos el objeto
                     $pdf=new PDF();
                     //habilitamos la opcion php para mostrar la paginacion
@@ -162,7 +159,6 @@ class ReportesCombustibleController extends Controller
                         $guadarDatos->formulario="Formulario 7";
                         $guadarDatos->fecha_generacion=date('Y-m-d H:i:s');
                         $guadarDatos->usuario_genera= auth()->user()->id;    
-                        // $guadarDatos->codigo_externo=$codExterno;
                         $guadarDatos->descripcion="Informe Resumido desde ".$fecha_ini. " hasta ".$fecha_fin;
                         $guadarDatos->ruta=$nombrePDF;
                         $guadarDatos->estado="Generado";

@@ -7,7 +7,7 @@ use App\Models\VehiculoCombustible\Vehiculo;
 use App\Models\VehiculoCombustible\Tarea;
 use \Log;
 use Illuminate\Http\Request;
-
+use DB;
 class TareasController extends Controller
 {
 
@@ -33,6 +33,7 @@ class TareasController extends Controller
         ->where('fecha_fin_ing', 'S')
         ->where('fecha_fin', '<',date('Y-m-d') )
         ->update(["estado"=>'Finalizada']);
+
     }
 
     public function listar(){
@@ -226,7 +227,21 @@ class TareasController extends Controller
                 ]);
             }
 
-           
+            //verificamos que no este asociada a un movimiento
+            $verMovimiento=DB::table('vc_tarea_veh_movim')
+            ->where('id_tarea', $id)->first();
+            if(!is_null($verMovimiento)){
+                //no dejamos modificar los datos de vehiculo y fecha de inicio
+                $valida=Tarea::where('id_tarea',$id)->first();
+                if($valida->id_vehiculo != $request->vehiculo_tarea || $valida->fecha_inicio != $request->fecha_ini){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'No se puede modifcar los datos del vehículo y fecha de inicio ya que  la información está asociada a un movimiento'
+                    ]);
+                }
+        
+            }
+                      
             if($actualiza_tarea->save()){
                 return response()->json([
                     'error'=>false,
@@ -259,6 +274,16 @@ class TareasController extends Controller
                     'mensaje'=>'La tarea ya no se puede eliminar'
                 ]);
             }
+            //verificamos que no este asociada a un movimiento
+            $verMovimiento=DB::table('vc_tarea_veh_movim')
+            ->where('id_tarea', $id)->first();
+            if(!is_null($verMovimiento)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La tarea ya no se puede eliminar, está asociada a un movimiento'
+                ]);
+            }
+           
             $tarea->id_usuario_act=auth()->user()->id;
             $tarea->fecha_actualizacion=date('Y-m-d H:i:s');
             $tarea->estado="Eliminada";

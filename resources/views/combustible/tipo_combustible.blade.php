@@ -108,7 +108,7 @@
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/combustible.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/combustible.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_combustible()

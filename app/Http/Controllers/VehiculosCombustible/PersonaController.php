@@ -6,6 +6,7 @@ use App\Models\Persona;
 use App\Models\VehiculoCombustible\Vehiculo;
 use App\Models\VehiculoCombustible\Tarea;
 use \Log;
+use DB;
 use Illuminate\Http\Request;
 
 class PersonaController extends Controller
@@ -161,7 +162,41 @@ class PersonaController extends Controller
                     "error"=>true,
                     "mensaje"=>"El numero de identificacion ingresado no es valido"
                 ]);
-            }   
+            } 
+            
+            //verificamos que no este asociado a un tarea, movimiento y despacho en estado activo
+            $veri_Tarea=DB::table('vc_tarea')
+            ->where('id_chofer',$id)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Tarea)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La persona está asociado a una tarea y no se puede actualizar'
+                ]);
+            }
+
+            $veri_Movimiento=DB::table('vc_movimiento')
+            ->where('id_chofer',$id)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Movimiento)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La persona está asociado a un ingreso/salida de vehículo y no se puede actualizar'
+                ]);
+            }
+
+            $veri_Despacho=DB::table('vc_detalle_despacho')
+            ->where('idconductor',$id)
+            ->where('estado','!=', 'Eliminado')
+            ->first();
+            if(!is_null($veri_Despacho)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La persona está asociado a un despacho de combustible de vehículo y no se puede actualizar'
+                ]);
+            }
             
             $guarda_persona= Persona::find($id);
             $guarda_persona->cedula=$request->cedula_persona;
@@ -210,6 +245,40 @@ class PersonaController extends Controller
 
     public function eliminar($id){
         try{
+            //verificamos que no este asociado a un tarea, movimiento y despacho en estado activo
+            $veri_Tarea=DB::table('vc_tarea')
+            ->where('id_chofer',$id)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Tarea)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La persona está asociado a una tarea y no se puede eliminar'
+                ]);
+            }
+
+            $veri_Movimiento=DB::table('vc_movimiento')
+            ->where('id_chofer',$id)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Movimiento)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La persona está asociado a un ingreso/salida de vehículo y no se puede eliminar'
+                ]);
+            }
+
+            $veri_Despacho=DB::table('vc_detalle_despacho')
+            ->where('idconductor',$id)
+            ->where('estado','!=', 'Eliminado')
+            ->first();
+            if(!is_null($veri_Despacho)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La persona está asociado a un despacho de combustible de vehículo y no se puede eliminar'
+                ]);
+            }
+           
             $persona=Persona::find($id);
             $persona->id_usuario_act=auth()->user()->id;
             $persona->fecha_actualiza=date('Y-m-d H:i:s');

@@ -142,7 +142,7 @@
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/gasolineraCombustible.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/gasolineraCombustible.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_gaso_comb()

@@ -179,14 +179,15 @@
                                     </td>
                                     
                                     <td align="left" style="border-top: 0px;border-bottom: 0px;border-right:0px;border-left:0px;border-color: #D3D3D3">
-                                    
+                                                                  
+                    
                                         @php
                                         $tareasVeh=\DB::table('vc_tarea')
-                                        ->WhereDate('fecha_inicio','<=',$dato->fecha_cabecera_despacho)
-                                        ->WhereDate('fecha_fin','>=',$dato->fecha_cabecera_despacho)
-                                        ->where('estado','!=','Eliminada')
-                                        ->where('id_vehiculo',$dato->id_vehiculo)
-                                        ->get()
+                                            ->WhereDate('fecha_inicio','<=',$dato->fecha_cabecera_despacho)
+                                            ->WhereDate('fecha_fin','>=',$dato->fecha_cabecera_despacho)
+                                            ->where('estado','!=','Eliminada')
+                                            ->where('id_vehiculo',$dato->id_vehiculo)
+                                            ->get()
                                         @endphp
                                         <ul style="margin-left: 0px">
                                         
@@ -210,11 +211,38 @@
                                         @php
                                             $cont_fin=0;
                                             $km_salida=0;
+                                       
+                                            $movimVeh=\DB::table('vc_movimiento')
+                                            ->WhereDate('fecha_registro','=',$dato->fecha_cabecera_despacho)
+                                            ->where('estado','!=','Eliminada')
+                                            ->where('id_vehiculo',$dato->id_vehiculo)
+                                            ->get()
                                         @endphp
-            
 
-                                        -----
+                                        @foreach($movimVeh as $movi) 
                                         
+                                            @if($movi->entrada_salida=="Salida")
+                                                @if(!is_null($movi->kilometraje))
+                                                    <li style="margin-left: 0px">
+                                                        {{$movi->kilometraje }}
+                                                        @php
+                                                            $cont_fin=$cont_fin+1;
+                                                            $km_salida=$km_salida+$movi->kilometraje;
+                                                        @endphp
+                                                    </li>
+                                                @else
+                                                    <li style="margin-left: 0px">
+                                                        {{$movi->horometro }}
+                                                        @php
+                                                            $cont_fin=$cont_fin+1;
+                                                            $km_salida=$km_salida+$movi->horometro;
+                                                        @endphp
+                                                    </li>
+                                                @endif
+                                            @endif
+                                        @endforeach
+
+                                      
                                     </td>
 
                                     <td align="center" style="border-top: 0px; border-bottom: 0px;border-left:0px;border-right:0px;border-color: #D3D3D3">
@@ -222,27 +250,68 @@
                                             @php
                                                 $cont_ini=0;
                                                 $km_entrada=0;
+
+                                                $movimVeh=\DB::table('vc_movimiento')
+                                                ->WhereDate('fecha_registro','=',$dato->fecha_cabecera_despacho)
+                                                ->where('estado','!=','Eliminada')
+                                                ->where('id_vehiculo',$dato->id_vehiculo)
+                                                ->get()
                                             @endphp
-                                                                                   
-                                            -----
+
+                                            @foreach($movimVeh as $movi) 
+                                            
+                                                @if($movi->entrada_salida=="Entrada")
+                                                    @if(!is_null($movi->kilometraje))
+                                                        <li style="margin-left: 0px">
+                                                            {{$movi->kilometraje }}
+                                                            @php
+                                                                $cont_ini=$cont_ini+1;
+                                                                $km_entrada=$km_entrada+$movi->kilometraje;
+                                                            @endphp
+                                                        </li>
+                                                    @else
+                                                        <li style="margin-left: 0px">
+                                                            {{$movi->horometro }}
+                                                            @php
+                                                                $cont_ini=$cont_ini+1;
+                                                                $km_entrada=$km_entrada+$movi->horometro;
+                                                            @endphp
+                                                        </li>
+                                                    @endif
+                                                @endif
+                                            @endforeach
                                       
                                     
                                     </td>
                                 
                                     <td align="center" style="border-top: 0px; border-bottom: 0px;border-left:0px;border-right:0px;border-color: #D3D3D3">
-                                       
+
                                         @php
-                                          
                                             $km_recorrido=0;
+
+                                            $ValorRecorrido=\DB::table('vc_movimiento')
+                                            ->WhereDate('fecha_registro','=',$dato->fecha_cabecera_despacho)
+                                            ->where('estado','!=','Eliminada')
+                                            ->where('entrada_salida','=','Entrada')
+                                            ->where('id_vehiculo',$dato->id_vehiculo)
+                                            ->get()->last();
+
+                                            if(!is_null($ValorRecorrido)){
+                                                if(!is_null($ValorRecorrido->km_hm_recorrido)){
+                                                    $km_recorrido=$ValorRecorrido->km_hm_recorrido;
+                                                }
+                                                    
+                                            }else{
+                                                $km_recorrido=0;
+                                            }
                                         @endphp
-                                        @if($km_entrada==0 || $km_salida==0)
-                                            <p style="margin-left: 0px">-----</p>  
+
+                                        @if($km_recorrido>0)
+                                            <p style="margin-left: 0px">{{$km_recorrido}}</p> 
                                         @else
-                                            @php
-                                                $km_recorrido=$km_entrada-$km_salida;
-                                            @endphp
-                                            <p style="margin-left: 0px">{{$km_recorrido}}</p>  
+                                            <p style="margin-left: 0px">-----</p> 
                                         @endif
+                                           
                                        
                                     </td>
 

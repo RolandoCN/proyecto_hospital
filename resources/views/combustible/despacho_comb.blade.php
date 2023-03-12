@@ -28,15 +28,16 @@
     </style>
     <link rel="stylesheet" href="{{asset('plugins/sweetalert/sweetalert.css')}}">
 
+    @if(session()->has('mensajePInfoDespacho'))
+        <input type="hidden" name="errorReporte" id="errorReporte" value="{{session('mensajePInfoDespacho')}}">
+    @endif
+
     <section class="content-header">
         <h1>
             Gestión Despacho Combustible
         </h1>
 
     </section>
-
-
-
 
     <section class="content" id="content_form">
 
@@ -51,7 +52,6 @@
                     </button>
 
                 </div>
-
  
             </div>
             <div class="box-body">
@@ -82,11 +82,9 @@
                     </table>
                 </div>
 
-
             </div>
 
         </div>
-
 
         <div id="form_ing" style="display:none">
 
@@ -146,8 +144,6 @@
             </form>
         </div>
 
-
-
         <div id="secc_detalle" style="display:none">
 
             <button type="button" onclick="volverListado()" class="btn btn-primary btn-sm">Regresar</button>
@@ -172,10 +168,8 @@
                             
                         </ul>
                     </div>  
-                    
                 </div>
 
-               
             </div>
 
 
@@ -319,11 +313,8 @@
                      </div>
                     
                 </div>
-
                
             </div>
-
-
 
         </div>
 
@@ -340,10 +331,14 @@
     <script src="{{ asset('canvasLibrary/js/bezier.js') }}"></script>
     <script src="{{ asset('canvasLibrary/js/jquery.signaturepad.js') }}"></script>
     <script type='text/javascript' src="{{ asset('canvasLibrary/js/html2canvas.js') }}"></script>
-    <script src="/js/vehiculoCombustible/despachoCombustible.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/despachoCombustible.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_tarea()
         limpiarCampos()
+        let error=$('#errorReporte').val()
+        if(error){
+            alertNotificar(error, "error")
+        }
     </script>
 @endsection

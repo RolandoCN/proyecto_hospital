@@ -7,7 +7,7 @@ use App\Models\VehiculoCombustible\Gestion;
 use App\Models\VehiculoCombustible\GestionMenu;
 use \Log;
 use Illuminate\Http\Request;
-
+use DB;
 class GestionMenuController extends Controller
 {
     public function index(){
@@ -181,6 +181,18 @@ class GestionMenuController extends Controller
     public function eliminar($id){
         try{
             $gestion_menu=GestionMenu::find($id);
+            //validamos que no este asociado a un perfil acceso
+            $veri_PerfilAcc=DB::table('vc_perfil_acceso')
+            ->where('id_menu',$gestion_menu->id_menu)
+            ->where('id_gestion',$gestion_menu->id_gestion)
+            ->first();
+            if(!is_null($veri_PerfilAcc)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La gestión menú está relacionada, no se puede eliminar'
+                ]);
+            }
+           
             $gestion_menu->id_usuario_act=auth()->user()->id;
             $gestion_menu->fecha_actualiza=date('Y-m-d H:i:s');
             $gestion_menu->estado="I";

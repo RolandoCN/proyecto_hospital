@@ -226,7 +226,7 @@
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/registro_vehiculo.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/registro_vehiculo.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_vehiculo()

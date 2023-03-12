@@ -49,15 +49,16 @@
                         <thead>
                             <tr>
                                 <th>Vehículo</th>
+                                <th>Chofer</th>
                                 <th>Fecha Evento</th>
                                 <th>Evento</th>
                                 <th>Firma</th>
-                                <th style="min-width: 30%">Opciones</th>
+                                <th style="min-width: 10%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="6"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -137,8 +138,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="tareasguard" id="tareasguard">
-
+                        
                         <div class="form-group">
                           
                             <label for="inputPassword3" class="col-sm-3 control-label">Chofer</label>
@@ -174,7 +174,7 @@
                         <div class="form-group">
                             <label for="inputPassword3" class="col-sm-3 control-label">Entrada/Salida</label>
                             <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Sexo" class="form-control select2" style="width: 100%;" name="entrada_salida" id="entrada_salida">
+                                <select data-placeholder="Seleccione Un Opción" class="form-control select2" style="width: 100%;" name="entrada_salida" id="entrada_salida">
                                     <option selected="selected" value="Entrada">Entrada</option>
                                     <option value="Salida">Salida</option>
                                   
@@ -214,8 +214,6 @@
                             </div>
                 
                         </div>
-
-                      
                       
                         
                         <hr>
@@ -254,7 +252,8 @@
     <script src="{{asset('canvasLibrary/js/bezier.js')}}"></script>
     <script src="{{asset('canvasLibrary/js/jquery.signaturepad.js')}}"></script> 
     <script type='text/javascript' src="{{asset('canvasLibrary/js/html2canvas.js')}}"></script>
-    <script src="/js/vehiculoCombustible/movimiento.js"></script>
+
+    <script src="{{ asset('js/vehiculoCombustible/movimiento.js?v='.rand())}}"></script>
 
     <script>
         llenar_tabla_tarea()

@@ -198,14 +198,32 @@
                                     <td align="right" style="border-top: 0px; border-bottom: 0px;border-left:0px;border-right:0px;border-color: #D3D3D3">
 
                                         @php
-                                            $km_salida=0;
-                                            $km_entrada=0;
                                             $km_recorrido=0;
+
+                                            $ValorRecorrido=\DB::table('vc_movimiento')
+                                            ->WhereDate('fecha_registro','=',$dato->fecha_cabecera_despacho)
+                                            ->where('estado','!=','Eliminada')
+                                            ->where('entrada_salida','=','Entrada')
+                                            ->where('id_vehiculo',$dato->id_vehiculo)
+                                            ->get()->last();
+
+                                            if(!is_null($ValorRecorrido)){
+                                                if(!is_null($ValorRecorrido->km_hm_recorrido)){
+                                                    $km_recorrido=$ValorRecorrido->km_hm_recorrido;
+                                                }
+                                                    
+                                            }else{
+                                                $km_recorrido=0;
+                                            }
                                         @endphp
 
+                                        @if($km_recorrido>0)
+                                           {{$km_recorrido}} 
+                                        @else
+                                            -----
+                                        @endif
                                        
-                                        -----
-                                      
+                                        
                                        
                                     </td>
 

@@ -40,12 +40,12 @@ $("#form_registro_tarea").submit(function(e){
 
     }else{
         if(parseFloat(ValorMinimoKm_Hm)> parseFloat(horometro)){
-            alertNotificar("El valor del kilometraje no puede ser menor a "+ValorMinimoKm_Hm,"error")
+            alertNotificar("El valor del Horometro no puede ser menor a "+ValorMinimoKm_Hm,"error")
             $('#horometro').focus()
             return
         }
 
-        if(horometro=="" || kilomhorometroetraje==null || horometro<0){
+        if(horometro=="" || horometro==null || horometro<0){
             alertNotificar("Ingrese un valor de kilometraje válido","error")
             $('#horometro').focus()
             return
@@ -83,23 +83,20 @@ $("#form_registro_tarea").submit(function(e){
         tipo="PUT"
         url_form="/actualizar-tarea/"+IdTareaEditar
     }
-  
-    // var FrmData=$("#form_registro_tarea").serialize();
 
     var FrmData = new FormData(this);
-
-    console.log(FrmData)
-
-    // var iddetale = $("#iddetallef").val();
 
     html2canvas([document.getElementById('sign-pad')], {
         onrendered: function (canvas) {
             var canvas_img_data = canvas.toDataURL('image/png');
             var img_data = canvas_img_data.replace(/^data:image\/(png|jpg);base64,/, "");
+            if($( "p" ).hasClass("error")){
+                alertNotificar("Debes firmar para poder aprobar la "+entrada_salida, "error")
+                return
+            }
 
             FrmData.append("b64_firma",img_data);
 
-            console.log(FrmData)
             $.ajax({
                     
                 type: tipo,
@@ -113,7 +110,6 @@ $("#form_registro_tarea").submit(function(e){
             
 
                 success: function(data){
-                    console.log(data)
                     // vistacargando("");                
                     if(data.error==true){
                         alertNotificar(data.mensaje,'error');
@@ -127,7 +123,6 @@ $("#form_registro_tarea").submit(function(e){
                     limpiarSingArea()
                                     
                 }, error:function (data) {
-                    console.log(data)
 
                     // vistacargando("");
                     alertNotificar('Ocurrió un error','error');
@@ -149,7 +144,7 @@ function limpiarCampos(){
     // limpiarSingArea()
     $("#table_dato_salida").hide();
     $('#tbody_dato_salida').html('');
-    $('#tareasguard').html('');
+    $('#tareasguard').val();
 
     $('#msmDetalledos').html('')
     $('#msmDetalledos').hide()
@@ -163,7 +158,6 @@ function llenar_tabla_tarea(){
     
     $.get("/listado-movimiento/", function(data){
         console.log(data)
-      
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
@@ -187,33 +181,36 @@ function llenar_tabla_tarea(){
                     url: '/json/datatables/spanish.json',
                 },
                 columnDefs: [
-                    { "width": "10%", "targets": 0 },
-                    { "width": "30%", "targets": 1 },
+                    { "width": "25%", "targets": 0 },
+                    { "width": "25%", "targets": 1 },
                     { "width": "10%", "targets": 2 },
-                    { "width": "25%", "targets": 3 },
-                    { "width": "15%", "targets": 4 },
+                    { "width": "10%", "targets": 3 },
+                    { "width": "20%", "targets": 4 },
+                    { "width": "10%", "targets": 5 },
                    
                 ],
                 data: data.resultado,
                 columns:[
                         {data: "vehiculo.placa"},
                         {data: "fecha_registro" },
+                        {data: "fecha_registro"},
                         {data: "entrada_salida"},
-                        {data: "estado"},
+                        {data: "entrada_salida"},
                         {data: "entrada_salida"},
                 ],    
                 "rowCallback": function( row, data ) {
-                    console.log("dd "+data.firmaconductor)
+                    $('td',row).eq(0).html(data.vehiculo.descripcion +" ["+data.vehiculo.placa+"]")
+                    $('td',row).eq(1).html(data.chofer.nombres +" "+data.chofer.apellidos)
                     if(data.firmaconductor==null){
                         
-                        $('td',row).eq(3).html('<span"> Sin Firmar &nbsp; &nbsp;&nbsp;</span>'); 
+                        $('td',row).eq(4).html('<span"> Sin Firmar &nbsp; &nbsp;&nbsp;</span>'); 
                     }
                     else{
                             // estad="Atendido"
-                    $('td',row).eq(3).html(`<img src='data:image/png;base64,${data.firmaconductor}') class="img_firma">`);
+                    $('td',row).eq(4).html(`<img src='data:image/png;base64,${data.firmaconductor}') class="img_firma">`);
                     } 
 
-                    $('td', row).eq(4).html(`
+                    $('td', row).eq(5).html(`
                                   
                                             
                                             <a onclick="btn_eliminar_movimi(${data.idmovimiento })" class="btn btn-danger btn-xs"> Eliminar </a>
@@ -265,7 +262,6 @@ function visualizarListado(){
 function btn_eliminar_movimi(idmovimiento){
     if(confirm('¿Quiere eliminar el registro?')){
         $.get("/eliminar-movimiento/"+idmovimiento, function(data){
-            console.log(data)
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
@@ -290,9 +286,8 @@ function cargartarea(){
         return
     }
     $('#tbody_dato_salida').html('');
-    $('#tareasguard').html('');
+    $('#tareasguard').val('');
     $.get("/carga-tarea/"+idveh, function (data) {
-        console.log(data)
         if(data.error == true){
             alertNotificar(data.mensaje,"error");
         }
@@ -301,20 +296,23 @@ function cargartarea(){
             if(data.resultado.length===0){
                 $('#chofer').val('').trigger('change.select2')
                 var tarea="no";
-                $('#tareasguard').val(tarea); 
+                // $('#tareasguard').val(''); 
+              
                 $("#table_dato_salida").show(700);
 
                 
                 $('#tbody_dato_salida').append(
                     `<tr>
-                        <td colspan="2"><center>Sin tareas que mostrar</center></td>
+                        <td colspan="2">
+                            <center>Sin tareas que mostrar</center>
+                           
+                        </td>
                         
-                        
-                        </tr>`);
+                    </tr>`);
                 }
             else{
                 var tarea="si";
-                $('#tareasguard').val(tarea); 
+                 
 
                 //cargamos el chofer que se realizo la tarea
                 $('#chofer').val(data.resultado[0].id_chofer).trigger('change.select2')
@@ -322,14 +320,20 @@ function cargartarea(){
         
             $("#table_dato_salida").show(700);
             $.each(data.resultado, function(i,item){
-                console.log(item.motivo);
+                console.log(item.id_tarea);
             
-            $('#tbody_dato_salida').append(
+                $('#tbody_dato_salida').append(
                     `<tr>
-                        <td style="color:black">${i+1}</td>
+                        <td style="color:black" >
+                            <input type='hidden' name='tareasguard[]' id='tareasguard' value='${item.id_tarea}'>
+                            ${i+1}
+                        </td>
                         <td style="color:black">${item.motivo}</td>
                         
                     </tr>`);
+
+                // $('#tareasguard').val(item.id_tarea);
+                
             
             }); 
 
@@ -337,7 +341,6 @@ function cargartarea(){
             globalThis.TipoMedi=""
             //ultimo km o hm
             globalThis.ValorMinimoKm_Hm=0;
-            console.log(data.medicion.tipo_medicion.detalle)
             if(data.medicion.tipo_medicion.detalle=="Kilometraje"){
                
                 $('#km_txt').show()

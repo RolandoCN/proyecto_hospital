@@ -118,11 +118,11 @@
 @endsection
 @section('scripts')
 
-    <script src="/js/vehiculoCombustible/menu.js"></script>
+    <script src="{{ asset('js/vehiculoCombustible/menu.js?v='.rand())}}"></script>
+
 
     <script>
         llenar_tabla_menu()
-        // limpiarCampos()
     </script>
 
 

@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\VehiculoCombustible\Menu;
 use \Log;
 use Illuminate\Http\Request;
-
+use DB;
 class MenuController extends Controller
 {
       
@@ -197,6 +197,18 @@ class MenuController extends Controller
 
     public function eliminar($id){
         try{
+
+            //verificamos que no este asociado a una gestion-menu
+            $veri_GestionMenu=DB::table('vc_gestion_menu')
+            ->where('id_menu',$id)
+            ->where('estado','A')
+            ->first();
+            if(!is_null($veri_GestionMenu)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El menú está relacionado, no se puede eliminar'
+                ]);
+            }
             $menu=Menu::find($id);
             $menu->id_usuario_act=auth()->user()->id;
             $menu->fecha_actualiza=date('Y-m-d H:i:s');

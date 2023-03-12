@@ -10,14 +10,24 @@ use App\Models\VehiculoCombustible\TipoCombustible;
 use App\Models\VehiculoCombustible\Movimiento;
 use App\Models\VehiculoCombustible\Gasolinera;
 use App\Models\VehiculoCombustible\CabeceraDespacho;
+use App\Models\VehiculoCombustible\TareaDetalleDespacho;
+use App\Models\VehiculoCombustible\MovimientoDetalleDespacho;
 use \Log;
 use DB;
 use PDF;
 use Illuminate\Http\Request;
+use App\Http\Controllers\VehiculosCombustible\TareasController;
 
 class DespachoCombustibleController extends Controller
 {
-
+    public function __construct() {
+        try {       
+            $this->objTareas = new TareasController();
+                           
+        } catch (\Throwable $e) {
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage());
+        }
+    }
 
     public function index(){
         $persona=Persona::where('estado','A')->get();
@@ -35,6 +45,9 @@ class DespachoCombustibleController extends Controller
 
     public function listar(){
         try{
+            //comprobamos si hay tareas sin fecha final y actualizamos el estado en caso d q tenga fecha fin menor a la actual
+            $comprobar=$this->objTareas->actualizaTarea();
+            
             $cab=CabeceraDespacho::with('gasolinera')->where('estado','!=','Eliminado')->get();
             return response()->json([
                 'error'=>false,
@@ -103,8 +116,6 @@ class DespachoCombustibleController extends Controller
                     'mensaje'=>'No se pudo registrar la información'
                 ]);
             }
-
-
 
 
         }catch (\Throwable $e) {
@@ -336,63 +347,67 @@ class DespachoCombustibleController extends Controller
         ];
 
         $this->validate($request, $rules, $messages);
-        try{
+        $transaction=DB::transaction(function() use($request){
+            try{
 
-            $data_cabecera=CabeceraDespacho::find($request->idcabeceradespacho);
-            $fecha_cabecera=$data_cabecera->fecha;
-            
-            $guarda_det_des=new DetalleDespacho();
-            $guarda_det_des->id_vehiculo=$request->vehiculo_id;
-            $guarda_det_des->idcabecera_despacho=$request->idcabeceradespacho;
-            $guarda_det_des->fecha_cabecera_despacho=$fecha_cabecera;
-            $guarda_det_des->kilometraje=$request->kilometrajemodal;
-            $guarda_det_des->horometraje=$request->horometrajemodal;
-            $guarda_det_des->id_tipocombustible=$request->combustible_id;
-            $guarda_det_des->galones=$request->galonesmodal;
-            $guarda_det_des->precio_unitario=$request->preciounitariomodal;
-            $guarda_det_des->total=$request->totalmodal;
-            $guarda_det_des->idconductor=$request->chofer_id;
-            $guarda_det_des->fecha_hora_despacho=date('Y-m-d H:i:s');
-            $guarda_det_des->estado="No aprobado";
-            $guarda_det_des->num_factura_ticket=$request->facturamodal;
-            $guarda_det_des->idusuarioregistra=auth()->User()->id;
+                $data_cabecera=CabeceraDespacho::find($request->idcabeceradespacho);
+                $fecha_cabecera=$data_cabecera->fecha;
 
-            //validar no se repita
-            $ver=DetalleDespacho::where('idcabecera_despacho',$guarda_det_des->idcabecera_despacho)
-            ->where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
-            ->where('estado','!=',"Eliminado")->first();
-            if(!is_null($ver)){
-               return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El número de factura-ticket ya está ingresado'
-                ]);
-            }
-           
-           
-            if($guarda_det_des->save()){
+                              
+                $guarda_det_des=new DetalleDespacho();
+                $guarda_det_des->id_vehiculo=$request->vehiculo_id;
+                $guarda_det_des->idcabecera_despacho=$request->idcabeceradespacho;
+                $guarda_det_des->fecha_cabecera_despacho=$fecha_cabecera;
+                $guarda_det_des->kilometraje=$request->kilometrajemodal;
+                $guarda_det_des->horometraje=$request->horometrajemodal;
+                $guarda_det_des->id_tipocombustible=$request->combustible_id;
+                $guarda_det_des->galones=$request->galonesmodal;
+                $guarda_det_des->precio_unitario=$request->preciounitariomodal;
+                $guarda_det_des->total=$request->totalmodal;
+                $guarda_det_des->idconductor=$request->chofer_id;
+                $guarda_det_des->fecha_hora_despacho=date('Y-m-d H:i:s');
+                $guarda_det_des->estado="No aprobado";
+                $guarda_det_des->num_factura_ticket=$request->facturamodal;
+                $guarda_det_des->idusuarioregistra=auth()->User()->id;
+
+                //validar no se repita
+                $ver=DetalleDespacho::where('idcabecera_despacho',$guarda_det_des->idcabecera_despacho)
+                ->where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
+                ->where('estado','!=',"Eliminado")->first();
+                if(!is_null($ver)){
                 return response()->json([
-                    'error'=>false,
-                    'mensaje'=>'Información registrada exitosamente',
-                    'id_despacho'=>$guarda_det_des->iddetalle_despacho 
-                ]);
-            }else{
+                        'error'=>true,
+                        'mensaje'=>'El número de factura-ticket ya está ingresado'
+                    ]);
+                }
+            
+                if($guarda_det_des->save()){
+                    return response()->json([
+                        'error'=>false,
+                        'mensaje'=>'Información registrada exitosamente',
+                        'id_despacho'=>$guarda_det_des->iddetalle_despacho 
+                    ]);
+                }else{
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'No se pudo registrar la información'
+                    ]);
+                }
+
+
+
+
+            }catch (\Throwable $e) {
+                DB::Rollback();
+                Log::error('DespachoCombustibleController => guardarDetalle => mensaje => '.$e->getMessage()).' Linea '.$e->getLine();
                 return response()->json([
                     'error'=>true,
-                    'mensaje'=>'No se pudo registrar la información'
+                    'mensaje'=>'Ocurrió un error'
                 ]);
+                
             }
-
-
-
-
-        }catch (\Throwable $e) {
-            Log::error('DespachoCombustibleController => guardarDetalle => mensaje => '.$e->getMessage());
-            return response()->json([
-                'error'=>true,
-                'mensaje'=>'Ocurrió un error'
-            ]);
-            
-        }
+        });
+        return $transaction;
     }
 
     public function listarDetalleDesp($idCab){
@@ -452,94 +467,151 @@ class DespachoCombustibleController extends Controller
         ];
 
         $this->validate($request, $rules, $messages);
-        try{
+        $transaction=DB::transaction(function() use($request, $id){
+            try{
 
-        
-            $actualiza_detalle= DetalleDespacho::find($id);
-            $actualiza_detalle->id_vehiculo=$request->vehiculo_id;
-            $actualiza_detalle->idcabecera_despacho=$request->idcabeceradespacho;
-            $actualiza_detalle->kilometraje=$request->kilometrajemodal;
-            $actualiza_detalle->horometraje=$request->horometrajemodal;
-            $actualiza_detalle->id_tipocombustible=$request->combustible_id;
-            $actualiza_detalle->galones=$request->galonesmodal;
-            $actualiza_detalle->precio_unitario=$request->preciounitariomodal;
-            $actualiza_detalle->total=$request->totalmodal;
-            $actualiza_detalle->idconductor=$request->chofer_id;
-            $actualiza_detalle->fecha_hora_despacho=date('Y-m-d H:i:s');
-            $actualiza_detalle->estado="No aprobado";
-            $actualiza_detalle->firma_conductor=null;
-            $actualiza_detalle->num_factura_ticket=$request->facturamodal;
-            $actualiza_detalle->idusuarioregistra=auth()->User()->id;
+                $actualiza_detalle= DetalleDespacho::find($id);
+                $actualiza_detalle->id_vehiculo=$request->vehiculo_id;
+                $actualiza_detalle->idcabecera_despacho=$request->idcabeceradespacho;
+                $actualiza_detalle->kilometraje=$request->kilometrajemodal;
+                $actualiza_detalle->horometraje=$request->horometrajemodal;
+                $actualiza_detalle->id_tipocombustible=$request->combustible_id;
+                $actualiza_detalle->galones=$request->galonesmodal;
+                $actualiza_detalle->precio_unitario=$request->preciounitariomodal;
+                $actualiza_detalle->total=$request->totalmodal;
+                $actualiza_detalle->idconductor=$request->chofer_id;
+                $actualiza_detalle->fecha_hora_despacho=date('Y-m-d H:i:s');
+                $actualiza_detalle->estado="No aprobado";
+                $actualiza_detalle->firma_conductor=null;
+                $actualiza_detalle->num_factura_ticket=$request->facturamodal;
+                $actualiza_detalle->idusuarioregistra=auth()->User()->id;
 
-            //validar no se repita
-            $ver=DetalleDespacho::where('idcabecera_despacho',$actualiza_detalle->idcabecera_despacho)
-            ->where('num_factura_ticket',$actualiza_detalle->num_factura_ticket)
-            ->where('iddetalle_despacho','!=',$id)
-            ->where('estado','!=',"Eliminado")->first();
-            if(!is_null($ver)){
-               return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El número de factura-ticket ya está ingresado'
-                ]);
-            }
-           
-           
-            if($actualiza_detalle->save()){
+                //validar no se repita
+                $ver=DetalleDespacho::where('idcabecera_despacho',$actualiza_detalle->idcabecera_despacho)
+                ->where('num_factura_ticket',$actualiza_detalle->num_factura_ticket)
+                ->where('iddetalle_despacho','!=',$id)
+                ->where('estado','!=',"Eliminado")->first();
+                if(!is_null($ver)){
                 return response()->json([
-                    'error'=>false,
-                    'mensaje'=>'Información actualizada exitosamente',
-                    'id_despacho'=>$actualiza_detalle->iddetalle_despacho 
-                
-                ]);
-            }else{
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'No se pudo actualizar la información'
-                ]);
-            }
-
-
-
-
-        }catch (\Throwable $e) {
-            Log::error('DespachoCombustibleController => guardarDetalle => mensaje => '.$e->getMessage());
-            return response()->json([
-                'error'=>true,
-                'mensaje'=>'Ocurrió un error'
-            ]);
+                        'error'=>true,
+                        'mensaje'=>'El número de factura-ticket ya está ingresado'
+                    ]);
+                }
             
-        }
+                if($actualiza_detalle->save()){
+
+                    $fecha_cabecera=$actualiza_detalle->fecha_cabecera_despacho;
+                    //eliminamos la informacion de las tareasDetalle
+                    $eliminaTareaDetalle=TareaDetalleDespacho::where('iddetalle_despacho', $id);
+                    $eliminaTareaDetalle->delete();
+
+                    // buscamos las tareas asociadas a ese vehiculo ese dia asi como la informacion de los movimientos
+                    $tareas=$this->listarTareaVeh($request->vehiculo_id,$fecha_cabecera,'S');  
+                    if($tareas['error']==true){
+                        DB::Rollback();
+                        return response()->json([
+                            'error'=>true,
+                            'mensaje'=>'No se pudo registrar la información, ocurrió un error al obtener las tareas'
+                        ]);
+                    }else{
+                        if(sizeof($tareas['resultado'])>0){
+                            foreach($tareas['resultado'] as $tarea){
+                                $tareaDespacho= new TareaDetalleDespacho();
+                                $tareaDespacho->id_tarea=$tarea->id_tarea;
+                                $tareaDespacho->iddetalle_despacho=$actualiza_detalle->iddetalle_despacho;
+                                $tareaDespacho->save();
+                            }  
+                        }    
+                    }
+                    //eliminamos la informacion de las movimiemtoDetalle
+                    $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
+                    $eliminaMovimDetalle->delete();
+                    
+                    $listaMov=$this->listarMovimientoVeh($request->vehiculo_id, $fecha_cabecera);
+                    if($listaMov['error']==true){
+                        DB::Rollback();
+                        return response()->json([
+                            'error'=>true,
+                            'mensaje'=>'No se pudo registrar la información, ocurrió un error al obtener los movimientos de los vehículos'
+                        ]);
+                    }else{
+                        if(sizeof($listaMov['resultado'])>0){
+                            foreach($listaMov['resultado'] as $movi){
+                                $movimientoDespacho= new MovimientoDetalleDespacho();
+                                $movimientoDespacho->id_movimiento=$movi->idmovimiento;
+                                $movimientoDespacho->iddetalle_despacho=$actualiza_detalle->iddetalle_despacho;
+                                $movimientoDespacho->save();
+                            }  
+                        }    
+                    }
+
+                    return response()->json([
+                        'error'=>false,
+                        'mensaje'=>'Información actualizada exitosamente',
+                        'id_despacho'=>$actualiza_detalle->iddetalle_despacho 
+                    
+                    ]);
+                }else{
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'No se pudo actualizar la información'
+                    ]);
+                }
+
+            }catch (\Throwable $e) {
+                DB::Rollback();
+                Log::error('DespachoCombustibleController => guardarDetalle => mensaje => '.$e->getMessage());
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'Ocurrió un error'
+                ]);
+                
+            }
+        });
+        return $transaction;
     }
 
     public function eliminarDetalle($id){
-        try{
-            $elim_detalle=DetalleDespacho::find($id);
-            $elim_detalle->idusuarioelimina=auth()->user()->id;
-            $elim_detalle->fecha_eliminacion=date('Y-m-d H:i:s');
-            $elim_detalle->estado="Eliminado";
-            if($elim_detalle->save()){
+        $transaction=DB::transaction(function() use($id){
+            try{
+                $elim_detalle=DetalleDespacho::find($id);
+                $elim_detalle->idusuarioelimina=auth()->user()->id;
+                $elim_detalle->fecha_eliminacion=date('Y-m-d H:i:s');
+                $elim_detalle->estado="Eliminado";
+                if($elim_detalle->save()){
+
+                    //eliminamos la informacion de las tareasDetalle
+                    $eliminaTareaDetalle=TareaDetalleDespacho::where('iddetalle_despacho', $id);
+                    $eliminaTareaDetalle->delete();
+
+                    //eliminamos la informacion de las movimiemtoDetalle
+                    $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
+                    $eliminaMovimDetalle->delete();
+
+                    return response()->json([
+                        'error'=>false,
+                        'mensaje'=>'Información eliminada exitosamente'
+                    ]);
+                }else{
+                    return response()->json([
+                        'error'=>false,
+                        'mensaje'=>'No se pudo eliminar la información'
+                    ]);
+                }
+                
+            }catch (\Throwable $e) {
+                Log::error('DespachoCombustibleController => eliminarDetalle => mensaje => '.$e->getMessage());
                 return response()->json([
-                    'error'=>false,
-                    'mensaje'=>'Información eliminada exitosamente'
+                    'error'=>true,
+                    'mensaje'=>'Ocurrió un error, intentelo más tarde'
                 ]);
-            }else{
-                return response()->json([
-                    'error'=>false,
-                    'mensaje'=>'No se pudo eliminar la información'
-                ]);
+                
             }
-               
-        }catch (\Throwable $e) {
-            Log::error('DespachoCombustibleController => eliminarDetalle => mensaje => '.$e->getMessage());
-            return response()->json([
-                'error'=>true,
-                'mensaje'=>'Ocurrió un error, intentelo más tarde'
-            ]);
-            
-        }
+        });
+        return $transaction;
     }
 
-    public function listarTareaVeh($idVeh, $fecha){
+    public function listarTareaVeh($idVeh, $fecha, $interno=null){
         try{
             $fechaDesp=date('Y-m-d', strtotime($fecha));
            
@@ -550,16 +622,58 @@ class DespachoCombustibleController extends Controller
                 ->WhereDate('fecha_fin','>=',$fechaDesp);
             })
             ->get();
-            return response()->json([
-                'error'=>false,
-                'resultado'=>$bucartarea
-            ]);
+            if($interno==null){
+                return response()->json([
+                    'error'=>false,
+                    'resultado'=>$bucartarea
+                ]);
+            }else{
+                return [
+                    'error'=>false,
+                    'resultado'=>$bucartarea
+                ];
+            }
+                
         }catch (\Throwable $e) {
             Log::error('DespachoCombustibleController => listarTareaVeh => mensaje => '.$e->getMessage());
-            return response()->json([
-                'error'=>true,
-                'mensaje'=>'Ocurrió un error'
-            ]);
+            if($interno==null){
+                return response()->json([
+                    'error'=>false,
+                    'resultado'=>$bucartarea
+                ]);
+            }else{
+                return [
+                    'error'=>false,
+                    'resultado'=>$bucartarea
+                ];
+            }
+            
+        }
+    }
+
+    public function listarMovimientoVeh($idVeh, $fecha){
+        try{
+            $fechaDesp=date('Y-m-d', strtotime($fecha));
+           
+            $bucarMovimiento=Movimiento::where('id_vehiculo',$idVeh)
+            ->where('estado','!=','Eliminada')
+            ->whereDate('fecha_registro', $fechaDesp)
+            ->get();
+          
+            return [
+                'error'=>false,
+                'resultado'=>$bucarMovimiento
+            ];
+            
+                
+        }catch (\Throwable $e) {
+            Log::error('DespachoCombustibleController => listarMovimientoVeh => mensaje => '.$e->getMessage());
+           
+            return [
+                'error'=>false,
+                'resultado'=>$bucartarea
+            ];
+            
             
         }
     }
@@ -598,34 +712,39 @@ class DespachoCombustibleController extends Controller
     }
 
     public function despachoPdfGasolinera($idCab){
+            try{
+                $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
+                ->where('idcabecera_despacho',$idCab)->where('estado','Aprobado')
+                ->orderBy('fecha_hora_despacho', 'desc')->get();
 
-            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
-            ->where('idcabecera_despacho',$idCab)->where('estado','Aprobado')
-            ->orderBy('fecha_hora_despacho', 'desc')->get();
+                if(sizeof($detalle)<=0){
+                    return back()->with(['mensajePInfoDespacho'=>'Aún no se han registrado despachos aprobados','estadoP'=>'danger']);
+                }
+                
+                $datos=CabeceraDespacho::with('gasolinera')->where('idcabecera_despacho',$idCab)->first();
+                $fechaw=$datos->fecha;
+                setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
+                        $fecha= $fechaw;
+                        $fecha = strftime("%d de %B de %Y", strtotime($fecha));
 
-            if(sizeof($detalle)<=0){
-              return back()->with(['mensajePInfoDespacho'=>'Aún no se han registrado despacho','estadoP'=>'danger']);
+                
+                $nombre="despacho"; 
+                
+                //creamos el objeto
+                $pdf=new PDF();
+                //habilitamos la opcion php para mostrar la paginacion
+                $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
+            // enviamos a la vista para crear el documento que los datos repsectivos
+                $crearpdf->loadView('combustible.pdf_despacho_gasoli',['datos'=>$datos,'detalle'=>$detalle,'fecha'=>$fecha]);
+                $crearpdf->setPaper("A4", "landscape");
+
+                return $crearpdf->download($nombre."_".date('YmdHis').'.pdf');
+            
+            }catch (\Throwable $e) {
+                Log::error('DespachoCombustibleController => despachoPdfGasolinera => mensaje => '.$e->getMessage());
+                return back()->with(['mensajePInfoDespacho'=>'Ocurrió un error, intentelo más tarde','estadoP'=>'danger']);
+                
             }
-            
-            $datos=CabeceraDespacho::with('gasolinera')->where('idcabecera_despacho',$idCab)->first();
-            $fechaw=$datos->fecha;
-            setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
-                    $fecha= $fechaw;
-                    $fecha = strftime("%d de %B de %Y", strtotime($fecha));
-
-            
-            $nombre="despacho"; 
-            
-            //creamos el objeto
-            $pdf=new PDF();
-            //habilitamos la opcion php para mostrar la paginacion
-            $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
-           // enviamos a la vista para crear el documento que los datos repsectivos
-            $crearpdf->loadView('combustible.pdf_despacho_gasoli',['datos'=>$datos,'detalle'=>$detalle,'fecha'=>$fecha]);
-            $crearpdf->setPaper("A4", "landscape");
-
-            return $crearpdf->download($nombre."_".date('YmdHis').'.pdf');
-
 
     }
 

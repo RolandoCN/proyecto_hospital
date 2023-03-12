@@ -7,6 +7,7 @@ use App\Models\VehiculoCombustible\PerfilAcceso;
 use App\Models\VehiculoCombustible\Menu;
 use App\Models\VehiculoCombustible\GestionMenu;
 use App\Models\User;
+use DB;
 use \Log;
 use Illuminate\Http\Request;
 
@@ -202,10 +203,17 @@ class PerfilController extends Controller
     public function mantenimientoAccesoPerfil($idmenu, $tipo, $idperfil){
        
         try{
+            
             //agregamos
             if($tipo=="A"){
                 //obtenemos el id de la gestion del menu
                 $idGestion=GestionMenu::where('id_menu', $idmenu)->pluck('id_gestion')->first();
+                if(is_null($idGestion)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El menú no está asociado a una gestión'
+                    ]);
+                }
                 $acceso_perf= new PerfilAcceso();
                 $acceso_perf->id_perfil=$idperfil;
                 $acceso_perf->id_menu=$idmenu;
@@ -222,7 +230,7 @@ class PerfilController extends Controller
                 $quitar->delete();
                 return response()->json([
                     'error'=>false,
-                    'mensaje'=>'Información registrada exitosamente'
+                    'mensaje'=>'Información quitada exitosamente'
                 ]);
             }
            
@@ -239,11 +247,25 @@ class PerfilController extends Controller
 
     public function eliminar($id){
         try{
+            //verificamos que no este asociado a un usuario
+            $veri_PerfilUsuario=DB::table('vc_perfil_usuario')
+            ->where('id_perfil',$id)
+            ->first();
+            if(!is_null($veri_PerfilUsuario)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El perfil está asociado a un usuario, no se puede eliminar'
+                ]);
+            }
+            
             $perfil=Perfil::find($id);
             $perfil->id_usuario_act=auth()->user()->id;
             $perfil->fecha_actualiza=date('Y-m-d H:i:s');
             $perfil->estado="I";
             if($perfil->save()){
+                //si tiene asociado accesos los borramos
+                $quitar=PerfilAcceso::where('id_perfil',$id);
+                $quitar->delete();
                 return response()->json([
                     'error'=>false,
                     'mensaje'=>'Información eliminada exitosamente'

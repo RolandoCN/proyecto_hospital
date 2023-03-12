@@ -7,12 +7,21 @@ use App\Models\VehiculoCombustible\Vehiculo;
 use App\Models\VehiculoCombustible\Tarea;
 use App\Models\VehiculoCombustible\TipoMedicion;
 use App\Models\VehiculoCombustible\Movimiento;
+use App\Models\VehiculoCombustible\TareaMovimento;
 use \Log;
 use Illuminate\Http\Request;
+use App\Http\Controllers\VehiculosCombustible\TareasController;
 
 class MovimientoVehController extends Controller
 {
-
+    public function __construct() {
+        try {       
+            $this->objTareas = new TareasController();
+                           
+        } catch (\Throwable $e) {
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage());
+        }
+    }
 
     public function index(){
         $persona=Persona::where('estado','A')->get();
@@ -27,6 +36,10 @@ class MovimientoVehController extends Controller
 
     public function listar(){
         try{
+
+            //comprobamos si hay tareas sin fecha final y actualizamos el estado en caso d q tenga fecha fin menor a la actual
+            $comprobar=$this->objTareas->actualizaTarea();
+
             $mov=Movimiento::with('vehiculo','chofer')->where('estado','!=','Eliminada')->get();
             return response()->json([
                 'error'=>false,
@@ -46,12 +59,14 @@ class MovimientoVehController extends Controller
         try{
             $tarea=Tarea::where('estado','Pendiente')
             ->where('id_vehiculo', $id)
-            ->where('fecha_inicio','>=',date('Y-m-d'))
+            ->WhereDate('fecha_inicio','<=',date('Y-m-d'))
+            ->WhereDate('fecha_fin','>=',date('Y-m-d'))
             ->get();
 
             $medicion=Vehiculo::with('TipoMedicion')->where('id_vehiculo',$id)->first();
 
             $ultimoKm_Hm=Movimiento::where('id_vehiculo',$id)
+            ->where('estado','!=','Eliminada')
             ->get()->last();
             
             return response()->json([
@@ -72,13 +87,13 @@ class MovimientoVehController extends Controller
 
 
     public function guardar(Request $request){
-      
+        
         $messages = [
             
             'vehiculo_tarea.required' => 'Debe seleccionar el vehículo',
             'chofer.required' => 'Debe seleccionar el chofer',
             'entrada_salida.required' => 'Debe seleccionar si es entrada o salida',
-            // 'motivo.required' => 'Debe ingresar el motivo',           
+            'observacion.required' => 'Debe ingresar el motivo',           
         ];
            
 
@@ -86,13 +101,35 @@ class MovimientoVehController extends Controller
             'vehiculo_tarea' => "required",
             'chofer' => "required",
             'entrada_salida' => "required",
-            // 'motivo' =>"required|string|max:500",
+            'observacion' =>"required|string|max:500",
                      
         ];
 
         $this->validate($request, $rules, $messages);
         try{
+            $valorRecorrido=null;
+            //cuando es entrada a patio calculamos el km o hm recorrido de ese vehiculo
+            if($request->entrada_salida=="Entrada"){
+                //ultimo km o hm
+                $verValor=Movimiento::where('id_vehiculo', '=',$request->vehiculo_tarea)
+                ->where('estado','Activo')
+                ->where('entrada_salida','Salida')
+                ->get()->last();
+                if(!is_null($verValor)){
+                    if(!is_null($request->kilometraje)){
+                        $ultimoValor=$verValor->kilometraje;
+                        $valor_actual=$request->kilometraje;
+                    }else{
+                        $ultimoValor=$verValor->horometro;
+                        $valor_actual=$request->horometro;
+                    } 
+                    //calculamos el valor recorrido
+                    $valorRecorrido=$valor_actual -  $ultimoValor;
+                }else{
+                    $valorRecorrido=null;
+                }
 
+            }
             $guarda_movi=new Movimiento();
             $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
             $guarda_movi->id_chofer=$request->chofer;
@@ -112,6 +149,7 @@ class MovimientoVehController extends Controller
                 
             $guarda_movi->kilometraje=$request->kilometraje;
             $guarda_movi->horometro=$request->horometro;
+            $guarda_movi->km_hm_recorrido=$valorRecorrido;
 
             $guarda_movi->idusuarioregistra=auth()->user()->id;
             $guarda_movi->fecha_registro=date('Y-m-d H:i:s');
@@ -145,8 +183,22 @@ class MovimientoVehController extends Controller
                 }
             }
 
+
            
             if($guarda_movi->save()){
+                //guardamos las tareas asociados al vehiculo en el movimiento
+                if(isset($request->tareasguard)){
+                    if(sizeof($request->tareasguard)>0 ){
+                        foreach($request->tareasguard as $tarea){
+                            $tareaMov=new TareaMovimento();
+                            $tareaMov->id_tarea=$tarea;
+                            $tareaMov->id_movimiento=$guarda_movi->idmovimiento;
+                            $tareaMov->save();
+                        }
+                    }
+                }
+                    
+                    
                 return response()->json([
                     'error'=>false,
                     'mensaje'=>'Información registrada exitosamente'
@@ -179,6 +231,9 @@ class MovimientoVehController extends Controller
             $mov->fecha_act=date('Y-m-d H:i:s');
             $mov->estado="Eliminada";
             if($mov->save()){
+                //eliminamos las tareas movimientos
+                $eliminaTareasMov=TareaMovimento::where('id_movimiento',$id);
+                $eliminaTareasMov->delete();
                 return response()->json([
                     'error'=>false,
                     'mensaje'=>'Información eliminada exitosamente'

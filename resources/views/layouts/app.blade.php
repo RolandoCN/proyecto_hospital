@@ -168,29 +168,39 @@
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu tree" data-widget="tree" style="margin-top: 12px">
                                     
-                    @foreach(listarMenuSession() as $menu)
-                        <li class="treeview" id="{{$menu['gestion']}}">
+                    @foreach(listarMenuSession() as $key=> $menu)
+                        <li class="treeview" id="lista_gest_{{$key}}">
                        
-                        <a href="">
-                            <i class="{{$menu['icono'] <> null ? $menu['icono'] : "fa fa-desktop"}}"></i>
-                            <span>{{$menu['gestion']}}</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
+                            <a href="">
+                                <i class="{{$menu['icono'] <> null ? $menu['icono'] : "fa fa-desktop"}}"></i>
+                                <span>{{$menu['gestion']}}</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                                
                             
-                           
-                        </a>
-                        <ul class="treeview-menu">
-                            @foreach($menu['rutas'] as $gestion)
+                            </a>
+                            <ul class="treeview-menu">
+                                @foreach($menu['rutas'] as $key2=> $gestion)
 
-                                <li><a href="{{url($gestion->menu->url)}}"><i class="fa fa-circle-o"></i> {{($gestion->menu->descripcion)}}</a></li>
-                            <li>
-                               
-                            @endforeach
-                        </ul>
+                                    @if (url($_SERVER['REQUEST_URI']) == url($gestion->menu->url))
+                                        <li class="active"><a href="{{url($gestion->menu->url)}}">
+                                            <i class="fa fa-circle-o"></i> {{($gestion->menu->descripcion)}}</a>
+                                        </li>
+                                        <input type="hidden" name="url_" id="url_" value="{{$key}}">
+                                    @else
+                                        <li class=""><a href="{{url($gestion->menu->url)}}">
+                                            <i class="fa fa-circle-o"></i> {{($gestion->menu->descripcion)}}</a>
+                                        </li>
+                                    @endif
+                                    
+                                <li>
+                                    
+                                @endforeach
+                            </ul>
                         </li>
                     @endforeach
-                    
+
                 </ul>
             </section>
             <!-- /.sidebar -->
@@ -490,6 +500,11 @@
                 $('#modal_cargando').hide();
                 $('body').css('overflow', '');
             }
+        }
+
+        let url_actual=$('#url_').val()
+        if(url_actual){
+            $('#lista_gest_'+url_actual).addClass('active menu-open')
         }
 
     </script>

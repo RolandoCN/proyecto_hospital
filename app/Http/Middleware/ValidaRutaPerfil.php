@@ -37,7 +37,6 @@ class ValidaRutaPerfil
 
         //verficamos si tiene la ruta asignada
         $rutaLlamada = \Request::route()->uri; // obtenemos el nombre de la ruta que se esta llamando
-        log::info("ss ".$rutaLlamada);
         if($perfil->descripcion=="SuperAdmin" && $rutaLlamada=="logs"){
             goto PERMITIR;
         }

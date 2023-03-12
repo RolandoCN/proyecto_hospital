@@ -90,7 +90,16 @@ $("#form_reporte").submit(function(e){
 })
 
 function limpiarCampos(){
-    $('#descripcion').val('')
+    $('#fecha_ini').val('')
+    $('#fecha_fin').val('')
+    $('#formulario').val('').trigger('change.select2')
+    // $('#departamento').val('').trigger('change.select2')
+    $("#departamento").val([]).change();
+    // $("#departamento").select2({
+    //     placeholder: "Select a customer",
+    //     initSelection: function(element, callback) {                   
+    //     }
+    // });
 }
 
 function llenar_tabla_reportes(){
@@ -173,6 +182,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 function visualizarForm(tipo){
     $('#form_ing').show(200)
     $('#listado_formulario').hide(200)
+    limpiarCampos()
     globalThis.AccionForm="";
     if(tipo=='N'){
         $('#titulo_form').html("Registro Perfil")
