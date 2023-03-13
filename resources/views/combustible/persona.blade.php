@@ -121,7 +121,7 @@
 
                             <label for="inputPassword3" class="col-sm-3 control-label">Teléfono</label>
                             <div class="col-sm-8">
-                                <input type="text" minlength="1" maxlength="10" onKeyPress="if(this.value.length==10) return false;"  class="form-control" id="telefono" name="telefono" placeholder="Teléfono">
+                                <input type="number" minlength="1" maxlength="10" onKeyPress="if(this.value.length==10) return false;"  class="form-control" id="telefono" name="telefono" placeholder="Teléfono">
                                 <span class="invalid-feedback" role="alert" style="color:red; display:none
                                 " id="error_telefono">
                                     <strong id="txt_error_telefonos"></strong>
