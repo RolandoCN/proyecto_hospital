@@ -72,12 +72,9 @@
 
             <tr>
                 <td height="50px" colspan="3" style="border: 0px;" align="left">
-                    <img src="images/logoDescripcion.jpg" width="300px" height="80px">
+                    <img src="logo.jpg" width="300px" height="80px">
                 </td>
-                <td height="60px" colspan="2" style="border: 0px;" align="center"></td>
-                <td height="50px" colspan="3" style="border: 0px;" align="right" width="100%">
-                    <img src="images/chone_resurge.png" width="290px" height="90px">
-                </td>
+                
             </tr>
 
 
@@ -96,7 +93,7 @@
             </tr>
             <tr>
                 <td style="height:40px;font-size: 12px;border-top: 0px;border-right: 0px;border-color: #D3D3D3"
-                    colspan="4" class="pad"><b>Gasolinera:</b> {{ $datos->gasolinera->detalle }}</td>
+                    colspan="4" class="pad"><b>Gasolinera:</b> {{ $datos->gasolinera->descripcion }}</td>
 
                 <td style="height:40px;font-size: 12px;border-top: 0px;border-left: : 0px;border-color: #D3D3D3"colspan="4"
                     class="pad"><b>Fecha:</b> {{ $fecha }}</td>

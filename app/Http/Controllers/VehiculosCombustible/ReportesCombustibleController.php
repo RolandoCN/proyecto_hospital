@@ -97,11 +97,11 @@ class ReportesCombustibleController extends Controller
                     $nombrePDF="despachoCombustibleDepartamento6_".date('YmdHis').".pdf";// $nombrePDF  
                  
                     //creamos el objeto
-                    $pdf=new PDF();
+                    // $pdf=new PDF();
                     //habilitamos la opcion php para mostrar la paginacion
-                    $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
+                    // $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
                     // enviamos a la vista para crear el documento que los datos repsectivos
-                    $crearpdf->loadView('combustible.reportes.reporteForm6',['datos'=>$lista_final_agrupada,'detalle'=>$detale=[],'desde'=>$fecha_ini,'hasta'=>$fecha_fin]);
+                    $crearpdf=PDF::loadView('combustible.reportes.reporteForm6',['datos'=>$lista_final_agrupada,'detalle'=>$detale=[],'desde'=>$fecha_ini,'hasta'=>$fecha_fin]);
                     $crearpdf->setPaper("A4", "landscape");
         
                     $estadoarch = $crearpdf->stream();
@@ -138,11 +138,11 @@ class ReportesCombustibleController extends Controller
                     $nombrePDF="despachoCombustibleDepartamento7_".date('YmdHis').".pdf";// $nombrePDF  
                    
                     //creamos el objeto
-                    $pdf=new PDF();
+                    // $pdf=new PDF();
                     //habilitamos la opcion php para mostrar la paginacion
-                    $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
+                    // $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
                     // enviamos a la vista para crear el documento que los datos repsectivos
-                    $crearpdf->loadView('combustible.reportes.reporteForm7',['datos'=>$lista_final_agrupada,'detalle'=>$detale=[],'desde'=>$fecha_ini,'hasta'=>$fecha_fin]);
+                    $crearpdf=PDF::loadView('combustible.reportes.reporteForm7',['datos'=>$lista_final_agrupada,'detalle'=>$detale=[],'desde'=>$fecha_ini,'hasta'=>$fecha_fin]);
                     $crearpdf->setPaper("A4", "landscape");
 
                     // return $crearpdf->stream("asa.pdf");

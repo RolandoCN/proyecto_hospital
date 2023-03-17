@@ -84,12 +84,9 @@
         <table class="ltable " width="112.5%"  >                
             <tr>
                 <td height="50px" colspan="3" style="border: 0px;" align="left" >
-                    <img src="images/logoDescripcion.jpg" width="300px" height="80px"> 
+                    <img src="logo.jpg" width="300px" height="80px"> 
                 </td>
-                <td height="60px" colspan="2" style="border: 0px;" align="center" ></td>
-                <td height="50px" colspan="3" style="border: 0px;" align="right" width="100%">
-                    <img src="images/chone_resurge.png" width="290px" height="90px"> 
-                </td>
+                
             </tr>             
         </table>
     </header>

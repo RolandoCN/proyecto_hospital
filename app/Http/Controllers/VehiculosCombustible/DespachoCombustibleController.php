@@ -349,10 +349,46 @@ class DespachoCombustibleController extends Controller
         $this->validate($request, $rules, $messages);
         $transaction=DB::transaction(function() use($request){
             try{
+                $ultimo_valor=null;
+                //ultimo km o hm recorrido del vehiculo
+                if(!is_null($request->kilometrajemodal)){
+                    $ultimoKm_Hm=Movimiento::where('id_vehiculo',$request->vehiculo_id)
+                    ->where('estado','!=','Eliminada')
+                    ->get()->last();
+                    $ultimo_valor=$ultimoKm_Hm->kilometraje;
+                    $tipo="kilomentraje";
+                    if(!is_null($ultimo_valor)){
+                        //validamos que el valor ingresado en gasolinera sea mayor al registrado en patio y en gasolinera
+                        if($request->kilometrajemodal <= $ultimo_valor){
+                            return response()->json([
+                                'error'=>true,
+                                'mensaje'=>'El valor del kilometraje no puede ser menor o igual a '.$ultimo_valor
+                            ]);
+                        }
+                        
+    
+                    }
+
+                }else{
+                    $ultimoKm_Hm=Movimiento::where('id_vehiculo',$request->vehiculo_id)
+                    ->where('estado','!=','Eliminada')
+                    ->get()->last();
+                    $ultimo_valor=$ultimoKm_Hm->horometro;
+                    $tipo="horometro";
+                    //validamos que el valor ingresado en gasolinera sea mayor al registrado en patio y en gasolinera
+                   
+                    if($request->horometrajemodal <= $ultimo_valor){
+                        return response()->json([
+                            'error'=>true,
+                            'mensaje'=>'El valor del horometro no puede ser menor o igual a '.$ultimo_valor
+                        ]);  
+                    }
+
+                }
+             
 
                 $data_cabecera=CabeceraDespacho::find($request->idcabeceradespacho);
                 $fecha_cabecera=$data_cabecera->fecha;
-
                               
                 $guarda_det_des=new DetalleDespacho();
                 $guarda_det_des->id_vehiculo=$request->vehiculo_id;
@@ -722,6 +758,7 @@ class DespachoCombustibleController extends Controller
                 }
                 
                 $datos=CabeceraDespacho::with('gasolinera')->where('idcabecera_despacho',$idCab)->first();
+               
                 $fechaw=$datos->fecha;
                 setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
                         $fecha= $fechaw;
@@ -731,11 +768,11 @@ class DespachoCombustibleController extends Controller
                 $nombre="despacho"; 
                 
                 //creamos el objeto
-                $pdf=new PDF();
+                // $pdf=new PDF();
                 //habilitamos la opcion php para mostrar la paginacion
-                $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
-            // enviamos a la vista para crear el documento que los datos repsectivos
-                $crearpdf->loadView('combustible.pdf_despacho_gasoli',['datos'=>$datos,'detalle'=>$detalle,'fecha'=>$fecha]);
+                // $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
+                // enviamos a la vista para crear el documento que los datos repsectivos
+                $crearpdf=PDF::loadView('combustible.pdf_despacho_gasoli',['datos'=>$datos,'detalle'=>$detalle,'fecha'=>$fecha]);
                 $crearpdf->setPaper("A4", "landscape");
 
                 return $crearpdf->download($nombre."_".date('YmdHis').'.pdf');
