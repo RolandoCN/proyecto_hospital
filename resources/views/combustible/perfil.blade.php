@@ -105,12 +105,12 @@
             
             </form>
         </div>
-
+        @include('combustible.modal_acceso_perfil')
 
     </section>
 
 @endsection
-@include('combustible.modal_acceso_perfil')
+
 @section('scripts')
 
     <script src="{{ asset('js/vehiculoCombustible/perfil.js?v='.rand())}}"></script>
