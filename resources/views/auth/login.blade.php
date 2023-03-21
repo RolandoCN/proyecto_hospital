@@ -32,6 +32,8 @@
 </head>
 
 
+
+
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
@@ -39,7 +41,11 @@
         </div>
 
         <div class="login-box-body">
-            <p class="login-box-msg">SisVehi</p>
+           
+            <div class="text-center" style="margin-bottom:12px">
+                <span class="login-box-msg">SisVehi</span>
+                <img src="img/logo.jpg" width="80%" height="90px" style="opacity: 0.6">
+            </div>
             <form action="{{ route('login') }}" method="post">
               @csrf
                 <div class="form-group has-feedback">
