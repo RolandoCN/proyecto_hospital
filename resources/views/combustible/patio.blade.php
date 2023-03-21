@@ -49,9 +49,9 @@
                         <thead>
                             <tr>
                                 <th>Vehículo</th>
-                                <th>Chofer</th>
-                                <th>Fecha Evento</th>
-                                <th>Evento</th>
+                                <th style="text-align: center">Chofer</th>
+                                <th style="text-align: center">Patio</th>
+                                <th style="text-align: center">Destino</th>
                                 <th>Firma</th>
                                 <th style="min-width: 10%">Opciones</th>
                             </tr>
@@ -74,7 +74,7 @@
 
         <div id="form_ing" style="display:none">
            
-            <form class="form-horizontal" id="form_registro_tarea" autocomplete="off" method="post"
+            <form role="form" id="form_registro_tarea" autocomplete="off" method="post"
                 action="">
                 {{ csrf_field() }}
                 <div class="box">
@@ -92,113 +92,122 @@
                     <div class="box-body">
                         <div id="msmDetalledos"></div>
 
-                        <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Vehículo</label>
-                            <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" onchange="cargartarea()">
-                                
+                        <div class="col-md-4">
+
+                            <div class="form-group ">
+                                <label for="exampleInputEmail1" class="">Vehiculo</label>
+                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" onchange="cargartarea()" >
+                                    
                                     @foreach ($vehiculo as $dato)
                                         <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>
                                     @endforeach
                                 </select>
-                            
-                            
                             </div>
 
-                        </div>
-
-                        <div id="table_dato_salida" class="form-group " style="margin-bottom: 0px; display: none">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12" for="descripcion_p"><span class="required"></span>
-                            </label>
-                            <div id="table_dato_salida" class="panel  col-md-8 col-sm-12 col-xs-12 form-group"style="margin-left: 0px;margin-right: 0px;padding: 0px">
-                                <div class="panel-heading" role="tab" id="HeadingTwo" style="background: blue;margin-right: 10px; margin-left: 10px">
-                                    <center>
-                                        <h4 class="panel-title "style="color: white">
-                                            <a class="collapsed" data-toggle="collapse" data-parent="#Accordion" href="#CollapseTwo" aria-expanded="false" aria-controls="CollapseTwo">
-                                            Detalles de tareas
-                                            </a>
-                                        </h4>
-                                    </center>
-                                </div>
-            
-                                <div id="CollapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="HeadingTwo">
-                                <div class="table-responsive col-md-12 col-sm-12 col-xs-12">
-                                        <table class="table table-bordered table-striped table-sm">
-                                            <thead style="background-color:blue">
-                                                <tr>
-                                                    <th scope="col" style="width: 20%;text-align: center;color: white">#</th>
-                                                    <th scope="col" style="width: 80%;text-align: center;color: white">Tarea</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbody_dato_salida">
-                                            </tbody>
-                                        </table>  
-                                </div>
-                                </div>
+                            <div class="form-group " >
+                                <label for="inputPassword3" >Lugar Salida Patio</label>                              
+                                <input type="text" readonly class="form-control" placeholder="Chone" id="l_salida_patio" name="l_salida_patio">                            
                             </div>
-                        </div>
-                        
-                        <div class="form-group">
-                          
-                            <label for="inputPassword3" class="col-sm-3 control-label">Chofer</label>
-                            <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="chofer" id="chofer" >
-                                
+
+                            <div class="form-group " >
+                                <label for="inputPassword3" >Lugar Destino</label>                              
+                                <input type="text" class="form-control" placeholder="Ingrese lugar destino" id="l_destino_ll" name="l_destino_ll" onkeyup="lugardestino()">                            
+                            </div>
+
+                            <div class="form-group " >
+                                <label for="inputPassword3" >Lugar Salida Destino</label>                              
+                                <input type="text" readonly class="form-control" placeholder="Ingrese lugar salida destino" id="l_sal_destino" name="l_sal_destino" >                            
+                            </div>
+
+                            <div class="form-group " >
+                                <label for="inputPassword3" >Lugar Llegada Patio</label>                              
+                                <input type="text" class="form-control" readonly placeholder="Chone" id="l_llegada_pat" name="l_llegada_pat" >                            
+                            </div>
+
+                            <div class="form-group " >
+                                <label for="inputPassword3" >Motivo</label>                              
+                                <textarea class="form-control" placeholder="Ingrese el motivo" id="motivo" name="motivo"></textarea>                          
+                            </div>
+
+                        </div>   
+
+                        <div class="col-md-4">
+                            
+                            <div class="form-group" >
+                                <label for="inputPassword3" >Chofer</label>                            
+                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="chofer" id="chofer" disabled>
                                     @foreach ($persona as $dato)
                                         <option value="{{ $dato->idpersona}}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
                                     @endforeach
-                                </select>
-                            
-                            
+                                </select>                            
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPassword3" >Fecha Hora Salida Patio</label>
+                                <input type="datetime-local" class="form-control"id="fecha_h_salida_patio" name="fecha_h_salida_patio">                            
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPassword3" >Fecha Hora Destino</label>
+                                <input type="datetime-local" class="form-control" id="fecha_h_destino" name="fecha_h_destino" onblur="validaFechaHoraDestino()">                     
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPassword3" >Fecha Hora Salida Destino</label>
+                                <input type="datetime-local" class="form-control" id="fecha_h_destino_salida" name="fecha_h_destino_salida"  onblur="validaFechaHoraSalidaDestino()">                     
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPassword3" >Fecha Hora Llegada Patio</label>
+                                <input type="datetime-local" class="form-control" id="fecha_h_llegada_patio" name="fecha_h_llegada_patio" onblur="validaFechaHoraLlegadaPatio()">                     
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputPassword3" >Acompañante</label>
+                                <textarea class="form-control" placeholder="Ingrese nombre acompañante" id="acompanante" name="acompanante">  </textarea>                
                             </div>
 
                         </div>
 
-                        <div class="form-group" id="km_txt" style="display:none">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Kilometraje</label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" placeholder="Ingrese una descripción" id="kilometraje" name="kilometraje">
-                            </div>
-                            
-                        </div>
+                        <div class="col-md-4">
 
-                        <div class="form-group" id="hm_txt" style="display:none">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Horómetro</label>
-                            <div class="col-sm-8">
-                                <input type="number" class="form-control" placeholder="Ingrese una descripción" id="horometro" name="horometro">
-                            </div>
-                            
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Entrada/Salida</label>
-                            <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Opción" class="form-control select2" style="width: 100%;" name="entrada_salida" id="entrada_salida">
-                                    <option selected="selected" value="Entrada">Entrada</option>
-                                    <option value="Salida">Salida</option>
-                                  
-                                  
-                                </select>
-                            </div>
-                            
-                        </div>
-
-                        <div class="form-group">
-
-                            <label for="inputPassword3" class="col-sm-3 control-label">Observacion</label>
-                            <div class="col-sm-8">
-                                <textarea class="form-control" placeholder="Ingrese la observacion" name="observacion" id="observacion"></textarea>
+                            <div class="form-group " >
+                                <label for="inputPassword3" >Nro Ticket</label>                            
+                                <input type="number" class="form-control" id="n_ticket" name="n_ticket" placeholder="Ingrese el número de ticket">                                    
                             </div>
 
-                           
+                            <div class="form-group ">
+                                <label for="inputPassword3" >Kilometraje Salida Patio</label>
+                                <input type="number" class="form-control"id="km_salida_patio" name="km_salida_patio" onblur="validaValoresKmSalidaPatio()" placeholder="Ingrese el kilometraje salida del patio">
+                            </div>
+
+                            <div class="form-group ">
+                                <label for="inputPassword3" >Kilometraje Destino</label>
+                                <input type="number" class="form-control"id="km_destino_ll" name="km_destino_ll" placeholder="Ingrese el kilometraje destino" onkeyup="kmdestino()" onblur="validaValoresKmDest()">
+                            </div>
+
+                            <div class="form-group ">
+                                <label for="inputPassword3" >Kilometraje Salida Destino</label>
+                                <input type="number" readonly class="form-control"id="km_salida_dest" name="km_salida_dest" placeholder="Ingrese el kilometraje de salida destino">
+                            </div>
+
+                            <div class="form-group ">
+                                <label for="inputPassword3" >Kilometraje LLegada Patio</label>
+                                <input type="number" class="form-control"id="km_llegada_patio" name="km_llegada_patio" placeholder="Ingrese el kilometraje de llegada patio"  onblur="validaValoresKmLlegadaPatio()" >
+                            </div>
+
+                            <div class="form-group ">
+                                <label for="inputPassword3" >Solicitado Por</label>
+                                <textarea class="form-control"id="solicitante" name="solicitante" placeholder="Ingrese el área solicitante" ></textarea>
+                            </div>
+
                         </div>
 
-
-                        <div id="content_firma" class="form-group">
-                            <label class="control-label col-md-3 col-sm-2 col-xs-12" for="icono_gestione"></label>
+                        
+                        <div id="content_firma" class="form-group col-md-12">
+                            <label class="control-label col-md-4 col-sm-2 col-xs-12" for="icono_gestione"></label>
                             <div class="col-md-4 col-sm-12 col-xs-12">
-                                <div id="signArea" style="margin: 0; margin-bottom: 20px; width: fit-content;">
+                                <div id="signArea" style="margin: 0; margin-bottom: 12px; width: fit-content;">
                                     <h2 class="tag-ingo"> Firma</h2>
                                     <div class="sig sigWrapper" style="height:auto; border:1px solid #000;">
                                         <div class="typed"></div>
@@ -214,19 +223,16 @@
                             </div>
                 
                         </div>
-                      
-                        
                         <hr>
-                        <div class="form-group">
-                            <div class="col-sm-12 text-center" >
-                            
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <span id="nombre_btn_form"></span>
-                                </button>
-                                <button type="button" onclick="visualizarListado()" class="btn btn-danger btn-sm">Cancelar</button>
-                            </div>
+                        <div class="col-sm-12 text-center" >
+                            <input type="hidden" id="idchofer_loguea" name="idchofer" value="{{auth()->user()->id_persona}}">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <span id="nombre_btn_form"></span>
+                            </button>
+                            <button type="button" onclick="visualizarListado()" class="btn btn-danger btn-sm">Cancelar</button>
                         </div>
-
+                        
+                        
                         
                     </div>
 
@@ -240,11 +246,7 @@
     </section>
 
     
-    <script>
-       
-       
-
-    </script>
+  
 @endsection
 @section('scripts')
 
@@ -256,6 +258,8 @@
     <script src="{{ asset('js/vehiculoCombustible/movimiento.js?v='.rand())}}"></script>
 
     <script>
+        //cargamos el datos del chofer el usuario logueado
+       
         llenar_tabla_tarea()
         limpiarCampos()
     </script>

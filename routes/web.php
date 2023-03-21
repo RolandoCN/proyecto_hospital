@@ -111,7 +111,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::post('/guardar-movimiento', [MovimientoVehController::class, 'guardar']);
     Route::get('/listado-movimiento', [MovimientoVehController::class, 'listar']);
     Route::get('/eliminar-movimiento/{id}', [MovimientoVehController::class, 'eliminar']);
-
+    Route::get('/reporte-mov-ind/{idmov}', [MovimientoVehController::class, 'reporteIndividual']);
 
     //GASOLINERAS
     Route::get('/gasolinera', [GasolineraController::class, 'index'])->middleware('validarRuta');
