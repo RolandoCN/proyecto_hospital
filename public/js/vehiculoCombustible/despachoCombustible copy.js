@@ -28,9 +28,6 @@ $('#ticket_id').select2({
 });
 
 function capturaTicket(){
-    if(EdicionDetalle=="S"){
-        return
-    }
     let nro_ticket=$('#ticket_id').val()
     if(nro_ticket==null || nro_ticket==""){
         return
@@ -42,7 +39,7 @@ function capturaTicket(){
             alertNotificar(data.mensaje,"error");
             return;   
         }
-       
+
         $('#vehiculo_id').val(data.data.id_vehiculo).trigger('change.select2')
         $('#chofer_id').val(data.data.id_chofer).trigger('change.select2')
         
@@ -303,7 +300,6 @@ function volverListado(){
 }
 
 function capturaDatosVeh(){
-    alert(EdicionDetalle)
     let idVeh=$('#vehiculo_id').val()
     //si viene del boton edit no mandamos a consultar
     if(EdicionDetalle=="S"){
@@ -344,7 +340,21 @@ function capturaDatosVeh(){
         $('#horometrajemodal').attr('readonly',true);
         $('#horometrajemodal').val('');
         
-        
+        //tipo medicion
+        if(data.tipoMed!=null){
+            globalThis.Km_Hm_Veh_Sel=""
+            if(data.tipoMed.detalle=="Kilometraje"){
+              
+                $('#kilometrajemodal').attr('readonly',false);
+                $('#kilometrajemodal').val('');
+                Km_Hm_Veh_Sel="kilometrajemodal"
+            }else{
+                $('#horometrajemodal').attr('readonly',false);
+                $('#horometrajemodal').val('');
+                Km_Hm_Veh_Sel="horometrajemodal"
+            }
+        }
+            
                 
     }).fail(function(){
        
@@ -486,7 +496,6 @@ function cargartablaDetalle(){
 
                     `);
 
-                
                 if(data.estado=='Aprobado'){
                         
                     $('td',row).eq(6).html('<span style="min-width: 90px !important;font-size: 12px" class="label label-success estado_validado"> Aprobado &nbsp; &nbsp;&nbsp;</span>');
@@ -497,8 +506,13 @@ function cargartablaDetalle(){
                     $('td',row).eq(6).html('<span style="min-width: 90px !important;font-size: 12px" class="label label-danger estado_validado"> No aprobado &nbsp;</span>');
 
                 } 
-                $('td',row).eq(5).html(`${data.num_factura_ticket}`); 
-                 
+
+                if(data.firma_conductor==null){
+                    $('td',row).eq(5).html('<span"> Sin Firmar &nbsp; &nbsp;&nbsp;</span>'); 
+                }
+                else{
+                    $('td',row).eq(5).html(`<img src='data:image/png;base64,${data.firma_conductor}') class="img_firma">`);
+                } 
             } 
 
 
@@ -514,8 +528,8 @@ function editar_detalle(id){
     
       
     $.get("/detalle-desp/editar/"+id, function (data) {
-        console.log(data.resultado.num_factura_ticket);
-        console.log("ss")
+        console.log(data);
+
         if(data.error==true){
             alertNotificar(data.mensaje,"error")
             return
@@ -523,15 +537,8 @@ function editar_detalle(id){
         
         EdicionDetalle="S"
         $('#titulo_btn_detalle_form').html('Actualizar')
-
-        
-        
-        
-        $('#ticket_id').append(`<option  value="${data.resultado.num_factura_ticket}">${data.resultado.num_factura_ticket}</option>`).change()
-        
-        $("#ticket_id").trigger("chosen:updated"); // actualizamos el combo 
     
-        // $('#ticket_id').val(data.resultado.num_factura_ticket).trigger('change.select2')
+        $('#facturamodal').val(data.resultado.num_factura_ticket);
        
         $('#galonesmodal').val(data.resultado.galones);
         TotalGlobalGalones=data.resultado.galones
@@ -546,6 +553,25 @@ function editar_detalle(id){
         $('#combustible_id').val(data.resultado.id_tipocombustible).trigger('change.select2')
         
         
+        if(data.resultado.horometraje!=null){
+            $('#horometrajemodal').attr('readonly',false);
+            $('#horometrajemodal').val(data.resultado.horometraje);
+            Km_Hm_Veh_Sel="horometrajemodal"
+        }
+        else{
+            $('#horometrajemodal').attr('readonly',true);
+            $('#horometrajemodal').val('');              
+        }
+        if(data.resultado.kilometraje!=null){
+            $('#kilometrajemodal').attr('readonly',false);
+            $('#kilometrajemodal').val(data.resultado.kilometraje);
+            Km_Hm_Veh_Sel="kilometrajemodal"
+        }
+        else{
+            
+            $('#kilometrajemodal').attr('readonly',true);
+            $('#kilometrajemodal').val('');
+        }
 
         AccionFormDetalle="E"
         globalThis.IdDetalleEditar=id
@@ -565,7 +591,7 @@ $("#form_idDetalleDesp").submit(function(e){
     let vehiculo=$('#vehiculo_id').val()
     let chofer=$('#chofer_id').val()
 
-    let facturamodal=$('#ticket_id').val()
+    let facturamodal=$('#facturamodal').val()
     let totalmodal=$('#totalmodal').val()
     let combustible_id=$('#combustible_id').val()
     let preciounitariomodal=$('#preciounitariomodal').val()
@@ -578,7 +604,19 @@ $("#form_idDetalleDesp").submit(function(e){
         return
     } 
 
-   
+    if(Km_Hm_Veh_Sel=="kilometrajemodal"){
+        if(km_in==""){
+            alertNotificar("Ingrese el Kilometraje ","error")
+            $('#kilometrajemodal').focus()
+                return
+        }
+    }else{
+        if(Hm_in==""){
+            alertNotificar("Ingrese el Horometro ","error")
+            $('#horometrajemodal').focus()
+            return
+        }
+    }
 
     if(chofer=="" || chofer==null){
         alertNotificar("Seleccione un chofer ","error")
@@ -586,8 +624,8 @@ $("#form_idDetalleDesp").submit(function(e){
     } 
 
     if(facturamodal=="" || facturamodal==null){
-        alertNotificar("Ingrese el número de factura o ticket xx","error")
-       
+        alertNotificar("Ingrese el número de factura o ticket ","error")
+        $('#facturamodal').focus()
         return
     } 
 
@@ -692,7 +730,6 @@ $("#form_idDetalleDesp").submit(function(e){
 
 
 function limpiarCamposDetalle(){
-    $('#ticket_id').val('').trigger('change.select2')
     $('#vehiculo_id').val('').trigger('change.select2')
     $('#chofer_id').val('').trigger('change.select2')
 
@@ -819,7 +856,7 @@ function cargartareadetalle(idvehi,fecha){
     $('#tareamodalapr').html('');
     
     $.get("/listar-tarea-veh/"+idvehi+'/'+fecha, function (data) {
-        console.log(data)
+        
         if(data.error == true){
             alertNotificar(data.mensaje,'error');
         }
@@ -881,41 +918,53 @@ $("#firma_aprobacion").submit(function(e){
    
     // var iddetale = $("#iddetallef").val();
 
-    $.ajax({
-            
-        type: 'POST',
-        url: '/aprobar-despacho-firma',
-        method: 'POST',             
-        data: FrmData,
-        dataType: 'json',
-        contentType:false,
-        cache:false,
-        processData:false,
-
-        success: function(data){
-
-            
-            console.log(data)
-            // vistacargando("");                
-            if(data.error==true){
-                alertNotificar(data.mensaje,'error');
-                return;                      
+    html2canvas([document.getElementById('sign-pad')], {
+        onrendered: function (canvas) {
+            var canvas_img_data = canvas.toDataURL('image/png');
+            var img_data = canvas_img_data.replace(/^data:image\/(png|jpg);base64,/, "");
+           
+            if($( "p" ).hasClass("error")){
+                alertNotificar("Debes firmar para poder aprobar el despacho", "error")
+                return
             }
-            limpiarCamposDetalle()
-            limpiarCamposDetalleTxt()
-            alertNotificar(data.mensaje,"success");
-            cargartablaDetalle()
-            
-            $('#cerra_modal').click();
-            
-                            
-        }, error:function (data) {
-            console.log(data)
 
-            // vistacargando("");
-            alertNotificar('Ocurrió un error','error');
+            FrmData.append("b64_firma",img_data);
+            $.ajax({
+                    
+                type: 'POST',
+                url: '/aprobar-despacho-firma',
+                method: 'POST',             
+                data: FrmData,
+                dataType: 'json',
+                contentType:false,
+                cache:false,
+                processData:false,
+
+                success: function(data){
+
+                   
+                    console.log(data)
+                    // vistacargando("");                
+                    if(data.error==true){
+                        alertNotificar(data.mensaje,'error');
+                        return;                      
+                    }
+                    limpiarCamposDetalle()
+                    limpiarCamposDetalleTxt()
+                    alertNotificar(data.mensaje,"success");
+                    cargartablaDetalle()
+                 
+                    $('#cerra_modal').click();
+                    
+                                    
+                }, error:function (data) {
+                    console.log(data)
+
+                    // vistacargando("");
+                    alertNotificar('Ocurrió un error','error');
+                }
+            });
         }
-    });
-        
+    })
 })
 

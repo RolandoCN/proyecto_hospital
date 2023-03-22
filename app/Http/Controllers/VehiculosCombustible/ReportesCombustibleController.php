@@ -4,6 +4,7 @@ namespace App\Http\Controllers\VehiculosCombustible;
 use App\Http\Controllers\Controller;
 use App\Models\VehiculoCombustible\ReportesFormularios;
 use App\Models\VehiculoCombustible\DetalleDespacho;
+use App\Models\VehiculoCombustible\OrdenesCombustible;
 use \Log;
 use Illuminate\Http\Request;
 use DB;
@@ -211,6 +212,89 @@ class ReportesCombustibleController extends Controller
             Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage());
             return back();
         }
+    }
+
+    public function vistaOrdenes(){
+        return view('combustible.reportes.vistaOrdenes');
+    }
+
+    public function listadoOrden(){
+        try{
+            $ordenes=OrdenesCombustible::where('estado','!=','Elimininado')->get();
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$ordenes
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('MenuController => listadoOrden => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
+
+    //consulta y genera el documento
+    public function guardarOrden(Request $request){
+      
+        $transaction=DB::transaction(function() use ($request){
+            try{
+
+                $desde=$request->fecha_ini;
+                $hasta=$request->fecha_fin;
+
+                $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
+                ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
+                ->orderBy('id_vehiculo', 'asc')->get();
+                
+
+                return response()->json([
+                    'error'=>false,
+                    'data'=>$detalle
+                ]);
+
+                  
+                
+
+
+            }catch (\Throwable $e) {
+                DB::rollback();
+                Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea ".$e->getLine());           
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'Ocurrió un error, intentelo más tarde'
+                ]);
+            }    
+        });
+        return ($transaction);           
+        
+    }
+
+    public function pdfOrden($id, $nro){
+
+        $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
+        ->where('estado','Aprobado')
+        ->where('idcabecera_despacho',$id)
+        ->orderBy('id_vehiculo', 'asc')->get();
+
+        $fechaw=$detalle[0]->fecha_cabecera_despacho;
+        setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
+        $fecha= $fechaw;
+        $fecha = strftime("%d de %B de %Y", strtotime($fecha));
+        $movimiento=DB::table('vc_movimiento')
+        ->where('estado','!=','Eliminado')
+        // ->where('id_vehiculo',$id)
+        ->where('nro_ticket',$nro)
+        ->first();
+        // dd($movimiento);
+
+        $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha]);
+        $crearpdf->setPaper("A4", "portrait");
+
+        return $crearpdf->stream("xx.pdf");
+
+        $estadoarch = $crearpdf->stream();
     }
 }
 

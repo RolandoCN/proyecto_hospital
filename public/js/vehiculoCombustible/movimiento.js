@@ -416,7 +416,7 @@ function llenar_tabla_tarea(){
                                             <a onclick="btn_eliminar_movimi(${data.idmovimiento })" class="btn btn-danger btn-xs"> Eliminar </a><br>
 
                                             <a onclick="reporte_movimiento(${data.idmovimiento })" class="btn btn-success btn-xs"
-                                            style="margin-left:3px"> Reporte </a>
+                                            style="margin-top:3px"> Reporte </a>
                                        
                                     
                     `); 
@@ -438,8 +438,42 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function reporte_movimiento(id){
-   window.location.href='reporte-mov-ind/'+id
+//    window.location.href='reporte-mov-ind/'+id
+   vistacargando("m","Espere por favor")
+   $.get("reporte-mov-ind/"+id, function(data){
+        vistacargando("")
+        
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        verpdf(data.pdf)
+     
+   }).fail(function(){
+       vistacargando("")
+       alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+   });
 }
+
+//permite visualizarr el pdf de la emision en una modal
+function verpdf(nombre_pdf){
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "/visualizar-documento/"+nombre_pdf);   
+    $("#vinculo").attr("href", '/descargar-doc/'+nombre_pdf);
+    $("#documentopdf").modal("show");
+    $('#titulo').html('Emisión');
+}
+
+//limpiamos los datos de la modal
+$('#documentopdf').on('hidden.bs.modal', function (e) {            
+    var iframe=$('#iframePdf');
+    iframe.attr("src", null);
+
+});
+
+$('#descargar').click(function(){
+    $('#documentopdf').modal("hide");
+});
 
 function visualizarForm(tipo){
     $('#chofer').val($('#idchofer_loguea').val()).trigger('change.select2')
@@ -485,6 +519,7 @@ function btn_eliminar_movimi(idmovimiento){
     }
    
 }
+
 
 function cargartarea(){
 

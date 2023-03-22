@@ -9,8 +9,10 @@ use App\Models\VehiculoCombustible\TipoMedicion;
 use App\Models\VehiculoCombustible\Movimiento;
 use App\Models\VehiculoCombustible\TareaMovimento;
 use \Log;
+use Storage;
 use Illuminate\Http\Request;
 use PDF;
+use SplFileInfo;
 use App\Http\Controllers\VehiculosCombustible\TareasController;
 
 class MovimientoVehController extends Controller
@@ -95,22 +97,107 @@ class MovimientoVehController extends Controller
         ->where('idmovimiento',$id)->where('estado','Activo')
         ->get();
 
-        if(is_null($movimiento)){
-            return back()->with(['mensajePInfoDespacho'=>'Aún no se han registrado despachos aprobados','estadoP'=>'danger']);
+        if(sizeof($movimiento)==0){
+           
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'No se encontró infomación'
+            ]);
         }
         
-        $fechaw=date('H:i:s',strtotime($movimiento[0]->fecha_salida_patio));
+        $fecha=date('Y-m-d',strtotime($movimiento[0]->fecha_salida_patio));
+       
         setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
-                $fecha= $fechaw;
+                $fecha= $fecha;
                 $fecha = strftime("%d de %B de %Y", strtotime($fecha));
 
         
-        $nombre="movimiento"; 
+        $nombrePDF="movimiento_".$movimiento[0]->idmovimiento.".pdf"; 
         
         $crearpdf=PDF::loadView('combustible.reportes.pdf_movimiento',['datos'=>$movimiento,'fecha'=>$fecha]);
         $crearpdf->setPaper("A4", "landscape");
 
-        return $crearpdf->stream($nombre."_".date('YmdHis').'.pdf');
+        $estadoarch = $crearpdf->stream();
+                        
+        //lo guardamos en el disco temporal
+        Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+        $exists_destino = Storage::disk('public')->exists($nombrePDF); 
+        if($exists_destino){   
+            return response()->json([
+                'error'=>false,
+                'pdf'=>$nombrePDF
+            ]);
+        }else{
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'No se pudo crear el documento'
+            ]);
+        }
+
+        
+    }
+
+
+    
+    //funcion que permite visualizar un documento selecciondo
+    public function visualizarDocumento($documentName){
+        try {
+            //obtenemos la extension
+            $info = new SplFileInfo($documentName);
+            $extension = $info->getExtension();
+            if($extension!= "pdf" && $extension!="PDF"){
+                return \Storage::disk('public')->download($documentName);
+            }else{
+                // obtenemos el documento del disco en base 64
+                $documentEncode= base64_encode(\Storage::disk('public')->get($documentName));
+                return view("vistaPrevia")->with([
+                    "documentName"=>$documentName,
+                    "documentEncode"=>$documentEncode
+                ]);        
+            }            
+        }   catch (\Throwable $th) {
+            Log::error("ProcesosIniciadosController => visualizarDocumento => Mensaje: ".$th->getMessage());
+            abort("404");            
+        }
+
+    }
+
+    public function descargar($archivo)
+    {
+        
+        $exists = Storage::disk('public')
+        ->exists($archivo);       
+        if($exists){
+            return Storage::disk('public')
+            ->download($archivo);
+        }else{
+            return back()->with(['error'=>'No se pudo descargar el archivo','estadoP'=>'danger']);
+        }
+      
+    }
+    public function buscarTicket(Request $request){
+        log::info($request->all());
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            $text=mb_strtoupper($search);
+            $data=Movimiento::where(function($query)use($text){
+                $query->where('nro_ticket', 'like', '%'.$text.'%');
+            })
+            ->take(10)->get();
+        }
+        
+        return response()->json($data);
+
+    }
+
+    public function ticketVehiculo($nro){
+        $data=Movimiento::where('nro_ticket',$nro)->first();
+        return response()->json([
+            'error'=>false,
+            'data'=>$data
+        ]);
+
     }
 
     public function guardar(Request $request){
@@ -149,6 +236,7 @@ class MovimientoVehController extends Controller
             $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
             $guarda_movi->id_chofer=auth()->user()->id_persona;
             $guarda_movi->motivo=$request->motivo;
+            $guarda_movi->area=$request->solicitante;
             $guarda_movi->acompanante=$request->acompanante;
             $guarda_movi->nro_ticket=$request->n_ticket;
 

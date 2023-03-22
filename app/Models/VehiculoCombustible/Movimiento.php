@@ -12,7 +12,8 @@ class Movimiento extends Model
 
 
     public function vehiculo(){
-        return $this->belongsTo('App\Models\VehiculoCombustible\Vehiculo', 'id_vehiculo', 'id_vehiculo');
+        return $this->belongsTo('App\Models\VehiculoCombustible\Vehiculo', 'id_vehiculo', 'id_vehiculo')
+        ->with('marca');
     }
 
 

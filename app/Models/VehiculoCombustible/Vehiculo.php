@@ -26,5 +26,9 @@ class Vehiculo extends Model
         return $this->belongsTo('App\Models\VehiculoCombustible\Departamento', 'id_departamento', 'iddepartamento');
     }
 
+    public function marca(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\Marca', 'id_marca', 'id_marca');
+    }
+
 }
 ?>

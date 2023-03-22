@@ -186,13 +186,6 @@
                         <input type="hidden" name="idcabeceradespacho"id="idcabeceradespacho">
 
                         <div class="form-group col-md-6">
-                            <label for="exampleInputEmail1" class="">Nro. Factura Ticket</label>
-                            <select data-placeholder="Seleccione Un Número Factura/Ticket" style="width: 100%;" class="form-control select2" name="ticket_id" id="ticket_id" onchange="capturaTicket()">
-                              
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-6">
                             <label for="exampleInputEmail1" class="">Vehiculo</label>
                             <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_id" id="vehiculo_id" onchange="capturaDatosVeh()">
                                 
@@ -202,63 +195,62 @@
                             </select>
                         </div>
                         
-                        {{-- <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
                             <label for="inputPlaca">Kilometraje</label>
                             <input type="text" readonly class="form-control"  id="kilometrajemodal" name="kilometrajemodal">
-                        </div>
+                          </div>
   
-                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                          <div class="form-group col-md-6 col-sm-12 col-xs-12">
                             <label for="inputDescripcion">Horometraje</label>
                             <input type="text" readonly class="form-control" id="horometrajemodal" name="horometrajemodal">
-                        </div> --}}
-
-                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
-                            <div class="chosen-select-conten">
-                                <label for="inputfabtricacion">Conductor</label>
-                                <select data-placeholder="Seleccione Un Conductor" style="width: 100%;" class="form-control select2" name="chofer_id" id="chofer_id" >
-                            
-                                    @foreach ($persona as $dato)
-                                        <option value=""></option>
-                                        <option value="{{ $dato->idpersona }}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
-                                    @endforeach
-                                </select>
-                            
-                            </div>
-                        </div>
+                          </div>
+                          <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                              <div class="chosen-select-conten">
+                                  <label for="inputfabtricacion">Conductor</label>
+                                  <select data-placeholder="Seleccione Un Conductor" style="width: 100%;" class="form-control select2" name="chofer_id" id="chofer_id" >
+                                
+                                        @foreach ($persona as $dato)
+                                            <option value=""></option>
+                                            <option value="{{ $dato->idpersona }}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
+                                        @endforeach
+                                    </select>
+                                
+                              </div>
+                          </div>
   
-                        {{-- <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                          <div class="form-group col-md-6 col-sm-12 col-xs-12">
                             <label for="inputPlaca">N° Factura/Ticket</label>
                             <input type="text"  class="form-control"  id="facturamodal" name="facturamodal">
-                        </div> --}}
-
-                        
-                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                          </div>
+  
+                          
+                           <div class="form-group col-md-6 col-sm-12 col-xs-12">
                             <label for="inputModelo">Total</label>
                             <input type="number" class="floatNumberField form-control"step="0.01" min="0" onkeyup="calculartotal(this,0)" class="form-control" name="totalmodal" id="totalmodal">
-                        </div>
+                          </div>
                           
-                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
-                            <div class="chosen-select-conten">
-                                <label for="inputfabtricacion">Combustible</label>
-                                <select data-placeholder="Seleccione Un Combustible" style="width: 100%;" class="form-control select2" name="combustible_id" id="combustible_id" onchange="precioCombgas()" >
-                            
-                                    @foreach ($tipo_comb as $dato)
-                                        <option value=""></option>
-                                        <option value="{{ $dato->id_tipocombustible }}" >{{ $dato->detalle }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
-                        <label for="inputModelo">Precio Unitario</label>
-                        <input type="text" class="form-control" readonly name="preciounitariomodal" id="preciounitariomodal">
-                        </div>
-
-                        <div class="form-group col-md-6 col-sm-12 col-xs-12">
-                        <label for="inputModelo">Galones</label>
-                        <input type="text" readonly class="form-control" name="galonesmodal" id="galonesmodal">
-                        </div>
+                          <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                              <div class="chosen-select-conten">
+                                    <label for="inputfabtricacion">Combustible</label>
+                                    <select data-placeholder="Seleccione Un Combustible" style="width: 100%;" class="form-control select2" name="combustible_id" id="combustible_id" onchange="precioCombgas()" >
+                                
+                                        @foreach ($tipo_comb as $dato)
+                                            <option value=""></option>
+                                            <option value="{{ $dato->id_tipocombustible }}" >{{ $dato->detalle }}</option>
+                                        @endforeach
+                                    </select>
+                              </div>
+                          </div>
+  
+                          <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                            <label for="inputModelo">Precio Unitario</label>
+                            <input type="text" class="form-control" readonly name="preciounitariomodal" id="preciounitariomodal">
+                          </div>
+  
+                          <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                            <label for="inputModelo">Galones</label>
+                            <input type="text" readonly class="form-control" name="galonesmodal" id="galonesmodal">
+                          </div>
                         
 
 
@@ -303,7 +295,7 @@
 
                                             <th class="sorting_desc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" aria-sort="descending" style="width: 10%;">Fecha despacho</th>
 
-                                            <th class="sorting_desc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" aria-sort="descending" style="width: 12%;">Nro Ticket</th>
+                                            <th class="sorting_desc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" aria-sort="descending" style="width: 12%;">Firma</th>
 
                                             <th class="sorting_desc" tabindex="0" aria-controls="datatable" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending" aria-sort="descending" style="width: 13%;">Estado</th>
 
@@ -326,9 +318,9 @@
 
         </div>
 
-
+        @include('combustible.modal_detalle_desp')
     </section>
-    @include('combustible.modal_detalle_desp')
+    
 
 
     

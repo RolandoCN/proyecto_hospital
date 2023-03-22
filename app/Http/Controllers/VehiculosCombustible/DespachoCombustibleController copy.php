@@ -349,7 +349,44 @@ class DespachoCombustibleController extends Controller
         $this->validate($request, $rules, $messages);
         $transaction=DB::transaction(function() use($request){
             try{
-                
+                $ultimo_valor=null;
+                //ultimo km o hm recorrido del vehiculo
+                if(!is_null($request->kilometrajemodal)){
+                    $ultimoKm_Hm=Movimiento::where('id_vehiculo',$request->vehiculo_id)
+                    ->where('estado','!=','Eliminada')
+                    ->get()->last();
+                    $ultimo_valor=$ultimoKm_Hm->kilometraje;
+                    $tipo="kilomentraje";
+                    if(!is_null($ultimo_valor)){
+                        //validamos que el valor ingresado en gasolinera sea mayor al registrado en patio y en gasolinera
+                        if($request->kilometrajemodal <= $ultimo_valor){
+                            return response()->json([
+                                'error'=>true,
+                                'mensaje'=>'El valor del kilometraje no puede ser menor o igual a '.$ultimo_valor
+                            ]);
+                        }
+                        
+    
+                    }
+
+                }else{
+                    $ultimoKm_Hm=Movimiento::where('id_vehiculo',$request->vehiculo_id)
+                    ->where('estado','!=','Eliminada')
+                    ->get()->last();
+                    $ultimo_valor=$ultimoKm_Hm->horometro;
+                    $tipo="horometro";
+                    //validamos que el valor ingresado en gasolinera sea mayor al registrado en patio y en gasolinera
+                   
+                    if($request->horometrajemodal <= $ultimo_valor){
+                        return response()->json([
+                            'error'=>true,
+                            'mensaje'=>'El valor del horometro no puede ser menor o igual a '.$ultimo_valor
+                        ]);  
+                    }
+
+                }
+             
+
                 $data_cabecera=CabeceraDespacho::find($request->idcabeceradespacho);
                 $fecha_cabecera=$data_cabecera->fecha;
                               
@@ -365,8 +402,8 @@ class DespachoCombustibleController extends Controller
                 $guarda_det_des->total=$request->totalmodal;
                 $guarda_det_des->idconductor=$request->chofer_id;
                 $guarda_det_des->fecha_hora_despacho=date('Y-m-d H:i:s');
-                $guarda_det_des->estado="Aprobado";
-                $guarda_det_des->num_factura_ticket=$request->ticket_id;
+                $guarda_det_des->estado="No aprobado";
+                $guarda_det_des->num_factura_ticket=$request->facturamodal;
                 $guarda_det_des->idusuarioregistra=auth()->User()->id;
 
                 //validar no se repita
@@ -480,9 +517,9 @@ class DespachoCombustibleController extends Controller
                 $actualiza_detalle->total=$request->totalmodal;
                 $actualiza_detalle->idconductor=$request->chofer_id;
                 $actualiza_detalle->fecha_hora_despacho=date('Y-m-d H:i:s');
-                $actualiza_detalle->estado="Aprobado";
+                $actualiza_detalle->estado="No aprobado";
                 $actualiza_detalle->firma_conductor=null;
-                $actualiza_detalle->num_factura_ticket=$request->ticket_id;
+                $actualiza_detalle->num_factura_ticket=$request->facturamodal;
                 $actualiza_detalle->idusuarioregistra=auth()->User()->id;
 
                 //validar no se repita
@@ -614,22 +651,13 @@ class DespachoCombustibleController extends Controller
         try{
             $fechaDesp=date('Y-m-d', strtotime($fecha));
            
-            // $bucartarea=Tarea::where('id_vehiculo',$idVeh)
-            // ->where('estado','!=','Eliminada')
-            // ->where(function($query)use($fechaDesp){
-            //     $query->WhereDate('fecha_inicio','<=',$fechaDesp)
-            //     ->WhereDate('fecha_fin','>=',$fechaDesp);
-            // })
-            // ->get();
-
-            $bucartarea=Movimiento::where('id_vehiculo',$idVeh)
+            $bucartarea=Tarea::where('id_vehiculo',$idVeh)
             ->where('estado','!=','Eliminada')
             ->where(function($query)use($fechaDesp){
-                $query->WhereDate('fecha_salida_patio','<=',$fechaDesp)
-                ->WhereDate('fecha_llega_patio','>=',$fechaDesp);
+                $query->WhereDate('fecha_inicio','<=',$fechaDesp)
+                ->WhereDate('fecha_fin','>=',$fechaDesp);
             })
             ->get();
-
             if($interno==null){
                 return response()->json([
                     'error'=>false,
