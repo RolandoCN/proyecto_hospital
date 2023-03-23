@@ -55,7 +55,7 @@ $("#form_reporte").submit(function(e){
                 return;                      
             }
             // limpiarCampos()
-            alertNotificar(data.mensaje,"success");
+            // alertNotificar(data.mensaje,"success");
             // $('#form_ing').hide(200)
             // $('#listado_formulario').show(200)
             llenar_tabla_reportes(data.data)
@@ -105,7 +105,7 @@ function llenar_tabla_reportes(data){
         columns:[
             {data: "estado"},
             {data: "vehiculo.descripcion" },
-            {data: "estado"},
+            {data: "num_factura_ticket"},
             {data: "chofer.apellidos"},
             {data: "num_factura_ticket"},
          

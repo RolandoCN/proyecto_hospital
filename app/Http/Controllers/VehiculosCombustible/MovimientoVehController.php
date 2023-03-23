@@ -286,6 +286,8 @@ class MovimientoVehController extends Controller
                 $c->WhereDate('fecha_salida_patio','>=',$salida)
                 ->Where('fecha_llega_patio', '<=', $llegada);
             })
+            ->where('id_vehiculo',$guarda_movi->id_vehiculo)
+            ->where('estado','!=','Eliminada')
             ->first();
             if(!is_null($verificaVeh)){
                 return response()->json([
@@ -336,7 +338,15 @@ class MovimientoVehController extends Controller
 
     public function eliminar($id){
         try{
+            //verificamos que no se haya generado despacho
             $mov=Movimiento::find($id);
+            if(!is_null($mov->codigo_orden)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'Ya existen despacho generado con esta orden'
+                ]);
+            }
+            
             $mov->id_usuario_actualiza=auth()->user()->id;
             $mov->fecha_act=date('Y-m-d H:i:s');
             $mov->estado="Eliminada";

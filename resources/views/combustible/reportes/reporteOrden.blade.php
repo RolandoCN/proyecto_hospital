@@ -84,7 +84,7 @@
             <tr style="font-size: 13px" class="fuenteSubtitulo ">
                 <th class="pad"
                     style="height:25px;text-align: center;background-color: #D3D3D3;border-top: 0px;border-bottom: 0px;border-color:#D3D3D3"colspan="8"
-                    width="100%">ORDEN DE PEDIDO DE COMBUSTIBLE</th>
+                    width="100%">ORDEN DE PEDIDO DE COMBUSTIBLE Nº {{$movimiento->codigo_orden}}</th>
 
             </tr>
 
@@ -186,7 +186,7 @@
             <tr style="font-size: 13px" class="fuenteSubtitulo ">
                 <th class="pad"
                     style="height:25px;text-align: center;background-color: #D3D3D3;border-top: 0px;border-bottom: 0px;border-color:#D3D3D3"colspan="8"
-                    width="100%">ORDEN DE SALIDA DE VEHÍCULOS</th>
+                    width="100%">ORDEN DE SALIDA DE VEHÍCULOS Nº {{$movimiento->codigo_orden}}</th>
 
             </tr>
 
