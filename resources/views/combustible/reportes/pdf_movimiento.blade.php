@@ -48,7 +48,7 @@
         }
 
         .img_firma {
-            width: 80px;
+            width: 150px;
         }
 
         .btn_azul {
@@ -280,10 +280,14 @@
         </tbody>
 
     </table>
+    <br><br>
+    
+    <div style="margin-top:50px" style="text-align:center">
+        <img src="data:image/png;base64,'.{{ $datos[0]->firmaconductor }}.'" class="img_firma">
+    </div>
+        
 
-
-
-  
+   
 
 
 

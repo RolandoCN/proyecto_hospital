@@ -284,31 +284,28 @@ class ReportesCombustibleController extends Controller
         $fecha = strftime("%d de %B de %Y", strtotime($fecha));
         $movimiento=DB::table('vc_movimiento')
         ->where('estado','!=','Eliminado')
-        // ->where('id_vehiculo',$id)
         ->where('nro_ticket',$nro)
         ->first();
-        // dd($movimiento);
 
         $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha]);
         $crearpdf->setPaper("A4", "portrait");
         
-        // $nombrePDF=
-        return $crearpdf->stream("xx.pdf");
+        $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
         Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
         $exists_destino = Storage::disk('public')->exists($nombrePDF); 
         if($exists_destino){   
-            return response()->json([
+            return [
                 'error'=>false,
                 'pdf'=>$nombrePDF
-            ]);
+            ];
         }else{
-            return response()->json([
+            return [
                 'error'=>true,
                 'mensaje'=>'No se pudo crear el documento'
-            ]);
+            ];
         }
 
-        $estadoarch = $crearpdf->stream();
+       
     }
 }
 

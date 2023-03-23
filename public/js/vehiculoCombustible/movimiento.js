@@ -536,7 +536,7 @@ function cargartarea(){
         else{
         
             if(data.resultado.length===0){
-                $('#chofer').val('').trigger('change.select2')
+                // $('#chofer').val('').trigger('change.select2')
                 var tarea="no";
                 // $('#tareasguard').val(''); 
               

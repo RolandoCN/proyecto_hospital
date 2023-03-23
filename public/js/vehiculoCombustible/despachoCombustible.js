@@ -303,7 +303,6 @@ function volverListado(){
 }
 
 function capturaDatosVeh(){
-    alert(EdicionDetalle)
     let idVeh=$('#vehiculo_id').val()
     //si viene del boton edit no mandamos a consultar
     if(EdicionDetalle=="S"){
@@ -663,23 +662,23 @@ $("#form_idDetalleDesp").submit(function(e){
             cargartablaDetalle()
 
             //preguntamos si desea firmar y aprobar el despacho generado/actualizado
-            swal({
-                title: "¿Desea aprobar el despacho?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Si, continuar",
-                cancelButtonText: "No, cancelar",
-                closeOnConfirm: false,
-                closeOnCancel: false
-            },
-            function(isConfirm) {
-                if (isConfirm) { 
-                   //mostramos el resumen en la modal y la seccion para que firme
-                   ver_detalledes(data.id_despacho)
-                }
-                sweetAlert.close();   // ocultamos la ventana de pregunta
-            }); 
+            // swal({
+            //     title: "¿Desea aprobar el despacho?",
+            //     type: "warning",
+            //     showCancelButton: true,
+            //     confirmButtonClass: "btn-danger",
+            //     confirmButtonText: "Si, continuar",
+            //     cancelButtonText: "No, cancelar",
+            //     closeOnConfirm: false,
+            //     closeOnCancel: false
+            // },
+            // function(isConfirm) {
+            //     if (isConfirm) { 
+            //        //mostramos el resumen en la modal y la seccion para que firme
+            //        ver_detalledes(data.id_despacho)
+            //     }
+            //     sweetAlert.close();   // ocultamos la ventana de pregunta
+            // }); 
                             
         }, error:function (data) {
             console.log(data)

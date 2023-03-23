@@ -14,6 +14,7 @@ use App\Models\VehiculoCombustible\TareaDetalleDespacho;
 use App\Models\VehiculoCombustible\MovimientoDetalleDespacho;
 use \Log;
 use DB;
+use Storage;
 use PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\VehiculosCombustible\TareasController;
@@ -370,8 +371,7 @@ class DespachoCombustibleController extends Controller
                 $guarda_det_des->idusuarioregistra=auth()->User()->id;
 
                 //validar no se repita
-                $ver=DetalleDespacho::where('idcabecera_despacho',$guarda_det_des->idcabecera_despacho)
-                ->where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
+                $ver=DetalleDespacho::where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
                 ->where('estado','!=',"Eliminado")->first();
                 if(!is_null($ver)){
                 return response()->json([
@@ -379,14 +379,70 @@ class DespachoCombustibleController extends Controller
                         'mensaje'=>'El número de factura-ticket ya está ingresado'
                     ]);
                 }
+
+                $fecha_desp=$guarda_det_des->fecha_cabecera_despacho;
+
+                //validamos que el conductor y vehiculo seleccionado sea el asociado al movimientp
+                $verificaVehMov=Movimiento::where('id_vehiculo',$guarda_det_des->id_vehiculo)
+                ->where('nro_ticket',$guarda_det_des->num_factura_ticket)
+                ->where('estado','!=','Eliminada')
+                ->first();
+                
+                if(is_null($verificaVehMov)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El vehiculo seleccionado no esta asociado a la orden de salida'
+                    ]);
+                }
+                
+                $verificaVehCond=Movimiento::where('id_chofer',$guarda_det_des->idconductor)
+                ->where('nro_ticket',$guarda_det_des->num_factura_ticket)
+                ->where('estado','!=','Eliminada')
+                ->first();
+                
+                if(is_null($verificaVehCond)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El chofer seleccionado no esta asociado a la orden de salida'
+                    ]);
+                }
+                
+                
+                //validar que el ticket seleccionadp este dentro del rango de movimmiento y el despacho
+                $verificaVeh=Movimiento::where(function($c)use($fecha_desp) {
+                    $c->WhereDate('fecha_salida_patio','<=',$fecha_desp)
+                    ->Where('fecha_llega_patio', '>=', $fecha_desp);
+                })
+                ->where('id_vehiculo',$guarda_det_des->id_vehiculo)
+                ->where('nro_ticket',$guarda_det_des->num_factura_ticket)
+                ->where('estado','!=','Eliminada')
+                ->first();
+               
+                if(is_null($verificaVeh)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'La orden de salida asociada a este movimiento esta fuera del rango de fecha de este despacho'
+                    ]);
+                }
+
             
                 if($guarda_det_des->save()){
+
+                    //generamos el documento
+                    $genera=$this->pdfOrden($guarda_det_des->idcabecera_despacho,$guarda_det_des->num_factura_ticket, $guarda_det_des->iddetalle_despacho, 'N');
+
+                    if($genera['error']==false){
+                        
+                    }
+                    
+
                     return response()->json([
                         'error'=>false,
                         'mensaje'=>'Información registrada exitosamente',
                         'id_despacho'=>$guarda_det_des->iddetalle_despacho 
                     ]);
                 }else{
+                    DB::Rollback();
                     return response()->json([
                         'error'=>true,
                         'mensaje'=>'No se pudo registrar la información'
@@ -398,7 +454,7 @@ class DespachoCombustibleController extends Controller
 
             }catch (\Throwable $e) {
                 DB::Rollback();
-                Log::error('DespachoCombustibleController => guardarDetalle => mensaje => '.$e->getMessage()).' Linea '.$e->getLine();
+                Log::error('DespachoCombustibleController => guardarDetallexx => mensaje => '.$e->getMessage().' Linea '.$e->getLine());
                 return response()->json([
                     'error'=>true,
                     'mensaje'=>'Ocurrió un error'
@@ -439,13 +495,96 @@ class DespachoCombustibleController extends Controller
                 'resultado'=>$detalleDespEdit
             ]);
         }catch (\Throwable $e) {
-            Log::error('DespachoCombustibleController => listarDetalleDesp => mensaje => '.$e->getMessage());
+            Log::error('DespachoCombustibleController => listarDetalleDesp => mensaje => '.$e->getMessage().' Linea => '.$e->getLine());
             return response()->json([
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error'
             ]);
             
         }
+    }
+
+    public function pdfOrden($id, $nro, $iddet, $tipo){
+
+        try{
+            if($tipo=='N'){
+                //generamos y guardamos el codigo de orden
+                $ultimoCod=Movimiento::where('estado','!=','Eliminada')
+                ->get()->last();
+                if(!is_null($ultimoCod->codigo_orden)){
+                    $codigo=$ultimoCod->codigo_orden;  
+                    $codigo=explode('-', $codigo);
+                    $codigo=$codigo+1;             
+                    $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo[2]);
+                }else{
+                    $codi=1;
+                    $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
+                }
+
+                $movim=Movimiento::where('nro_ticket',$nro)->first();
+                $movim->codigo_orden=$cod;
+                $movim->save();
+            }
+                   
+
+            $movimiento=DB::table('vc_movimiento')
+            ->where('estado','!=','Eliminado')
+            ->where('nro_ticket',$nro)
+            ->first();
+
+            $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
+
+            $act_det_des=DetalleDespacho::find($iddet);
+            $act_det_des->pdf_orden=$nombrePDF;
+            $act_det_des->save();
+            
+            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
+            ->where('estado','Aprobado')
+            ->where('idcabecera_despacho',$id)
+            ->orderBy('id_vehiculo', 'asc')->get();
+
+
+            $fechaw=$detalle[0]->fecha_cabecera_despacho;
+            setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
+            $fecha= $fechaw;
+            $fecha = strftime("%d de %B de %Y", strtotime($fecha));
+           
+
+            $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha]);
+            $crearpdf->setPaper("A4", "portrait");
+            $estadoarch = $crearpdf->stream();
+            
+            
+            $exists_destino = Storage::disk('public')->exists($nombrePDF);
+            
+            if($exists_destino){   
+                Storage::disk('public')->delete($nombrePDF);
+            }
+
+            Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = Storage::disk('public')->exists($nombrePDF); 
+            if($exists_destino){   
+               
+                return [
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ];
+            }else{
+                return [
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ];
+            }
+        }catch (\Throwable $e) {
+            Log::error('DespachoCombustibleController => pdfOrden => mensaje => '.$e->getMessage().' Linea => '.$e->getLine());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+
+       
     }
 
     public function actualizarDetalle(Request $request, $id){
@@ -486,8 +625,7 @@ class DespachoCombustibleController extends Controller
                 $actualiza_detalle->idusuarioregistra=auth()->User()->id;
 
                 //validar no se repita
-                $ver=DetalleDespacho::where('idcabecera_despacho',$actualiza_detalle->idcabecera_despacho)
-                ->where('num_factura_ticket',$actualiza_detalle->num_factura_ticket)
+                $ver=DetalleDespacho::where('num_factura_ticket',$actualiza_detalle->num_factura_ticket)
                 ->where('iddetalle_despacho','!=',$id)
                 ->where('estado','!=',"Eliminado")->first();
                 if(!is_null($ver)){
@@ -496,32 +634,19 @@ class DespachoCombustibleController extends Controller
                         'mensaje'=>'El número de factura-ticket ya está ingresado'
                     ]);
                 }
+
+               
             
                 if($actualiza_detalle->save()){
 
-                    $fecha_cabecera=$actualiza_detalle->fecha_cabecera_despacho;
-                    //eliminamos la informacion de las tareasDetalle
-                    $eliminaTareaDetalle=TareaDetalleDespacho::where('iddetalle_despacho', $id);
-                    $eliminaTareaDetalle->delete();
+                    //generamos el documento
+                    $genera=$this->pdfOrden($actualiza_detalle->idcabecera_despacho,$actualiza_detalle->num_factura_ticket, $actualiza_detalle->iddetalle_despacho, 'A');
 
-                    // buscamos las tareas asociadas a ese vehiculo ese dia asi como la informacion de los movimientos
-                    $tareas=$this->listarTareaVeh($request->vehiculo_id,$fecha_cabecera,'S');  
-                    if($tareas['error']==true){
-                        DB::Rollback();
-                        return response()->json([
-                            'error'=>true,
-                            'mensaje'=>'No se pudo registrar la información, ocurrió un error al obtener las tareas'
-                        ]);
-                    }else{
-                        if(sizeof($tareas['resultado'])>0){
-                            foreach($tareas['resultado'] as $tarea){
-                                $tareaDespacho= new TareaDetalleDespacho();
-                                $tareaDespacho->id_tarea=$tarea->id_tarea;
-                                $tareaDespacho->iddetalle_despacho=$actualiza_detalle->iddetalle_despacho;
-                                $tareaDespacho->save();
-                            }  
-                        }    
+                    if($genera['error']==false){
                     }
+
+                    $fecha_cabecera=$actualiza_detalle->fecha_cabecera_despacho;
+                  
                     //eliminamos la informacion de las movimiemtoDetalle
                     $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
                     $eliminaMovimDetalle->delete();
@@ -559,7 +684,7 @@ class DespachoCombustibleController extends Controller
 
             }catch (\Throwable $e) {
                 DB::Rollback();
-                Log::error('DespachoCombustibleController => guardarDetalle => mensaje => '.$e->getMessage());
+                Log::error('DespachoCombustibleController => actualizaDetalle => mensaje => '.$e->getMessage());
                 return response()->json([
                     'error'=>true,
                     'mensaje'=>'Ocurrió un error'
@@ -579,9 +704,17 @@ class DespachoCombustibleController extends Controller
                 $elim_detalle->estado="Eliminado";
                 if($elim_detalle->save()){
 
-                    //eliminamos la informacion de las tareasDetalle
-                    $eliminaTareaDetalle=TareaDetalleDespacho::where('iddetalle_despacho', $id);
-                    $eliminaTareaDetalle->delete();
+                    $movimiento=Movimiento::where('estado','!=','Eliminado')
+                    ->where('nro_ticket',$elim_detalle->num_factura_ticket)
+                    ->first();
+                    $movimiento->codigo_orden=null;
+                    $movimiento->save();
+                    
+                    $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
+                    $exists_destino = Storage::disk('public')->exists($nombrePDF);
+                    if($exists_destino){   
+                        Storage::disk('public')->delete($nombrePDF);
+                    }                   
 
                     //eliminamos la informacion de las movimiemtoDetalle
                     $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
@@ -614,14 +747,6 @@ class DespachoCombustibleController extends Controller
         try{
             $fechaDesp=date('Y-m-d', strtotime($fecha));
            
-            // $bucartarea=Tarea::where('id_vehiculo',$idVeh)
-            // ->where('estado','!=','Eliminada')
-            // ->where(function($query)use($fechaDesp){
-            //     $query->WhereDate('fecha_inicio','<=',$fechaDesp)
-            //     ->WhereDate('fecha_fin','>=',$fechaDesp);
-            // })
-            // ->get();
-
             $bucartarea=Movimiento::where('id_vehiculo',$idVeh)
             ->where('estado','!=','Eliminada')
             ->where(function($query)use($fechaDesp){
@@ -739,11 +864,7 @@ class DespachoCombustibleController extends Controller
                 
                 $nombre="despacho"; 
                 
-                //creamos el objeto
-                // $pdf=new PDF();
-                //habilitamos la opcion php para mostrar la paginacion
-                // $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
-                // enviamos a la vista para crear el documento que los datos repsectivos
+              
                 $crearpdf=PDF::loadView('combustible.pdf_despacho_gasoli',['datos'=>$datos,'detalle'=>$detalle,'fecha'=>$fecha]);
                 $crearpdf->setPaper("A4", "landscape");
 

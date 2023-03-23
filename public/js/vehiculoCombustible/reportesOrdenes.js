@@ -55,7 +55,7 @@ $("#form_reporte").submit(function(e){
                 return;                      
             }
             // limpiarCampos()
-            alertNotificar(data.mensaje,"success");
+            // alertNotificar(data.mensaje,"success");
             // $('#form_ing').hide(200)
             // $('#listado_formulario').show(200)
             llenar_tabla_reportes(data.data)
@@ -82,7 +82,6 @@ function llenar_tabla_reportes(data){
 
     let desde=$('#fecha_ini').val()
     let hasta=$('#fecha_fin').val()
-    alert(desde)
    
     $('#tabla_formulario').DataTable({
         "destroy":true,
@@ -95,30 +94,30 @@ function llenar_tabla_reportes(data){
         },
         columnDefs: [
             { "width": "5%", "targets": 0 },
-            { "width": "10%", "targets": 1 },
-            { "width": "10%", "targets": 2 },
-            { "width": "20%", "targets": 3 },
-            { "width": "45%", "targets": 4 },
-            { "width": "10%", "targets": 5 },
+            { "width": "20%", "targets": 1 },
+            { "width": "15%", "targets": 2 },
+            { "width": "40%", "targets": 3 },
+            { "width": "10%", "targets": 4 },
+           
             
         ],
         data: data,
         columns:[
             {data: "estado"},
-            {data: "estado" },
-            {data: "estado"},
+            {data: "vehiculo.descripcion" },
             {data: "num_factura_ticket"},
+            {data: "chofer.apellidos"},
             {data: "num_factura_ticket"},
-            {data: "estado"},
+         
             
         ],    
         "rowCallback": function( row, data, index ) {
             $('td', row).eq(0).html(index+1)
-            $('td', row).eq(1).html(desde)
-            $('td', row).eq(2).html(hasta)
-            $('td', row).eq(5).html(`
+            $('td', row).eq(1).html(data.vehiculo.descripcion+" "+data.vehiculo.codigo_institucion)
+            $('td', row).eq(3).html(data.chofer.apellidos+" "+data.chofer.nombres)
+            $('td', row).eq(4).html(`
                             
-                                    <button type="button" class="btn btn-success btn-xs" onclick="reporteDescargar('${data.idcabecera_despacho}','${data.num_factura_ticket}')">Descargar</button>
+                                    <button type="button" class="btn btn-success btn-xs" onclick="visualizarOrden('${data.pdf_orden}')">Visualizar</button>
 
                                 
                             
@@ -132,7 +131,29 @@ function llenar_tabla_reportes(data){
 
 }
 
-function reporteDescargar(id, nroTicket){
+//permite visualizarr el pdf de la emision en una modal
+function visualizarOrden(nombre_pdf){
+    var iframe=$('#iframePdf');
+    iframe.attr("src", "/visualizar-documento/"+nombre_pdf);   
+    $("#vinculo").attr("href", '/descargar-doc/'+nombre_pdf);
+    $("#documentopdf").modal("show");
+    $('#titulo').html('Orden');
+}
+
+//limpiamos los datos de la modal
+$('#documentopdf').on('hidden.bs.modal', function (e) {            
+    var iframe=$('#iframePdf');
+    iframe.attr("src", null);
+
+});
+
+$('#descargar').click(function(){
+    $('#documentopdf').modal("hide");
+});
+
+
+
+function reporteDescargar1(id, nroTicket){
     
     window.location.href="genera-orden-pdf/"+id+"/"+nroTicket
 }

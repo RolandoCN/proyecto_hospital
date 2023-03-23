@@ -115,18 +115,14 @@
                         class="pad"><b># Despacho </b> </td>
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-color: #D3D3D3"
                         colspan="1" class="pad"><b>Fecha-Hora</b></td>
-                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"colspan="1"
+                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"colspan="4"
                         class="pad"><b>Conductor</b></td>
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"colspan="2"
-                        class="pad"><b>Firma Conductor</b></td>
+                        class="pad"><b>Número Ticket</b></td>
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="2" class="pad"><b>Vehículo</b></td>
-                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>Kilometraje</b></td>
-                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>Horometraje</b></td>
-                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="2" class="pad"><b>Tareas</b></td>
+                        colspan="3" class="pad"><b>Vehículo</b></td>
+                   
+                   
                     <td style="text-align:#D3D3D3;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
                         colspan="1" class="pad"><b>Combustible</b></td>
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
@@ -146,28 +142,27 @@
                             {{ $dato->iddetalle_despacho }}</td>
                         <td style="border-color: #D3D3D3"colspan="1" class="pad">
                             {{ $dato->fecha_hora_despacho }}</td>
-                        <td style="border-color: #D3D3D3" colspan="1" class="pad">
+                        <td style="border-color: #D3D3D3" colspan="4" class="pad">
                             {{ $dato->chofer->nombres }} {{ $dato->chofer->apellidos }}</td>
 
 
 
                         <td align="center" style="border-color: #D3D3D3"colspan="2" class="pad">
-                            <img
-                                src="data:image/png;base64,'.{{ $dato->firma_conductor }}.'" class="img_firma">
+                           {{ $dato->num_factura_ticket}}
                                 
-                            </td>
-                        <td style="border-color: #D3D3D3" colspan="2" class="pad">
+                        </td>
+                        <td style="border-color: #D3D3D3" colspan="3" class="pad">
                             {{ $dato->vehiculo['descripcion'] . ' ' .$dato->vehiculo['codigo_institucion'].' ['. $dato->vehiculo['placa'].']' }}
                         </td>
-                        <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
+                        {{-- <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
                             {{ $dato->kilometraje }}</td>
                         <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
                             @if ($dato->horometraje != null)
                                 {{ $dato->horometraje }}
-                            @endif
-                        </td>
+                            @endif --}}
+                        {{-- </td> --}}
                       
-                        <td style="border-color: #D3D3D3" colspan="2" class="pad">
+                        {{-- <td style="border-color: #D3D3D3" colspan="2" class="pad">
 
                             @php
                                 $tareasVeh=\DB::table('vc_tarea')
@@ -185,9 +180,8 @@
                                
                             </ul>
                             
-                        </td>
-                        {{-- <td style=";border-color: #D3D3D3" colspan="2" class="pad">
                         </td> --}}
+                     
                
                         <td style=";border-color: #D3D3D3" colspan="1" class="pad">
                             {{ $dato->tipocombustible['detalle'] }}</td>
