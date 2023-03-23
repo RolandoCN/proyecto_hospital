@@ -508,22 +508,22 @@ class DespachoCombustibleController extends Controller
 
         try{
             if($tipo=='N'){
-                //generamos y guardamos el codigo de orden
-                $ultimoCod=Movimiento::where('estado','!=','Eliminada')
-                ->get()->last();
-                if(!is_null($ultimoCod->codigo_orden)){
-                    $codigo=$ultimoCod->codigo_orden;  
-                    $codigo=explode('-', $codigo);
-                    $codigo=$codigo+1;             
-                    $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo[2]);
-                }else{
-                    $codi=1;
-                    $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
-                }
+                // //generamos y guardamos el codigo de orden
+                // $ultimoCod=Movimiento::where('estado','!=','Eliminada')
+                // ->get()->last();
+                // if(!is_null($ultimoCod->codigo_orden)){
+                //     $codigo=$ultimoCod->codigo_orden;  
+                //     $codigo=explode('-', $codigo);
+                //     $codigo=$codigo+1;             
+                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo[2]);
+                // }else{
+                //     $codi=1;
+                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
+                // }
 
-                $movim=Movimiento::where('nro_ticket',$nro)->first();
-                $movim->codigo_orden=$cod;
-                $movim->save();
+                // $movim=Movimiento::where('nro_ticket',$nro)->first();
+                // $movim->codigo_orden=$cod;
+                // $movim->save();
             }
                    
 

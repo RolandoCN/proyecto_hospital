@@ -98,7 +98,7 @@
                 <td style="height:25px;text-align: left;border-color:black; "colspan="9"
                 width="60%"><b>Lugar y Fecha: </b> Chone, {{$fecha}} </td>
                 <td style="height:25px;text-align: left;border-color:black"colspan="7"
-                width="40%"><b>Número de Movilización: </b>{{$datos[0]->idmovimiento }}</td>
+                width="40%"><b>Número de Movilización: </b>{{$datos[0]->codigo_orden}}</td>
             </tr>
 
             <tr style="border-color:blue">
@@ -174,7 +174,8 @@
                 <th style="height:25px;text-align: center;border-color:black; "colspan="2"
                 width="35%">Km</th>
 
-
+                <th style="height:25px;text-align: center;border-color:black; "colspan="2"
+                width="35%">Km Recorrido</th>
                 
                 <th style="height:25px;text-align: center;border-color:black; "colspan="3"
                 width="35%">Lugar</th>
@@ -183,12 +184,19 @@
                 width="35%">Fecha Hora</th>
 
 
-                <th style="height:25px;text-align: center;border-color:black; "colspan="2"
-                width="35%">Km</th>
+                
             </tr>
 
             <tr>
+                @php
+                    $km_corrido_1=0;
+                    $km_corrido_2=0;
+                @endphp
                 @foreach($datos as $e=>$item)
+                    @php
+                        $km_corrido_1=$item->km_llegada_destino - $item->km_salida_patio;
+                        $km_corrido_2=$item->km_llegada_patio  - $item->km_salida_destino;
+                    @endphp
                     <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%">
                         {{$item->lugar_salida_patio}}
@@ -220,15 +228,17 @@
                         {{$item->km_llegada_destino}}
                     </td>
 
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
+                    width="35%">{{$km_corrido_1}}</td>
+
                     <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%"></td>
 
                     <td style="height:25px;text-align: left;border-color:black; "colspan="2"
-                    width="35%"></td>
+                    width="35%">{{$ticket->fecha_registro}}</td>
 
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="2"
-                    width="35%"></td>
+               
 
                    
                 @endforeach
@@ -267,6 +277,11 @@
                         {{$datos[0]->km_llegada_patio}}
                     </td>
 
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
+                    width="35%">
+                        {{$km_corrido_2}}
+                    </td>
+
                     <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%"></td>
 
@@ -274,8 +289,7 @@
                     width="35%"></td>
 
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="2"
-                    width="35%"></td>
+                  
             </tr>
         </tbody>
 

@@ -82,7 +82,7 @@ class VehiculoController extends Controller
             'fabricacion.required' => 'Debe ingresar el año de fabricacion',
             'cmb_tipocombustible.required' => 'Debe seleccionar el tipo combustible',
             'cmb_tipomedicion.required' => 'Debe seleccionar el tipo medición',
-            'departamento.required' => 'Debe seleccionar el departamento',
+            // 'departamento.required' => 'Debe seleccionar el departamento',
         ];
            
 
@@ -97,7 +97,7 @@ class VehiculoController extends Controller
             'fabricacion' => "required",
             'cmb_tipocombustible' => "required",
             'cmb_tipomedicion' => "required",
-            'departamento' => "required",
+            // 'departamento' => "required",
            
         ];
 
@@ -120,6 +120,7 @@ class VehiculoController extends Controller
             $guarda_veh->usuariocrea=auth()->user()->id;
             $guarda_veh->fecha_registro=date('Y-m-d H:i:s');
             $guarda_veh->estado="A";
+            $guarda_veh->estado_vehiculo=$request->estado_veh;
            
             //comprobamos si no existe otra placa con el mismo dato
             $placaexiste=Vehiculo::where('placa',$guarda_veh->placa)
@@ -190,7 +191,7 @@ class VehiculoController extends Controller
             'fabricacion.required' => 'Debe ingresar el año de fabricacion',
             'cmb_tipocombustible.required' => 'Debe seleccionar el tipo combustible',
             'cmb_tipomedicion.required' => 'Debe seleccionar el tipo medición',
-            'departamento.required' => 'Debe seleccionar el departamento',
+            // 'departamento.required' => 'Debe seleccionar el departamento',
         ];
            
 
@@ -205,7 +206,7 @@ class VehiculoController extends Controller
             'fabricacion' => "required",
             'cmb_tipocombustible' => "required",
             'cmb_tipomedicion' => "required",
-            'departamento' => "required",
+            // 'departamento' => "required",
            
         ];
 
@@ -227,6 +228,7 @@ class VehiculoController extends Controller
             $guarda_veh->id_departamento=$request->departamento;
             $guarda_veh->usuario_actualiza=auth()->user()->id;
             $guarda_veh->fecha_actualizacion=date('Y-m-d H:i:s');
+            $guarda_veh->estado_vehiculo=$request->estado_veh;
            
             //comprobamos si no existe otra placa con el mismo dato
             $placaexiste=Vehiculo::where('placa',$guarda_veh->placa)

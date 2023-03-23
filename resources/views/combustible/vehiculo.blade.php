@@ -41,12 +41,13 @@
                                 <th>Descripción</th>
                                 <th>Placa</th>
                                 <th>Uso</th>
+                                <th>Estado</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="6"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -182,8 +183,19 @@
 
                             </div>
 
+                            <label for="inputPassword3" class="col-sm-2 control-label">Estado</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" id="estado_veh"  name="estado_veh" >
+                                                                    
+                                    <option value="Bueno" selected>Bueno</option>
+                                    <option value="Malo" >Malo</option>
+        
+                                </select>
 
-                            <label for="inputPassword3" class="col-sm-2 control-label">Departamento</label>
+                            </div>
+
+
+                            {{-- <label for="inputPassword3" class="col-sm-2 control-label">Departamento</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="Seleccione Un Departamento" style="width: 100%;" class="form-control select2" name="departamento" id="departamento" >
                                 
@@ -191,7 +203,7 @@
                                         <option value="{{ $dato->iddepartamento}}" >{{ $dato->descripcion }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                         </div>
                         <hr>

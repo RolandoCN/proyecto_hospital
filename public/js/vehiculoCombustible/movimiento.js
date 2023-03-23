@@ -99,7 +99,10 @@ $("#form_registro_tarea").submit(function(e){
     let acompanante=$('#acompanante').val()
     
     let solicitante=$('#solicitante').val()
-            
+    let tiene_novedad=$('#tiene_novedad').val()
+    let txt_novedad= $('#txt_novedad').val()
+
+    let autorizado=$('#autorizado').val()
     
     if(vehiculo=="" || vehiculo==null){
         alertNotificar("Seleccione el vehículo","error")
@@ -216,36 +219,23 @@ $("#form_registro_tarea").submit(function(e){
         $('#solicitante').focus()
         return
     } 
+
+    if(autorizado=="" || autorizado==null){
+        alertNotificar("Seleccione la persona que autoriza'","error")
+     
+        return
+    } 
+
+
+    if(tiene_novedad=="Si"){
+        if(txt_novedad =="" || txt_novedad==null){
+            alertNotificar("Ingrese la novedad'","error")
+            $('#txt_novedad').focus()
+            return
+        }
+    }
     
-    //comprobamos que el valor a ingresar d km o hm no sea menor al ultimo ingresado
-    // if(TipoMedi=="Kilometraje"){
-    //     if(parseFloat(ValorMinimoKm_Hm)> parseFloat(kilometraje)){
-    //         alertNotificar("El valor del kilometraje no puede ser menor a "+ValorMinimoKm_Hm,"error")
-    //         $('#kilometraje').focus()
-    //         return
-    //     }
-
-    //     if(kilometraje=="" || kilometraje==null || kilometraje<0){
-    //         alertNotificar("Ingrese un valor de kilometraje válido","error")
-    //         $('#kilometraje').focus()
-    //         return
-    //     } 
-
-    // }else{
-    //     if(parseFloat(ValorMinimoKm_Hm)> parseFloat(horometro)){
-    //         alertNotificar("El valor del Horometro no puede ser menor a "+ValorMinimoKm_Hm,"error")
-    //         $('#horometro').focus()
-    //         return
-    //     }
-
-    //     if(horometro=="" || horometro==null || horometro<0){
-    //         alertNotificar("Ingrese un valor de kilometraje válido","error")
-    //         $('#horometro').focus()
-    //         return
-    //     } 
-    // }
     
-   
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -318,6 +308,8 @@ function limpiarCampos(){
     $('#entrada_salida').val('').trigger('change.select2')
     $('#vehiculo_tarea').val('').trigger('change.select2')
     $('#chofer').val('').trigger('change.select2')
+
+    $('#autorizado').val('').trigger('change.select2')
    
     $('#observacion').val('')
     // limpiarSingArea()
@@ -327,6 +319,38 @@ function limpiarCampos(){
 
     $('#msmDetalledos').html('')
     $('#msmDetalledos').hide()
+
+    $('#n_ticket').val('')
+    $('#fecha_h_salida_patio').val('')
+    $('#km_salida_patio').val('')
+    $('#l_destino_ll').val('')
+    $('#fecha_h_destino').val('')
+
+    $('#km_destino_ll').val('')
+    $('#l_sal_destino').val('')
+    $('#fecha_h_destino_salida').val('')
+    $('#km_salida_dest').val('')
+
+    $('#fecha_h_llegada_patio').val('')
+    $('#km_llegada_patio').val('')
+    $('#motivo').val('')
+    $('#acompanante').val('')
+    $('#solicitante').val('')
+    
+    $('#div_novedad').hide()
+
+    $('#tiene_novedad').val('No').trigger('change.select2')
+    $('#txt_novedad').val('')
+}
+
+function cambiaNovedad(){
+    let tiene_novedad=$('#tiene_novedad').val()
+    if(tiene_novedad=="Si"){
+        $('#div_novedad').show()
+    }else{
+        $('#div_novedad').hide()
+        $('#txt_novedad').val('')
+    }
     
 }
 
@@ -385,7 +409,7 @@ function llenar_tabla_tarea(){
                                             <li> <b>Fecha Salida:</b> ${data.fecha_hora_salida_patio} </li>
                                             <li> <b>Km Salida:</b> ${data.km_salida_patio} </li>
 
-                                            <li>  <b>Fecha Llegada:</b> ${data.fecha_llega_patio}</li>
+                                            <li>  <b>Fecha Llegada:</b> ${data.fecha_hora_llega_patio}</li>
                                             <li>  <b>Km Llegada:</b> ${data.km_llegada_patio}</li>
 
                                             `)
@@ -438,7 +462,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function reporte_movimiento(id){
-//    window.location.href='reporte-mov-ind/'+id
+   window.location.href='reporte-mov-ind/'+id
    vistacargando("m","Espere por favor")
    $.get("reporte-mov-ind/"+id, function(data){
         vistacargando("")
@@ -647,3 +671,26 @@ $(document).ready(function () {
 function limpiarSingArea(){
     $('#signArea').signaturePad().clearCanvas();
 }
+
+//Busqueda de persona por cedula o nombre
+$('#n_ticket').select2({
+   
+    placeholder: 'Seleccione una opción',
+    ajax: {
+    url: 'buscar-ticket-persona',
+    dataType: 'json',
+    delay: 250,
+    processResults: function (data) {
+        console.log(data)
+        return {
+        results:  $.map(data, function (item) {
+                return {
+                    text: item.numero_ticket,
+                    id: item.numero_ticket
+                }
+            })
+        };
+    },
+    cache: true
+    }
+});

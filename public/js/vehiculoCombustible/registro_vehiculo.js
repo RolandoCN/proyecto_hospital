@@ -81,10 +81,10 @@ $("#form_registro_veh").submit(function(e){
         return
     } 
 
-    if(departamento=="" || departamento==null){
-        alertNotificar("Seleccione el departamento","error")
-        return
-    } 
+    // if(departamento=="" || departamento==null){
+    //     alertNotificar("Seleccione el departamento","error")
+    //     return
+    // } 
     
     $.ajaxSetup({
         headers: {
@@ -139,6 +139,7 @@ $("#form_registro_veh").submit(function(e){
 function limpiarCampos(){
     $('#codigo').val('')
     $('#placa').val('')
+    $('#estado_veh').val('')
     $('#descripcion').val('')
     $('#marcacombo').val('').trigger('change.select2')
     $('#tipousocombo').val('').trigger('change.select2')
@@ -184,7 +185,8 @@ function llenar_tabla_vehiculo(){
                     { "width": "10%", "targets": 0 },
                     { "width": "30%", "targets": 1 },
                     { "width": "10%", "targets": 2 },
-                    { "width": "25%", "targets": 3 },
+                    { "width": "15%", "targets": 3 },
+                    { "width": "10%", "targets": 3 },
                     { "width": "15%", "targets": 4 },
                    
                 ],
@@ -194,10 +196,11 @@ function llenar_tabla_vehiculo(){
                         {data: "descripcion" },
                         {data: "placa"},
                         {data: "tipo_uso.detalle"},
+                        {data: "estado_vehiculo"},
                         {data: "placa"},
                 ],    
                 "rowCallback": function( row, data ) {
-                    $('td', row).eq(4).html(`
+                    $('td', row).eq(5).html(`
                                   
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarVehi(${data.id_vehiculo})">Editar</button>
                                                                                 
@@ -235,6 +238,7 @@ function editarVehi(id_vehiculo){
         $('#codigo').val(data.resultado.codigo_institucion)
         $('#placa').val(data.resultado.placa)
         $('#descripcion').val(data.resultado.descripcion)
+        $('#estado_veh').val(data.resultado.estado_vehiculo).trigger('change.select2')
 
         $('#marcacombo').val(data.resultado.id_marca).trigger('change.select2')
         $('#tipousocombo').val(data.resultado.id_tipouso).trigger('change.select2')

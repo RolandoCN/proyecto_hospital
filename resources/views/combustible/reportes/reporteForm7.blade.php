@@ -194,7 +194,7 @@
 
                                     <td align="right" style="border-top: 0px; border-bottom: 0px;border-left:0px;border-right:0px;border-color: #D3D3D3">
 
-                                        @php
+                                        {{-- @php
                                             $km_recorrido=0;
 
                                             $ValorRecorrido=\DB::table('vc_movimiento')
@@ -218,7 +218,7 @@
                                            {{$km_recorrido}} 
                                         @else
                                             -----
-                                        @endif
+                                        @endif --}}
                                        
                                         
                                        
@@ -236,6 +236,7 @@
 
                                 </tr>
                                 @php
+                                    $km_recorrido=0;
                                     $total_final=number_format($total_final,2,'.','')+number_format($dato->total,2,'.','');
                                     $total_galones=number_format($total_galones,2,'.','')+number_format($dato->galones,2,'.','');
                                     $total_km_recorridos=$total_km_recorridos+$km_recorrido;

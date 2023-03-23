@@ -106,27 +106,37 @@
 
                             <div class="form-group " >
                                 <label for="inputPassword3" >Lugar Salida Patio</label>                              
-                                <input type="text" readonly class="form-control" placeholder="Chone" id="l_salida_patio" name="l_salida_patio">                            
+                                <input type="text" readonly class="form-control" placeholder="Chone" id="l_salida_patio"  maxlength="100" onKeyPress="if(this.value.length==100) return false;" name="l_salida_patio">                            
                             </div>
 
                             <div class="form-group " >
                                 <label for="inputPassword3" >Lugar Destino</label>                              
-                                <input type="text" class="form-control" placeholder="Ingrese lugar destino" id="l_destino_ll" name="l_destino_ll" onkeyup="lugardestino()">                            
+                                <input type="text" class="form-control" maxlength="100" onKeyPress="if(this.value.length==100) return false;" placeholder="Ingrese lugar destino" id="l_destino_ll" name="l_destino_ll" onkeyup="lugardestino()">                            
                             </div>
 
                             <div class="form-group " >
                                 <label for="inputPassword3" >Lugar Salida Destino</label>                              
-                                <input type="text" readonly class="form-control" placeholder="Ingrese lugar salida destino" id="l_sal_destino" name="l_sal_destino" >                            
+                                <input type="text" maxlength="100" onKeyPress="if(this.value.length==100) return false;"  readonly class="form-control" placeholder="Ingrese lugar salida destino" id="l_sal_destino" name="l_sal_destino" >                            
                             </div>
 
                             <div class="form-group " >
                                 <label for="inputPassword3" >Lugar Llegada Patio</label>                              
-                                <input type="text" class="form-control" readonly placeholder="Chone" id="l_llegada_pat" name="l_llegada_pat" >                            
+                                <input type="text" maxlength="100" onKeyPress="if(this.value.length==100) return false;"  class="form-control" readonly placeholder="Chone" id="l_llegada_pat" name="l_llegada_pat" >                            
                             </div>
 
                             <div class="form-group " >
                                 <label for="inputPassword3" >Motivo</label>                              
-                                <textarea class="form-control" placeholder="Ingrese el motivo" id="motivo" name="motivo"></textarea>                          
+                                <textarea class="form-control" placeholder="Ingrese el motivo" id="motivo" maxlength="200" onKeyPress="if(this.value.length==200) return false;"  name="motivo"></textarea>                          
+                            </div>
+                            <div class="form-group" >
+                                <label for="inputPassword3" >Autorizado Por</label>                            
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2"  name="autorizado" id="autorizado" >
+                                    
+                                    @foreach ($autorizado as $dato)
+                                        <option value=""></option>
+                                        <option value="{{ $dato->id_autorizado_salida  }}" >{{ $dato->nombres }} </option>
+                                    @endforeach
+                                </select>                            
                             </div>
 
                         </div>   
@@ -144,7 +154,7 @@
 
                             <div class="form-group">
                                 <label for="inputPassword3" >Fecha Hora Salida Patio</label>
-                                <input type="datetime-local" class="form-control"id="fecha_h_salida_patio" name="fecha_h_salida_patio">                            
+                                <input type="datetime-local" class="form-control"id="fecha_h_salida_patio" name="fecha_h_salida_patio" >                            
                             </div>
 
                             <div class="form-group">
@@ -164,16 +174,30 @@
 
                             <div class="form-group">
                                 <label for="inputPassword3" >Acompañante</label>
-                                <textarea class="form-control" placeholder="Ingrese nombre acompañante" id="acompanante" name="acompanante">  </textarea>                
+                                <textarea class="form-control" placeholder="Ingrese nombre acompañante" id="acompanante" maxlength="200" onKeyPress="if(this.value.length==200) return false;"  name="acompanante">  </textarea>                
                             </div>
+
+
+                            <div class="form-group" >
+                                <label for="inputPassword3" >Presenta Novedad</label>                            
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" onchange="cambiaNovedad()" name="tiene_novedad" id="tiene_novedad" >
+                                    
+                                    <option value="No" selected>No</option>
+                                    <option value="Si">Si</option>
+                                </select>                            
+                            </div>
+                            
 
                         </div>
 
                         <div class="col-md-4">
 
-                            <div class="form-group " >
+                            <div class="form-group "> 
                                 <label for="inputPassword3" >Nro Ticket</label>                            
-                                <input type="number" class="form-control" id="n_ticket" name="n_ticket" placeholder="Ingrese el número de ticket">                                    
+                                {{-- <input type="number" maxlength="20" onKeyPress="if(this.value.length==20) return false;"  class="form-control" id="n_ticket" name="n_ticket" placeholder="Ingrese el número de ticket">                                     --}}
+
+                                <select data-placeholder="Seleccione Un Número Factura/Ticket" style="width: 100%;" class="form-control select2" name="n_ticket" id="n_ticket"></select>
+
                             </div>
 
                             <div class="form-group ">
@@ -183,25 +207,32 @@
 
                             <div class="form-group ">
                                 <label for="inputPassword3" >Kilometraje Destino</label>
-                                <input type="number" class="form-control"id="km_destino_ll" name="km_destino_ll" placeholder="Ingrese el kilometraje destino" onkeyup="kmdestino()" onblur="validaValoresKmDest()">
+                                <input type="number" maxlength="10" onKeyPress="if(this.value.length==10) return false;"  class="form-control"id="km_destino_ll" name="km_destino_ll" placeholder="Ingrese el kilometraje destino" onkeyup="kmdestino()" onblur="validaValoresKmDest()">
                             </div>
 
                             <div class="form-group ">
                                 <label for="inputPassword3" >Kilometraje Salida Destino</label>
-                                <input type="number" readonly class="form-control"id="km_salida_dest" name="km_salida_dest" placeholder="Ingrese el kilometraje de salida destino">
+                                <input type="number" maxlength="10" onKeyPress="if(this.value.length==10) return false;"  readonly class="form-control"id="km_salida_dest" name="km_salida_dest" placeholder="Ingrese el kilometraje de salida destino">
                             </div>
 
                             <div class="form-group ">
                                 <label for="inputPassword3" >Kilometraje LLegada Patio</label>
-                                <input type="number" class="form-control"id="km_llegada_patio" name="km_llegada_patio" placeholder="Ingrese el kilometraje de llegada patio"  onblur="validaValoresKmLlegadaPatio()" >
+                                <input type="number" maxlength="10" onKeyPress="if(this.value.length==10) return false;" class="form-control"id="km_llegada_patio" name="km_llegada_patio" placeholder="Ingrese el kilometraje de llegada patio"  onblur="validaValoresKmLlegadaPatio()" >
                             </div>
 
                             <div class="form-group ">
                                 <label for="inputPassword3" >Solicitado Por</label>
-                                <textarea class="form-control"id="solicitante" name="solicitante" placeholder="Ingrese el área solicitante" ></textarea>
+                                <textarea  maxlength="100" onKeyPress="if(this.value.length==100) return false;" class="form-control"id="solicitante" name="solicitante" placeholder="Ingrese el área solicitante" ma ></textarea>
+                            </div>
+
+                            <div class="form-group" id="div_novedad" style="display:none">
+                                <label for="inputPassword3" >Novedad</label>
+                                <textarea class="form-control" placeholder="Ingrese la novedad" id="txt_novedad" name="txt_novedad"> </textarea>                
                             </div>
 
                         </div>
+
+                       
 
                         
                         <div id="content_firma" class="form-group col-md-12">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\VehiculosCombustible;
 use App\Http\Controllers\Controller;
 use App\Models\Persona;
 use App\Models\VehiculoCombustible\Vehiculo;
+use App\Models\VehiculoCombustible\Ticket;
 use App\Models\VehiculoCombustible\Tarea;
 use App\Models\VehiculoCombustible\TipoMedicion;
 use App\Models\VehiculoCombustible\Movimiento;
@@ -12,6 +13,7 @@ use \Log;
 use Storage;
 use Illuminate\Http\Request;
 use PDF;
+use DB;
 use SplFileInfo;
 use App\Http\Controllers\VehiculosCombustible\TareasController;
 
@@ -28,12 +30,17 @@ class MovimientoVehController extends Controller
 
     public function index(){
         $persona=Persona::where('estado','A')->get();
-        $vehiculo=Vehiculo::where('estado','A')->get();
+        $vehiculo=Vehiculo::where('estado','A')
+        ->where('estado_vehiculo','Bueno')
+        ->get();
+
+        $autorizado=DB::table('vc_autorizado_salida')
+        ->where('estado','A')->get();
        
         return view('combustible.patio',[
             "persona"=>$persona,
             "vehiculo"=>$vehiculo,
-    
+            "autorizado"=>$autorizado,
         ]);
     }
 
@@ -113,9 +120,17 @@ class MovimientoVehController extends Controller
 
         
         $nombrePDF="movimiento_".$movimiento[0]->idmovimiento.".pdf"; 
+        $numero_ticket=$movimiento[0]->nro_ticket;
+
+        $ticket=Ticket::with('gasolinera', 'combustible')
+        ->where('estado','A')
+        ->where('numero_ticket',$numero_ticket )
+        ->first();
         
-        $crearpdf=PDF::loadView('combustible.reportes.pdf_movimiento',['datos'=>$movimiento,'fecha'=>$fecha]);
+        $crearpdf=PDF::loadView('combustible.reportes.pdf_movimiento',['datos'=>$movimiento,'fecha'=>$fecha, "ticket"=>$ticket]);
         $crearpdf->setPaper("A4", "landscape");
+
+        return $crearpdf->stream("ss.pdf");
 
         $estadoarch = $crearpdf->stream();
                         
@@ -231,7 +246,14 @@ class MovimientoVehController extends Controller
                $valorRecorrido=$request->km_llegada_patio -  $request->km_salida_patio;
             } 
             
-          
+            if($request->tiene_novedad=="Si"){
+                if(is_null($request->txt_novedad)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'Ingrese la descripción de la novedad'
+                    ]);
+                }
+            }
 
             $guarda_movi=new Movimiento();
             $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
@@ -240,6 +262,9 @@ class MovimientoVehController extends Controller
             $guarda_movi->area=$request->solicitante;
             $guarda_movi->acompanante=$request->acompanante;
             $guarda_movi->nro_ticket=$request->n_ticket;
+            $guarda_movi->tiene_novedad=$request->tiene_novedad;
+            $guarda_movi->novedad=$request->txt_novedad;
+            $guarda_movi->id_autorizado_salida=$request->autorizado;
 
             $guarda_movi->lugar_salida_patio="Chone";
             $guarda_movi->km_salida_patio=$request->km_salida_patio;
@@ -274,10 +299,16 @@ class MovimientoVehController extends Controller
             $guarda_movi->fecha_registro=date('Y-m-d H:i:s');
             $guarda_movi->estado="Activo";
 
-            //validar el lugar del vehiculo
-            // $valida_lugar=Movimiento::where('id_vehiculo', '=',$guarda_movi->id_vehiculo)
-            // ->where('estado','Activo')
-            // ->get()->last();
+            //validar que no se repita el numero de ticket
+            $existe_ticket=Movimiento::where('estado','!=','Eliminada')
+            ->where('nro_ticket', $guarda_movi->nro_ticket)
+            ->first();
+            if(!is_null($existe_ticket)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El número de ticket ya se encuentra asociado a otra salida'
+                ]);
+            }
 
             //comprobamos que el vehiculo no se encuentre ocupado en el rango de fecha
             $salida=$guarda_movi->fecha_salida_patio;
@@ -295,9 +326,39 @@ class MovimientoVehController extends Controller
                     'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
                 ]);
             }
-           
-          
+
+            $ultimoCod=Movimiento::where('estado','!=','Eliminada')
+            ->get()->last();
+            if(!is_null($ultimoCod)){
+                $codigo=$ultimoCod->codigo_orden;  
+                $codigo=explode('-', $codigo);
+                $codigo=$codigo[2]+1;  
+                $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo);
+            }else{
+                $codi=1;
+                $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
+            }
+            //dd($cod);
+                
             if($guarda_movi->save()){
+
+                //generamos y guardamos el codigo de orden
+                // $ultimoCod=Movimiento::where('estado','!=','Eliminada')
+                // ->get()->last();
+                // if(!is_null($ultimoCod->codigo_orden)){
+                //     $codigo=$ultimoCod->codigo_orden;  
+                //     $codigo=explode('-', $codigo);
+                //     $codigo=$codigo[2]+1;  
+                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo);
+                // }else{
+                //     $codi=1;
+                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
+                // }
+
+                $movim=Movimiento::where('nro_ticket',$request->n_ticket)->first();
+                $movim->codigo_orden=$cod;
+                $movim->save();
+
                 //guardamos las tareas asociados al vehiculo en el movimiento
                 if(isset($request->tareasguard)){
                     if(sizeof($request->tareasguard)>0 ){
