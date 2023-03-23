@@ -230,7 +230,8 @@ class MovimientoVehController extends Controller
                //calculamos el valor recorrido
                $valorRecorrido=$request->km_llegada_patio -  $request->km_salida_patio;
             } 
-           
+            
+          
 
             $guarda_movi=new Movimiento();
             $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
@@ -274,11 +275,26 @@ class MovimientoVehController extends Controller
             $guarda_movi->estado="Activo";
 
             //validar el lugar del vehiculo
-            $valida_lugar=Movimiento::where('id_vehiculo', '=',$guarda_movi->id_vehiculo)
-            ->where('estado','Activo')
-            ->get()->last();
+            // $valida_lugar=Movimiento::where('id_vehiculo', '=',$guarda_movi->id_vehiculo)
+            // ->where('estado','Activo')
+            // ->get()->last();
+
+            //comprobamos que el vehiculo no se encuentre ocupado en el rango de fecha
+            $salida=$guarda_movi->fecha_salida_patio;
+            $llegada=$guarda_movi->fecha_llega_patio;
+            $verificaVeh=Movimiento::where(function($c)use($salida,$llegada) {
+                $c->WhereDate('fecha_salida_patio','>=',$salida)
+                ->Where('fecha_llega_patio', '<=', $llegada);
+            })
+            ->first();
+            if(!is_null($verificaVeh)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
+                ]);
+            }
            
-           
+          
             if($guarda_movi->save()){
                 //guardamos las tareas asociados al vehiculo en el movimiento
                 if(isset($request->tareasguard)){
