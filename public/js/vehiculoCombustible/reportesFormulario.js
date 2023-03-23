@@ -101,7 +101,7 @@ function limpiarCampos(){
     //     }
     // });
 }
-
+ 
 function llenar_tabla_reportes(){
     var num_col = $("#tabla_formulario thead tr th").length; //obtenemos el numero de columnas de la tabla
 	$("#tabla_formulario tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
