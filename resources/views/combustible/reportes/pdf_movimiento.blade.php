@@ -174,10 +174,17 @@
                 <th style="height:25px;text-align: center;border-color:black; "colspan="2"
                 width="35%">Km</th>
 
+
                 <th style="height:25px;text-align: center;border-color:black; "colspan="2"
                 width="35%">Km Recorrido</th>
                 
-                <th style="height:25px;text-align: center;border-color:black; "colspan="3"
+                <th style="height:25px;text-align: center;border-color:black; "colspan="1"
+                width="35%">Lugar</th>
+
+                <th style="height:25px;text-align: center;border-color:black; "colspan="1"
+                width="35%">Lugar</th>
+
+                <th style="height:25px;text-align: center;border-color:black; "colspan="1"
                 width="35%">Lugar</th>
 
                 <th style="height:25px;text-align: center;border-color:black; "colspan="2"
@@ -228,24 +235,30 @@
                         {{$item->km_llegada_destino}}
                     </td>
 
+
                     <td style="height:25px;text-align: center;border-color:black; "colspan="2"
                     width="35%">{{$km_corrido_1}}</td>
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="3"
+                    <td style="height:25px;text-align: left;border-color:black; "colspan="1"
+                    width="35%"></td>
+
+                    <td style="height:25px;text-align: left;border-color:black; "colspan="1"
+                    width="35%"></td>
+
+                    <td style="height:25px;text-align: left;border-color:black; "colspan="1"
                     width="35%"></td>
 
                     <td style="height:25px;text-align: left;border-color:black; "colspan="2"
                     width="35%">{{$ticket->fecha_registro}}</td>
 
 
-               
-
+                   
                    
                 @endforeach
 
                     
             </tr>
-            <tr>
+            {{-- <tr>
                 <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%">
                         {{$datos[0]->lugar_llegada_destino}}
@@ -288,9 +301,11 @@
                     <td style="height:25px;text-align: left;border-color:black; "colspan="2"
                     width="35%"></td>
 
+                   
+
 
                   
-            </tr>
+            </tr> --}}
         </tbody>
 
     </table>
