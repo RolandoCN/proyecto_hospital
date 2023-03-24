@@ -462,7 +462,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function reporte_movimiento(id){
-   window.location.href='reporte-mov-ind/'+id
+//    window.location.href='reporte-mov-ind/'+id
    vistacargando("m","Espere por favor")
    $.get("reporte-mov-ind/"+id, function(data){
         vistacargando("")

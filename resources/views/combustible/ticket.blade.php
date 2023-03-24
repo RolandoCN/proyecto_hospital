@@ -141,6 +141,16 @@
                            
                         </div>
 
+                        <div class="form-group">
+
+                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Despacho</label>
+                            <div class="col-sm-8">
+                                <input type="datetime-local"   class="form-control" id="f_despacho" name="f_despacho" placeholder="">
+                               
+                            </div>
+                           
+                        </div>
+
                         <hr>
                         <div class="form-group">
                             <div class="col-sm-12 text-center" >

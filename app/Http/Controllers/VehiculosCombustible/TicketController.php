@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\VehiculosCombustible;
 use App\Http\Controllers\Controller;
-use App\Models\VehiculoCombustible\Marca;
 use App\Models\VehiculoCombustible\TipoCombustible;
 use App\Models\VehiculoCombustible\Vehiculo;
-use App\Models\VehiculoCombustible\TipoUso;
 use App\Models\VehiculoCombustible\Gasolinera;
 use App\Models\VehiculoCombustible\Ticket;
 use \Log;
@@ -40,7 +38,7 @@ class TicketController extends Controller
             $data=Ticket::where(function($query)use($text){
                 $query->where('numero_ticket', 'like', '%'.$text.'%');
             })
-            ->where('idchofer', auth()->user()->id)
+            ->where('idchofer', auth()->user()->id_persona) 
             ->where('estado', 'A')
             ->take(10)->get();
         }
@@ -52,7 +50,7 @@ class TicketController extends Controller
         try{
             $ticket=Ticket::with('vehiculo', 'gasolinera', 'combustible', 'chofer')
             ->where('estado','A')
-            ->where('idchofer', auth()->user()->id)
+            ->where('idchofer', auth()->user()->id_persona)
             ->get();
            
             return response()->json([
@@ -116,7 +114,8 @@ class TicketController extends Controller
             $guarda_ticket->id_gasolinera=$request->cmb_gasolinera;
             $guarda_ticket->id_tipocombustible =$request->cmb_tipocombustible;
             $guarda_ticket->total=$request->total;
-            $guarda_ticket->idchofer=auth()->user()->id;
+            $guarda_ticket->f_despacho=$request->f_despacho;
+            $guarda_ticket->idchofer=auth()->user()->id_persona;
             $guarda_ticket->fecha_registro=date('Y-m-d H:i:s');
             $guarda_ticket->estado="A";
            
@@ -182,7 +181,8 @@ class TicketController extends Controller
             $actualiza_ticket->id_gasolinera=$request->cmb_gasolinera;
             $actualiza_ticket->id_tipocombustible =$request->cmb_tipocombustible;
             $actualiza_ticket->total=$request->total;
-            $actualiza_ticket->idchofer=auth()->user()->id;
+            $actualiza_ticket->f_despacho=$request->f_despacho;
+            $actualiza_ticket->idchofer=auth()->user()->id_persona;
             $actualiza_ticket->fecha_registro=date('Y-m-d H:i:s');
             $actualiza_ticket->estado="A";
             
@@ -250,7 +250,7 @@ class TicketController extends Controller
             
             $ticket_elim->fecha_actualizacion=date('Y-m-d H:i:s');
             $ticket_elim->estado="I";
-            if($veh->save()){
+            if($ticket_elim->save()){
                 return response()->json([
                     'error'=>false,
                     'mensaje'=>'Información eliminada exitosamente'

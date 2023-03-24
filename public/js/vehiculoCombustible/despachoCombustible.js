@@ -45,6 +45,11 @@ function capturaTicket(){
        
         $('#vehiculo_id').val(data.data.id_vehiculo).trigger('change.select2')
         $('#chofer_id').val(data.data.id_chofer).trigger('change.select2')
+
+        globalThis.PrecioTicket=data.infoTicket.total
+
+        $('#totalmodal').val(data.infoTicket.total)
+      
         
     
        
@@ -385,8 +390,8 @@ function precioCombgas(){
         PrecioUnitGas=preciogas;
 
         $('#galonesmodal').val('');  
-        $('#totalmodal').val('');  
-
+        // $('#totalmodal').val('');  
+        calculartotal2()
        
                 
     }).fail(function(){
@@ -394,8 +399,19 @@ function precioCombgas(){
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
     });
 }
+
+function calculartotal2(){
+    var total_=$('#totalmodal').val()
+    var preciouni=$('#preciounitariomodal').val();
+    var galones=total_/preciouni;
+    var galonestotal=(galones-0).toFixed(2);
+    $('#preciounitariomodal').val(preciouni);
+    $('#galonesmodal').val(galonestotal);
+    TotalGlobalGalones=galonestotal
+}
 globalThis.TotalGlobalGalones=0
 function calculartotal(input){
+    console.log('ss')
     var galones=0; 
   
     var totalp = $(input).val();
@@ -420,6 +436,8 @@ function calculartotal(input){
         $('#preciounitariomodal').val(preciouni);
         $('#galonesmodal').val(galonestotal);
         TotalGlobalGalones=galonestotal
+
+        
     }
     
 

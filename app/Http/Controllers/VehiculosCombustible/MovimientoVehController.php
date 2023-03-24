@@ -100,7 +100,7 @@ class MovimientoVehController extends Controller
 
     public function reporteIndividual($id){
       
-        $movimiento = Movimiento::with('vehiculo','chofer')
+        $movimiento = Movimiento::with('vehiculo','chofer', 'autoriza')
         ->where('idmovimiento',$id)->where('estado','Activo')
         ->get();
 
@@ -122,15 +122,14 @@ class MovimientoVehController extends Controller
         $nombrePDF="movimiento_".$movimiento[0]->idmovimiento.".pdf"; 
         $numero_ticket=$movimiento[0]->nro_ticket;
 
-        $ticket=Ticket::with('gasolinera', 'combustible')
-        ->where('estado','A')
+        $ticket=Ticket::where('estado','A')
         ->where('numero_ticket',$numero_ticket )
         ->first();
         
         $crearpdf=PDF::loadView('combustible.reportes.pdf_movimiento',['datos'=>$movimiento,'fecha'=>$fecha, "ticket"=>$ticket]);
         $crearpdf->setPaper("A4", "landscape");
 
-        return $crearpdf->stream("ss.pdf");
+        // return $crearpdf->stream("ss.pdf");
 
         $estadoarch = $crearpdf->stream();
                         
@@ -208,9 +207,11 @@ class MovimientoVehController extends Controller
 
     public function ticketVehiculo($nro){
         $data=Movimiento::where('nro_ticket',$nro)->first();
+        $infoTicket=DB::table('vc_ticket')->where('numero_ticket', $nro)->first();
         return response()->json([
             'error'=>false,
-            'data'=>$data
+            'data'=>$data,
+            'infoTicket'=>$infoTicket
         ]);
 
     }

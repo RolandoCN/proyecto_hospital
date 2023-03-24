@@ -48,7 +48,7 @@
         }
 
         .img_firma {
-            width: 150px;
+            width: 100px;
         }
 
         .btn_azul {
@@ -147,7 +147,7 @@
                 width="35%">Salida</th>
                 <th style="height:25px;text-align: center;border-color:black"colspan="8"
                 width="35%">Llegada</th>
-                <th style="height:25px;text-align: center;border-color:black"colspan="7"
+                <th style="height:25px;text-align: center;border-color:black"colspan="10"
                 width="30%">Provisión de Combustibles y Lubricantes</th>
             </tr>
         </thead>
@@ -175,20 +175,21 @@
                 width="35%">Km</th>
 
 
+
                 <th style="height:25px;text-align: center;border-color:black; "colspan="2"
                 width="35%">Km Recorrido</th>
                 
-                <th style="height:25px;text-align: center;border-color:black; "colspan="1"
-                width="35%">Lugar</th>
-
-                <th style="height:25px;text-align: center;border-color:black; "colspan="1"
-                width="35%">Lugar</th>
-
-                <th style="height:25px;text-align: center;border-color:black; "colspan="1"
+                <th style="height:25px;text-align: center;border-color:black; "colspan="2"
                 width="35%">Lugar</th>
 
                 <th style="height:25px;text-align: center;border-color:black; "colspan="2"
-                width="35%">Fecha Hora</th>
+                width="35%">Fecha</th>
+
+                <th style="height:25px;text-align: center;border-color:black; "colspan="2"
+                width="35%">Valor</th>
+
+                <th style="height:25px;text-align: center;border-color:black; "colspan="2"
+                width="35%">Nro Ticket</th>
 
 
                 
@@ -219,6 +220,8 @@
                         {{$item->km_salida_patio}}
                     </td>
 
+
+
                     <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%">
                         {{$item->lugar_llegada_destino}}
@@ -236,33 +239,33 @@
                     </td>
 
 
+
                     <td style="height:25px;text-align: center;border-color:black; "colspan="2"
                     width="35%">{{$km_corrido_1}}</td>
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="1"
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
                     width="35%"></td>
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="1"
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
                     width="35%"></td>
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="1"
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
                     width="35%"></td>
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="2"
-                    width="35%">{{$ticket->fecha_registro}}</td>
-
-
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
+                    width="35%"></td>
                    
                    
                 @endforeach
 
                     
             </tr>
-            {{-- <tr>
+
+            <tr>
                 <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%">
                         {{$datos[0]->lugar_llegada_destino}}
-                    </td>
+                </td>
 
                     <td style="height:25px;text-align: center;border-color:black; "colspan="3"
                     width="35%">
@@ -273,6 +276,8 @@
                     width="35%">
                         {{$datos[0]->km_salida_destino}}
                     </td>
+
+
 
                     <td style="height:25px;text-align: left;border-color:black; "colspan="3"
                     width="35%">
@@ -295,25 +300,69 @@
                         {{$km_corrido_2}}
                     </td>
 
-                    <td style="height:25px;text-align: left;border-color:black; "colspan="3"
-                    width="35%"></td>
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
+                    width="35%">Chone</td>
+
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
+                    width="35%">{{$ticket->fecha_registro}}</td>
+
+                    <td style="height:25px;text-align: center;border-color:black; "colspan="2"
+                    width="35%">{{$ticket->total}}</td>
 
                     <td style="height:25px;text-align: left;border-color:black; "colspan="2"
-                    width="35%"></td>
-
-                   
-
-
+                    width="35%">{{$ticket->numero_ticket}}</td>
                   
-            </tr> --}}
+            </tr>
         </tbody>
 
     </table>
-    <br><br>
+   <br>
+
+    <table class="ltable" style="width:99%;table-layout: fixed;  ">
+        <tbody style="font-size:11px">
+            <tr >
+                <td style="height:25px;text-align: left;border-color:black; "colspan="9"
+                width="60%"><b>Observaciones: </b>  {{$datos[0]->novedad}} </td>
+               
+            </tr>
+        </tbody>
+       
+    </table>
+
+   
+    <br>
+
+    <table width="100%">
+        <tr style="font-size:11px">
+            <td width="10%" style="border:0px"></td>
+            <td width="25%" style="text-align: center; border:0px">
+                <br><br><br><br>
+                <hr style="color:black !important">
+                <p style="text-align: center">Autorizado por <br>
+                    {{ $datos[0]->autoriza->abreviacion_titulo }} {{ $datos[0]->autoriza->nombres }}
+                </p>
+            </td>
+            <td width="30%" style="border:0px">
+            
+            
+            </td>
+            <td width="25%" style="border:0px">
+                <div style="text-align: center">
+                    <img src="data:image/png;base64,'.{{ $datos[0]->firmaconductor }}.'" class="img_firma-" style="width: 90px">
+                </div>
+                    
+                <hr style="color:black !important">
+                <p style="text-align: center">Conductor <br>
+                    {{ $datos[0]->chofer->nombres }}  {{ $datos[0]->chofer->apellidos }}
+                </p>
+            </td>
+            <td width="10%" style="border:0px"></td>
+        </tr>
+      </table>
     
-    <div style="margin-top:50px" style="text-align:center">
+    {{-- <div style="margin-top:50px" style="text-align:center">
         <img src="data:image/png;base64,'.{{ $datos[0]->firmaconductor }}.'" class="img_firma">
-    </div>
+    </div> --}}
         
 
    

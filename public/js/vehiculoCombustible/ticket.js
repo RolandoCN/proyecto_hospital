@@ -9,6 +9,7 @@ $("#form_ticket").submit(function(e){
     let cmb_gasolinera=$('#cmb_gasolinera').val()
     let cmb_tipocombustible=$('#cmb_tipocombustible').val()
     let total=$('#total').val()
+    let f_despacho=$('#f_despacho').val()
 
     if(numero_ticket=="" || numero_ticket==null){
         alertNotificar("Debe ingresar el número de ticket","error")
@@ -42,6 +43,12 @@ $("#form_ticket").submit(function(e){
     if(total<=0){
         alertNotificar("El total debe ser mayor a cero","error")
         $('#total').focus()
+        return
+    } 
+
+    if(f_despacho=="" || f_despacho==null){
+        alertNotificar("Debe ingresar la fecha de despacho","error")
+        $('#f_despacho').focus()
         return
     } 
 
@@ -100,6 +107,7 @@ function limpiarCampos(){
     $('#cmb_gasolinera').val('').trigger('change.select2')
     $('#cmb_tipocombustible').val('').trigger('change.select2')
     $('#total').val('')
+    $('#f_despacho').val('')
 }
 
 function llenar_tabla_ticket(){
@@ -153,7 +161,7 @@ function llenar_tabla_ticket(){
                 ],    
                 "rowCallback": function( row, data ) {
                     $('td', row).eq(1).html(data.vehiculo.codigo_institucion+" "+data.vehiculo.descripcion)
-                    $('td', row).eq(2).html(data.chofer.persona.nombres+" "+data.chofer.persona.apellidos)
+                    $('td', row).eq(2).html(data.chofer.nombres+" "+data.chofer.apellidos)
                     $('td', row).eq(6).html(`
                                   
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarTicket(${data.id})">Editar</button>
@@ -190,7 +198,7 @@ function editarTicket(idticket){
             return;   
         }
         if(data.resultado==null){
-            alertNotificar("La persona ya no se puede editar","error");
+            alertNotificar("La informacion ya no se puede editar","error");
             return;   
         }
 
@@ -201,7 +209,7 @@ function editarTicket(idticket){
         $('#cmb_gasolinera').val(data.resultado.id_gasolinera).trigger('change.select2')
         $('#cmb_tipocombustible').val(data.resultado.id_tipocombustible).trigger('change.select2')
         $('#total').val(data.resultado.total)
-       
+        $('#f_despacho').val(data.resultado.f_despacho)
 
         visualizarForm('E')
         globalThis.idTicketEditar=idticket
@@ -220,11 +228,11 @@ function visualizarForm(tipo){
     $('#listado_ticket').hide(200)
     globalThis.AccionForm="";
     if(tipo=='N'){
-        $('#titulo_form').html("Registro Persona")
+        $('#titulo_form').html("Registro Ticket")
         $('#nombre_btn_form').html('Registrar')
         AccionForm="R"
     }else{
-        $('#titulo_form').html("Actualización Persona")
+        $('#titulo_form').html("Actualización Ticket")
         $('#nombre_btn_form').html('Actualizar')
         AccionForm="E"
     }
