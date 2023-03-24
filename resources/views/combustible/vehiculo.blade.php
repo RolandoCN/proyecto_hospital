@@ -186,9 +186,9 @@
                             <label for="inputPassword3" class="col-sm-2 control-label">Estado</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" id="estado_veh"  name="estado_veh" >
-                                                                    
-                                    <option value="Bueno" selected>Bueno</option>
-                                    <option value="Malo" >Malo</option>
+                                    <option value=""></option>                           
+                                    <option value="Operativo" >Operativo</option>
+                                    <option value="Inoperativo" >Inoperativo</option>
         
                                 </select>
 

@@ -358,7 +358,7 @@
             </td>
             <td width="10%" style="border:0px"></td>
         </tr>
-      </table>
+    </table>
     
     {{-- <div style="margin-top:50px" style="text-align:center">
         <img src="data:image/png;base64,'.{{ $datos[0]->firmaconductor }}.'" class="img_firma">

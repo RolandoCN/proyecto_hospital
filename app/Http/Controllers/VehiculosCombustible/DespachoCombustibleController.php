@@ -12,6 +12,8 @@ use App\Models\VehiculoCombustible\Gasolinera;
 use App\Models\VehiculoCombustible\CabeceraDespacho;
 use App\Models\VehiculoCombustible\TareaDetalleDespacho;
 use App\Models\VehiculoCombustible\MovimientoDetalleDespacho;
+use App\Models\User;
+use App\Models\VehiculoCombustible\Ticket;
 use \Log;
 use DB;
 use Storage;
@@ -31,9 +33,23 @@ class DespachoCombustibleController extends Controller
     }
 
     public function index(){
-        $persona=Persona::where('estado','A')->get();
+        $perfil=DB::table('vc_perfil as pe')
+        ->where('pe.estado', 'A')
+        ->where('pe.descripcion', 'Choferes')
+        ->select('pe.id_perfil')
+        ->first();
+     
+        $persona=DB::table('persona as p')
+        ->leftJoin('users as u', 'u.id_persona', 'p.idpersona')
+        ->leftJoin('vc_perfil_usuario as pu', 'pu.id_usuario', 'u.id')
+        ->where('pu.id_perfil',$perfil->id_perfil)
+        ->where('p.estado','A')
+        ->get();
+
         $gasolinera=Gasolinera::where('estado','A')->get();
-        $vehiculo=Vehiculo::where('estado','A')->get();
+        $vehiculo=Vehiculo::where('estado','A')
+        ->where('estado_vehiculo','Operativo')
+        ->get();
         $tipo_comb=TipoCombustible::where('estado','A')->get();
         return view('combustible.despacho_comb',[
             "persona"=>$persona,
@@ -350,6 +366,25 @@ class DespachoCombustibleController extends Controller
         $this->validate($request, $rules, $messages);
         $transaction=DB::transaction(function() use($request){
             try{
+
+                //validar que el total ingresado sea el mismo que el del tocket
+                $valida_rango=Ticket::where('numero_ticket',$request->ticket_id)
+                ->where('estado','A')
+                ->first();
+            
+                if(is_null($valida_rango)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El número de factura-ticket ya no esta disponible'
+                    ]);
+                }
+
+                if($valida_rango->total != $request->totalmodal){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El valor del ticket ingresado por el chofer fue de $'.$valida_rango->total
+                    ]);
+                }
                 
                 $data_cabecera=CabeceraDespacho::find($request->idcabeceradespacho);
                 $fecha_cabecera=$data_cabecera->fecha;
@@ -507,30 +542,16 @@ class DespachoCombustibleController extends Controller
     public function pdfOrden($id, $nro, $iddet, $tipo){
 
         try{
-            if($tipo=='N'){
-                // //generamos y guardamos el codigo de orden
-                // $ultimoCod=Movimiento::where('estado','!=','Eliminada')
-                // ->get()->last();
-                // if(!is_null($ultimoCod->codigo_orden)){
-                //     $codigo=$ultimoCod->codigo_orden;  
-                //     $codigo=explode('-', $codigo);
-                //     $codigo=$codigo+1;             
-                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo[2]);
-                // }else{
-                //     $codi=1;
-                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
-                // }
+               
 
-                // $movim=Movimiento::where('nro_ticket',$nro)->first();
-                // $movim->codigo_orden=$cod;
-                // $movim->save();
-            }
-                   
-
-            $movimiento=DB::table('vc_movimiento')
-            ->where('estado','!=','Eliminado')
+            $movimiento=DB::table('vc_movimiento as m')
+            ->leftJoin('vc_autorizado_salida as a', 'a.id_autorizado_salida', 'm.id_autorizado_salida')
+            ->leftJoin('persona as p', 'p.idpersona', 'm.id_chofer')
+            ->where('m.estado','!=','Eliminado')
             ->where('nro_ticket',$nro)
+            ->select('*', 'a.abreviacion_titulo', 'a.nombres as autorizador', 'p.nombres', 'p.apellidos')
             ->first();
+           
 
             $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
 
@@ -553,6 +574,8 @@ class DespachoCombustibleController extends Controller
             $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha]);
             $crearpdf->setPaper("A4", "portrait");
             $estadoarch = $crearpdf->stream();
+
+            // return $crearpdf->stream("pdf.pdf");
             
             
             $exists_destino = Storage::disk('public')->exists($nombrePDF);
@@ -607,6 +630,25 @@ class DespachoCombustibleController extends Controller
         $this->validate($request, $rules, $messages);
         $transaction=DB::transaction(function() use($request, $id){
             try{
+
+                //validar que el total ingresado sea el mismo que el del tocket
+                $valida_rango=Ticket::where('numero_ticket',$request->ticket_id)
+                ->where('estado','A')
+                ->first();
+            
+                if(is_null($valida_rango)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El número de factura-ticket ya no esta disponible'
+                    ]);
+                }
+
+                if($valida_rango->total != $request->totalmodal){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El valor del ticket ingresado por el chofer fue de $'.$valida_rango->total
+                    ]);
+                }
 
                 $actualiza_detalle= DetalleDespacho::find($id);
                 $actualiza_detalle->id_vehiculo=$request->vehiculo_id;

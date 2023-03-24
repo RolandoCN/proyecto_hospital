@@ -31,7 +31,7 @@ class MovimientoVehController extends Controller
     public function index(){
         $persona=Persona::where('estado','A')->get();
         $vehiculo=Vehiculo::where('estado','A')
-        ->where('estado_vehiculo','Bueno')
+        ->where('estado_vehiculo','Operativo')
         ->get();
 
         $autorizado=DB::table('vc_autorizado_salida')
@@ -256,6 +256,33 @@ class MovimientoVehController extends Controller
                 }
             }
 
+            //validar que la fecha de salida este dentro del rango de despacho ticket
+            $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
+            ->where('estado','A')
+            ->whereBetween('f_despacho', [$request->fecha_h_salida_patio, $request->fecha_h_llegada_patio])
+            ->first();
+           
+            if(is_null($valida_rango)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'La hora y fecha de despacho del ticket, esta fuera del rango de fecha del movimiento ingresado'
+                ]);
+            }
+            if($valida_rango->id_vehiculo!=$request->vehiculo_tarea){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
+                ]);
+            }
+
+            if($valida_rango->idchofer!=auth()->user()->id_persona){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El chofer seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
+                ]);
+            }
+            
+
             $guarda_movi=new Movimiento();
             $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
             $guarda_movi->id_chofer=auth()->user()->id_persona;
@@ -343,19 +370,7 @@ class MovimientoVehController extends Controller
                 
             if($guarda_movi->save()){
 
-                //generamos y guardamos el codigo de orden
-                // $ultimoCod=Movimiento::where('estado','!=','Eliminada')
-                // ->get()->last();
-                // if(!is_null($ultimoCod->codigo_orden)){
-                //     $codigo=$ultimoCod->codigo_orden;  
-                //     $codigo=explode('-', $codigo);
-                //     $codigo=$codigo[2]+1;  
-                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo);
-                // }else{
-                //     $codi=1;
-                //     $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
-                // }
-
+              
                 $movim=Movimiento::where('nro_ticket',$request->n_ticket)->first();
                 $movim->codigo_orden=$cod;
                 $movim->save();

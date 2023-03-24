@@ -306,6 +306,17 @@ class VehiculoController extends Controller
                 ]);
             }
 
+            $veri_Ticket=DB::table('vc_ticket')
+            ->where('id_vehiculo',$id)
+            ->where('estado','!=', 'I')
+            ->first();
+            if(!is_null($veri_Ticket)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo está asociado a un ticket'
+                ]);
+            }
+
             $veri_Movimiento=DB::table('vc_movimiento')
             ->where('id_vehiculo',$id)
             ->where('estado','!=', 'Eliminada')

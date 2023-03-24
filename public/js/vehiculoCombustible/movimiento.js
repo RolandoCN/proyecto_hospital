@@ -694,3 +694,24 @@ $('#n_ticket').select2({
     cache: true
     }
 });
+
+function cargaInfoTicket(){
+
+    let n_ticket=$('#n_ticket').val()
+    if(n_ticket=="" || n_ticket==null){return}
+    vistacargando("m","Espere por favor")
+    $.get("/info-veh-ticket/"+n_ticket, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        $('#vehiculo_tarea').val(data.resultado.id_vehiculo).trigger('change.select2')
+      
+      
+       
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}

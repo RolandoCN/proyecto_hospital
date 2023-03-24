@@ -76,7 +76,7 @@ $("#frm_registro_cab_desp").submit(function(e){
         $('#fecha_desp').focus()
         return
     } 
-
+    vistacargando("m","Espere por favor")
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -106,6 +106,7 @@ $("#frm_registro_cab_desp").submit(function(e){
         processData:false, 
 
         success: function(data){
+            vistacargando("")
             console.log(data)
             // vistacargando("");                
             if(data.error==true){
@@ -121,7 +122,7 @@ $("#frm_registro_cab_desp").submit(function(e){
         }, error:function (data) {
             console.log(data)
 
-            // vistacargando("");
+            vistacargando("");
             alertNotificar('Ocurrió un error','error');
         }
     });
@@ -209,9 +210,10 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editar_cab(idcabecera_despacho){
+    vistacargando("m","Espere por favor")
     $.get("/editar-cab-despacho/"+idcabecera_despacho, function(data){
         console.log(data)
-      
+        vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             return;   
@@ -231,7 +233,7 @@ function editar_cab(idcabecera_despacho){
 
        
     }).fail(function(){
-       
+        vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
     });
 }
@@ -263,9 +265,10 @@ function imprimir_desp(idCab){
 
 function eliminar_cabecera_desp(idcabecera_despacho){
     if(confirm('¿Quiere eliminar el registro?')){
+        vistacargando("m","Espere por favor")
         $.get("/eliminar-cab-despacho/"+idcabecera_despacho, function(data){
             console.log(data)
-          
+            vistacargando("")
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
                 return;   
@@ -275,7 +278,7 @@ function eliminar_cabecera_desp(idcabecera_despacho){
             llenar_tabla_tarea()
            
         }).fail(function(){
-           
+            vistacargando("")
             alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
         });
     }
@@ -529,10 +532,10 @@ function cargartablaDetalle(){
 
 function editar_detalle(id){
     
-      
+    vistacargando("m","Espere por favor")  
     $.get("/detalle-desp/editar/"+id, function (data) {
         console.log(data.resultado.num_factura_ticket);
-        console.log("ss")
+        vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error")
             return
@@ -637,7 +640,7 @@ $("#form_idDetalleDesp").submit(function(e){
     }
 
     $('#idcabeceradespacho').val(idCabeceraDes)
-    
+    vistacargando("m","Espere por favor")
 
     $.ajaxSetup({
         headers: {
@@ -660,7 +663,7 @@ $("#form_idDetalleDesp").submit(function(e){
    
     console.log(FrmData)
     $.ajax({
-            
+        
         type: tipo,
         url: url_form,
         method: tipo,             
@@ -670,7 +673,7 @@ $("#form_idDetalleDesp").submit(function(e){
 
         success: function(data){
             console.log(data)
-            // vistacargando("");                
+            vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
                 return;                      
@@ -701,7 +704,7 @@ $("#form_idDetalleDesp").submit(function(e){
         }, error:function (data) {
             console.log(data)
 
-            // vistacargando("");
+            vistacargando("");
             alertNotificar('Ocurrió un error','error');
         }
     });

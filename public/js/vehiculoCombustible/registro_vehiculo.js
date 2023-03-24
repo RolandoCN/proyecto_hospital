@@ -17,7 +17,7 @@ $("#form_registro_veh").submit(function(e){
     let departamento=$('#departamento').val()
     let chasis=$('#chasis').val()
     let modelo=$('#modelo').val()
-    
+    let estado_veh=$('#estado_veh').val()
 
     if(codigo=="" || codigo==null){
         alertNotificar("Ingrese el código institucional del vehículo","error")
@@ -78,6 +78,11 @@ $("#form_registro_veh").submit(function(e){
 
     if(cmb_tipomedicion=="" || cmb_tipomedicion==null){
         alertNotificar("Seleccione el tipo de medicion del vehículo","error")
+        return
+    } 
+
+    if(estado_veh=="" || estado_veh==null){
+        alertNotificar("Seleccione el estado del vehículo","error")
         return
     } 
 

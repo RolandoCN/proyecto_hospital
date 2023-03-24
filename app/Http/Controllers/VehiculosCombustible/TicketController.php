@@ -13,13 +13,46 @@ use Illuminate\Http\Request;
 class TicketController extends Controller
 {
 
+    public function listado(){
+        $tipo_combust=TipoCombustible::where('estado','A')->get();
+        $gasolinera=Gasolinera::where('estado','A')->get();
+        $vehiculo=Vehiculo::where('estado','A')
+        ->where('estado_vehiculo','Operativo')
+        ->get();
+
+        return view('combustible.listado_ticket',[
+            "gasolinera"=>$gasolinera,
+            "tipo_combust"=>$tipo_combust,
+            "vehiculo"=>$vehiculo,
+        ]);
+    }
+
+    public function listarGeneral(){
+        try{
+            $ticket=Ticket::with('vehiculo', 'gasolinera', 'combustible', 'chofer')
+            ->where('estado','A')
+            ->get();
+           
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$ticket
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('TicketController => listarGeneral => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
 
     public function index(){
        
         $tipo_combust=TipoCombustible::where('estado','A')->get();
         $gasolinera=Gasolinera::where('estado','A')->get();
         $vehiculo=Vehiculo::where('estado','A')
-        ->where('estado_vehiculo','Bueno')
+        ->where('estado_vehiculo','Operativo')
         ->get();
 
         return view('combustible.ticket',[
@@ -45,6 +78,24 @@ class TicketController extends Controller
         
         return response()->json($data);
 
+    }
+
+    public function infoTicketChofer($num){
+        $data=Ticket::where('numero_ticket',$num)
+        ->where('idchofer', auth()->user()->id_persona) 
+        ->where('estado', 'A')
+        ->first();
+        if(is_null($data)){
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'No se encontro información'
+            ]);
+        }
+
+        return response()->json([
+            'error'=>false,
+            'resultado'=>$data
+        ]);
     }
     public function listar(){
         try{
@@ -198,6 +249,28 @@ class TicketController extends Controller
                 ]);
             }
 
+            $veri_Movimiento=DB::table('vc_movimiento')
+            ->where('nro_ticket',$actualiza_ticket->numero_ticket)
+            ->where('estado','!=', 'Eliminada')
+            ->first();
+            if(!is_null($veri_Movimiento)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El ticket está asociado a una orden de salida y no se puede actualizar'
+                ]);
+            }
+
+            $veri_Despacho=DB::table('vc_detalle_despacho')
+            ->where('num_factura_ticket',$actualiza_ticket->numero_ticket)
+            ->where('estado','!=', 'Eliminado')
+            ->first();
+            if(!is_null($veri_Despacho)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El ticket está asociado a un despacho de combustible y no se puede actualizar'
+                ]);
+            }
+           
             if($actualiza_ticket->save()){
                 return response()->json([
                     'error'=>false,
@@ -225,20 +298,20 @@ class TicketController extends Controller
         try{
             $ticket_elim=Ticket::find($id);
             //verificamos que no este asociado a un  movimiento y despacho en estado activo
-            
+          
             $veri_Movimiento=DB::table('vc_movimiento')
-            ->where('id_vehiculo',$ticket_elim->nro_ticket)
+            ->where('nro_ticket',$ticket_elim->numero_ticket)
             ->where('estado','!=', 'Eliminada')
             ->first();
             if(!is_null($veri_Movimiento)){
                 return response()->json([
                     'error'=>true,
-                    'mensaje'=>'El ticket está asociado a un ingreso/salida y no se puede eliminar'
+                    'mensaje'=>'El ticket está asociado a una orden de salida y no se puede eliminar'
                 ]);
             }
 
             $veri_Despacho=DB::table('vc_detalle_despacho')
-            ->where('num_factura_ticket',$ticket_elim->nro_ticket)
+            ->where('num_factura_ticket',$ticket_elim->numero_ticket)
             ->where('estado','!=', 'Eliminado')
             ->first();
             if(!is_null($veri_Despacho)){

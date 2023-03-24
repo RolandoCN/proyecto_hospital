@@ -17,6 +17,7 @@ use App\Http\Controllers\VehiculosCombustible\GasolineraCombustibleController;
 use App\Http\Controllers\VehiculosCombustible\CombustibleController;
 use App\Http\Controllers\VehiculosCombustible\ReportesCombustibleController;
 use App\Http\Controllers\VehiculosCombustible\TicketController;
+use App\Http\Controllers\VehiculosCombustible\AutorizadorController;
 
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
@@ -98,15 +99,27 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::put('/actualizar-vehiculo/{id}', [VehiculoController::class, 'actualizar']);
     Route::get('/eliminar-vehiculo/{id}', [VehiculoController::class, 'eliminar']);
 
-    //VEHICULOS
-    Route::get('/ticket', [TicketController::class, 'index'])->middleware('auth');
+    //AUTORIZADOR
+    Route::get('/autorizador', [AutorizadorController::class, 'index'])->middleware('validarRuta');
+    Route::get('/listado-vehicautorizadorulo', [AutorizadorController::class, 'listar']);
+    Route::post('/guardar-autorizador', [AutorizadorController::class, 'guardar']);
+    Route::get('/editar-autorizador/{id}', [AutorizadorController::class, 'editar']);
+    Route::put('/actualizar-autorizador/{id}', [AutorizadorController::class, 'actualizar']);
+    Route::get('/eliminar-autorizador/{id}', [AutorizadorController::class, 'eliminar']);
+
+    //TICKET
+    Route::get('/ticket', [TicketController::class, 'index'])->middleware('validarRuta');
     Route::get('/listado-ticket', [TicketController::class, 'listar']);
     Route::post('/guardar-ticket', [TicketController::class, 'guardar']);
     Route::get('/editar-ticket/{id}', [TicketController::class, 'editar']);
     Route::put('/actualizar-ticket/{id}', [TicketController::class, 'actualizar']);
     Route::get('/eliminar-ticket/{id}', [TicketController::class, 'eliminar']);
     Route::get('/buscar-ticket-persona', [TicketController::class, 'buscaTicketChofer']);
-    
+    Route::get('/info-veh-ticket/{num}', [TicketController::class, 'infoTicketChofer']);
+
+    Route::get('/listado-ticket', [TicketController::class, 'listado'])->middleware('validarRuta');
+    Route::get('/listado-ticket-todos', [TicketController::class, 'listarGeneral']);
+
 
     //TAREAS
     Route::get('/tareas-vehiculo', [TareasController::class, 'index'])->middleware('validarRuta');
@@ -185,4 +198,8 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/listado-reporte-orden', [ReportesCombustibleController::class, 'listadoOrden']);
     Route::post('/guardar-ordenes', [ReportesCombustibleController::class, 'guardarOrden']);
     Route::get('/genera-orden-pdf/{id}/{nro}', [ReportesCombustibleController::class, 'pdfOrden']);
+
+
+    //testreporte
+    Route::get('/genera-orden-pdf/{id}/{nro}/{iddet}/{t}', [DespachoCombustibleController::class, 'pdfOrden']);
 });

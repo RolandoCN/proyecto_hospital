@@ -94,14 +94,12 @@
 
                         <div class="col-md-4">
 
-                            <div class="form-group ">
-                                <label for="exampleInputEmail1" class="">Vehiculo</label>
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" onchange="cargartarea()" >
-                                    
-                                    @foreach ($vehiculo as $dato)
-                                        <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>
-                                    @endforeach
-                                </select>
+                            <div class="form-group "> 
+                                <label for="inputPassword3" >Nro Ticket</label>                            
+                                {{-- <input type="number" maxlength="20" onKeyPress="if(this.value.length==20) return false;"  class="form-control" id="n_ticket" name="n_ticket" placeholder="Ingrese el número de ticket">                                     --}}
+
+                                <select data-placeholder="Seleccione Un Número Factura/Ticket" style="width: 100%;" class="form-control select2" name="n_ticket" id="n_ticket" onchange="cargaInfoTicket()"></select>
+
                             </div>
 
                             <div class="form-group " >
@@ -142,16 +140,19 @@
                         </div>   
 
                         <div class="col-md-4">
-                            
-                            <div class="form-group" >
-                                <label for="inputPassword3" >Chofer</label>                            
-                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="chofer" id="chofer" disabled>
-                                    @foreach ($persona as $dato)
-                                        <option value="{{ $dato->idpersona}}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
-                                    @endforeach
-                                </select>                            
-                            </div>
 
+
+                            <div class="form-group ">
+                                <label for="exampleInputEmail1" class="">Vehiculo</label>
+                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="vehiculo_tarea" id="vehiculo_tarea" onchange="cargartarea()" >
+                                    
+                                    @foreach ($vehiculo as $dato)
+                                        <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                           
                             <div class="form-group">
                                 <label for="inputPassword3" >Fecha Hora Salida Patio</label>
                                 <input type="datetime-local" class="form-control"id="fecha_h_salida_patio" name="fecha_h_salida_patio" >                            
@@ -192,13 +193,17 @@
 
                         <div class="col-md-4">
 
-                            <div class="form-group "> 
-                                <label for="inputPassword3" >Nro Ticket</label>                            
-                                {{-- <input type="number" maxlength="20" onKeyPress="if(this.value.length==20) return false;"  class="form-control" id="n_ticket" name="n_ticket" placeholder="Ingrese el número de ticket">                                     --}}
-
-                                <select data-placeholder="Seleccione Un Número Factura/Ticket" style="width: 100%;" class="form-control select2" name="n_ticket" id="n_ticket"></select>
-
+                            <div class="form-group" >
+                                <label for="inputPassword3" >Chofer</label>                            
+                                <select data-placeholder="Seleccione Un Chofer" style="width: 100%;" class="form-control select2" name="chofer" id="chofer" disabled>
+                                    @foreach ($persona as $dato)
+                                        <option value="{{ $dato->idpersona}}" >{{ $dato->nombres }} {{ $dato->apellidos }}</option>
+                                    @endforeach
+                                </select>                            
                             </div>
+
+
+                           
 
                             <div class="form-group ">
                                 <label for="inputPassword3" >Kilometraje Salida Patio</label>
