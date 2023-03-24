@@ -102,14 +102,13 @@ $("#form_registro_veh").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-vehiculo"
+        url_form="guardar-vehiculo"
     }else{
         tipo="PUT"
-        url_form="/actualizar-vehiculo/"+IdVehicEditar
+        url_form="actualizar-vehiculo/"+IdVehicEditar
     }
   
     var FrmData=$("#form_registro_veh").serialize();
-    console.log(FrmData)
     $.ajax({
             
         type: tipo,
@@ -120,7 +119,6 @@ $("#form_registro_veh").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -133,7 +131,6 @@ $("#form_registro_veh").submit(function(e){
             llenar_tabla_vehiculo()
                             
         }, error:function (data) {
-            console.log(data)
 
             // vistacargando("");
             alertNotificar('Ocurrió un error','error');
@@ -161,8 +158,7 @@ function llenar_tabla_vehiculo(){
 	$("#tabla_vehiculo tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-vehiculo/", function(data){
-        console.log(data)
+    $.get("listado-vehiculo/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -184,7 +180,7 @@ function llenar_tabla_vehiculo(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -232,8 +228,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editarVehi(id_vehiculo){
-    $.get("/editar-vehiculo/"+id_vehiculo, function(data){
-        console.log(data)
+    $.get("editar-vehiculo/"+id_vehiculo, function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -292,8 +287,7 @@ function visualizarListado(){
 
 function btn_eliminar_veh(id_vehiculo){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-vehiculo/"+id_vehiculo, function(data){
-            console.log(data)
+        $.get("eliminar-vehiculo/"+id_vehiculo, function(data){
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");

@@ -16,7 +16,6 @@ function llenar_tabla_ticket(){
    
     
     $.get("listado-ticket-todos/", function(data){
-        console.log(data)
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_ticket tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
@@ -37,7 +36,7 @@ function llenar_tabla_ticket(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -89,7 +88,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 function Detalle(idticket){
     vistacargando("m","Espere por favor")
-    $.get("/editar-ticket/"+idticket, function(data){
+    $.get("editar-ticket/"+idticket, function(data){
         vistacargando("")
       
         if(data.error==true){

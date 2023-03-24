@@ -41,18 +41,18 @@ function cargaInfoPerfil(){
         if(data.data.persona.tx_rutafoto!=null){
             //foto de la persona dentro de la modal
             var foto=$('#foto_perfil');
-            foto.attr("src","/FotoPersona/"+data.data.persona.tx_rutafoto)
+            foto.attr("src","FotoPersona/"+data.data.persona.tx_rutafoto)
 
             //foto de la persona en la parte superior derecha del sistema (plantilla)
             var foto_plantilla=$('.img_perfil');
-            foto_plantilla.attr("src","/FotoPersona/"+data.data.persona.tx_rutafoto)
+            foto_plantilla.attr("src","FotoPersona/"+data.data.persona.tx_rutafoto)
             
         }else{
             var foto=$('#foto_perfil');
-            foto.attr("src","/assets/images/profile.jpg")
+            foto.attr("src","assets/images/profile.jpg")
 
             var foto_plantilla=$('.img_perfil');
-            foto_plantilla.attr("src","/assets/images/profile.jpg")
+            foto_plantilla.attr("src","assets/images/profile.jpg")
 
         }
        

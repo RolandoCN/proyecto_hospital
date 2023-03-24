@@ -63,10 +63,10 @@ $("#form_ticket").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-ticket"
+        url_form="guardar-ticket"
     }else{
         tipo="PUT"
-        url_form="/actualizar-ticket/"+idTicketEditar
+        url_form="actualizar-ticket/"+idTicketEditar
     }
     vistacargando("m","Espere por favor")
     var FrmData=$("#form_ticket").serialize();
@@ -116,7 +116,6 @@ function llenar_tabla_ticket(){
    
     
     $.get("listado-ticket/", function(data){
-        console.log(data)
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_ticket tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
@@ -137,7 +136,7 @@ function llenar_tabla_ticket(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -190,7 +189,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 function editarTicket(idticket){
     vistacargando("m","Espere por favor")
-    $.get("/editar-ticket/"+idticket, function(data){
+    $.get("editar-ticket/"+idticket, function(data){
         vistacargando("")
       
         if(data.error==true){
@@ -247,7 +246,7 @@ function visualizarListado(){
 function eliminarTicket(idticket){
     if(confirm('¿Quiere eliminar el registro?')){
         vistacargando("m","Espere por favor")
-        $.get("/eliminar-ticket/"+idticket, function(data){
+        $.get("eliminar-ticket/"+idticket, function(data){
             vistacargando("")
           
             if(data.error==true){

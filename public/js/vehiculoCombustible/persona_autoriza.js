@@ -4,14 +4,14 @@ $("#form_registro_persona").submit(function(e){
     e.preventDefault();
     
     //validamos los campos obligatorios
-    let cedula=$('#cedula_persona').val()
+    let cedula=$('#cedula').val()
     let nombres=$('#nombres').val()
-    let apellidos=$('#apellidos').val()
-    let telefono=$('#telefono').val()
-        
+    let estado_autoriza=$('#estado_autoriza').val()
+
+           
     if(cedula=="" || cedula==null){
         alertNotificar("Debe ingresar la cédula","error")
-        $('#cedula_persona').focus()
+        $('#cedula').focus()
         return
     } 
 
@@ -21,15 +21,9 @@ $("#form_registro_persona").submit(function(e){
         return
     } 
 
-    if(apellidos=="" || apellidos==null){
-        alertNotificar("Ingrese los apellidos","error")
-        $('#apellidos').focus()
-        return
-    } 
-
-    if(telefono=="" || telefono==null){
-        alertNotificar("Ingrese el telefono","error")
-        $('#telefono').focus()
+    if(estado_autoriza=="" || estado_autoriza==null){
+        alertNotificar("Seleccione el estado de la persona","error")
+       
         return
     } 
 
@@ -45,10 +39,10 @@ $("#form_registro_persona").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="guardar-persona"
+        url_form="guardar-autorizador"
     }else{
         tipo="PUT"
-        url_form="actualizar-persona/"+idPersonaEditar
+        url_form="actualizar-autorizador/"+idAutorizadorEditar
     }
     vistacargando("m","Espere por favor")
     var FrmData=$("#form_registro_persona").serialize();
@@ -84,10 +78,13 @@ $("#form_registro_persona").submit(function(e){
 })
 
 function limpiarCampos(){
-    $('#cedula_persona').val('')
+    $('#cedula').val('')
     $('#nombres').val('')
     $('#apellidos').val('')
     $('#telefono').val('')
+    $('#email').val('')
+    $('#abreviacion_titulo').val('')
+    $('#estado_autoriza').val('').trigger('change.select2')
 }
 
 function llenar_tabla_persona(){
@@ -95,7 +92,7 @@ function llenar_tabla_persona(){
 	$("#tabla_persona tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("listado-persona/", function(data){
+    $.get("listado-autorizador", function(data){
              
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -117,30 +114,32 @@ function llenar_tabla_persona(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: 'json/datatables/spanish.json',
+                    url: '/json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
                     { "width": "30%", "targets": 1 },
                     { "width": "10%", "targets": 2 },
-                    { "width": "25%", "targets": 3 },
-                    { "width": "15%", "targets": 4 },
+                    { "width": "22%", "targets": 3 },
+                    { "width": "13%", "targets": 4 },
+                    { "width": "15%", "targets":  5},
                    
                 ],
                 data: data.resultado,
                 columns:[
                         {data: "cedula"},
                         {data: "nombres" },
-                        {data: "apellidos"},
+                        {data: "email"},
                         {data: "telefono"},
+                        {data: "estado_autoriza"},
                         {data: "telefono"},
                 ],    
                 "rowCallback": function( row, data ) {
-                    $('td', row).eq(4).html(`
+                    $('td', row).eq(5).html(`
                                   
-                                            <button type="button" class="btn btn-primary btn-xs" onclick="editarPersona(${data.idpersona })">Editar</button>
+                                            <button type="button" class="btn btn-primary btn-xs" onclick="editarPersona(${data.id_autorizado_salida })">Editar</button>
                                                                                 
-                                            <a onclick="btn_eliminar_tarea(${data.idpersona })" class="btn btn-danger btn-xs"> Eliminar </a>
+                                            <a onclick="btn_eliminar_tarea(${data.id_autorizado_salida })" class="btn btn-danger btn-xs"> Eliminar </a>
                                        
                                     
                     `); 
@@ -162,9 +161,9 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 
-function editarPersona(idpersona){
+function editarPersona(id_autorizado_salida){
     vistacargando("m","Espere por favor")
-    $.get("editar-persona/"+idpersona, function(data){
+    $.get("editar-autorizador/"+id_autorizado_salida, function(data){
         vistacargando("")
       
         if(data.error==true){
@@ -176,17 +175,15 @@ function editarPersona(idpersona){
             return;   
         }
 
-
-        $('#cedula_persona').val(data.resultado.cedula)
-        $('#nombres').val(data.resultado.nombres)
-        $('#apellidos').val(data.resultado.apellidos)
+        $('#cedula').val(data.resultado.cedula)
+        $('#nombres').val(data.resultado.nombres)      
         $('#telefono').val(data.resultado.telefono)
-       
-
+        $('#email').val(data.resultado.email)
+        $('#abreviacion_titulo').val(data.resultado.abreviacion_titulo)
+        $('#estado_autoriza').val(data.resultado.estado_autoriza).trigger('change.select2')
+        
         visualizarForm('E')
-        globalThis.idPersonaEditar=idpersona
-
-
+        globalThis.idAutorizadorEditar=id_autorizado_salida
 
        
     }).fail(function(){
@@ -216,10 +213,10 @@ function visualizarListado(){
     limpiarCampos()
 }
 
-function btn_eliminar_tarea(idpersona){
+function btn_eliminar_tarea(id_autorizado_salida){
     if(confirm('¿Quiere eliminar el registro?')){
         vistacargando("m","Espere por favor")
-        $.get("eliminar-persona/"+idpersona, function(data){
+        $.get("eliminar-autorizador/"+id_autorizado_salida, function(data){
             vistacargando("")
           
             if(data.error==true){

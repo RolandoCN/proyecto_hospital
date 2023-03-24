@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     //AUTORIZADOR
     Route::get('/autorizador', [AutorizadorController::class, 'index'])->middleware('validarRuta');
-    Route::get('/listado-vehicautorizadorulo', [AutorizadorController::class, 'listar']);
+    Route::get('/listado-autorizador', [AutorizadorController::class, 'listar']);
     Route::post('/guardar-autorizador', [AutorizadorController::class, 'guardar']);
     Route::get('/editar-autorizador/{id}', [AutorizadorController::class, 'editar']);
     Route::put('/actualizar-autorizador/{id}', [AutorizadorController::class, 'actualizar']);

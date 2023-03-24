@@ -23,14 +23,13 @@ $("#form_registro_gestion").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-gestion"
+        url_form="guardar-gestion"
     }else{
         tipo="PUT"
-        url_form="/actualizar-gestion/"+idGestionEditar
+        url_form="actualizar-gestion/"+idGestionEditar
     }
   
     var FrmData=$("#form_registro_gestion").serialize();
-    console.log(FrmData)
     $.ajax({
             
         type: tipo,
@@ -41,7 +40,6 @@ $("#form_registro_gestion").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -54,7 +52,6 @@ $("#form_registro_gestion").submit(function(e){
             llenar_tabla_gestion()
                             
         }, error:function (data) {
-            console.log(data)
 
             // vistacargando("");
             alertNotificar('Ocurrió un error','error');
@@ -72,8 +69,7 @@ function llenar_tabla_gestion(){
 	$("#tabla_gestion tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-gestion/", function(data){
-        console.log(data)
+    $.get("listado-gestion/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -95,7 +91,7 @@ function llenar_tabla_gestion(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 0 },
@@ -140,8 +136,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editarGestion(id_gestion){
-    $.get("/editar-gestion/"+id_gestion, function(data){
-        console.log(data)
+    $.get("editar-gestion/"+id_gestion, function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -189,8 +184,7 @@ function visualizarListado(){
 
 function eliminarGestion(id_gestion){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-gestion/"+id_gestion, function(data){
-            console.log(data)
+        $.get("eliminar-gestion/"+id_gestion, function(data){
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");

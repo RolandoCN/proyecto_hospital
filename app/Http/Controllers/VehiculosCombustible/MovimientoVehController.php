@@ -35,7 +35,9 @@ class MovimientoVehController extends Controller
         ->get();
 
         $autorizado=DB::table('vc_autorizado_salida')
-        ->where('estado','A')->get();
+        ->where('estado','A')
+        ->where('estado_autoriza','Activo')
+        ->get();
        
         return view('combustible.patio',[
             "persona"=>$persona,
@@ -190,7 +192,6 @@ class MovimientoVehController extends Controller
       
     }
     public function buscarTicket(Request $request){
-        log::info($request->all());
         $data = [];
         if($request->has('q')){
             $search = $request->q;

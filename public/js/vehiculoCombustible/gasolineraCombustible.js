@@ -39,14 +39,13 @@ $("#form_gaso_comb").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-gasolinera-combustible"
+        url_form="guardar-gasolinera-combustible"
     }else{
         tipo="PUT"
-        url_form="/actualizar-gasolinera-combustible/"+idGasCombusEditar
+        url_form="actualizar-gasolinera-combustible/"+idGasCombusEditar
     }
   
     var FrmData=$("#form_gaso_comb").serialize();
-    console.log(FrmData)
     $.ajax({
             
         type: tipo,
@@ -57,7 +56,6 @@ $("#form_gaso_comb").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -89,8 +87,7 @@ function llenar_tabla_gaso_comb(){
 	$("#tabla_gaso_comb tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-gasolinera-combustible/", function(data){
-        console.log(data)
+    $.get("listado-gasolinera-combustible/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -112,7 +109,7 @@ function llenar_tabla_gaso_comb(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -159,8 +156,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editarGasoliComb(idgasolinera_comb ){
-    $.get("/editar-gasolinera-combustible/"+idgasolinera_comb , function(data){
-        console.log(data)
+    $.get("editar-gasolinera-combustible/"+idgasolinera_comb , function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -209,8 +205,7 @@ function visualizarListado(){
 
 function eliminarGasoliComb(idgasolinera_comb ){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-gasolinera-combustible/"+idgasolinera_comb , function(data){
-            console.log(data)
+        $.get("eliminar-gasolinera-combustible/"+idgasolinera_comb , function(data){
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");

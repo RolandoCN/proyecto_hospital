@@ -9,11 +9,10 @@ $('#ticket_id').select2({
    
     placeholder: 'Seleccione una opción',
     ajax: {
-    url: '/buscar-ticket',
+    url: 'buscar-ticket',
     dataType: 'json',
     delay: 250,
     processResults: function (data) {
-        console.log(data)
         return {
         results:  $.map(data, function (item) {
                 return {
@@ -36,7 +35,6 @@ function capturaTicket(){
         return
     }
     $.get("ticket-vehiculo/"+nro_ticket, function(data){
-        console.log(data)
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -88,14 +86,13 @@ $("#frm_registro_cab_desp").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-cab-despacho"
+        url_form="guardar-cab-despacho"
     }else{
         tipo="PUT"
-        url_form="/actualizar-cab-despacho/"+idCabeEditar
+        url_form="actualizar-cab-despacho/"+idCabeEditar
     }
   
     var FrmData=$("#frm_registro_cab_desp").serialize();
-    console.log(FrmData)
     $.ajax({
             
         type: tipo,
@@ -107,7 +104,6 @@ $("#frm_registro_cab_desp").submit(function(e){
 
         success: function(data){
             vistacargando("")
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -120,7 +116,6 @@ $("#frm_registro_cab_desp").submit(function(e){
             llenar_tabla_tarea()
                             
         }, error:function (data) {
-            console.log(data)
 
             vistacargando("");
             alertNotificar('Ocurrió un error','error');
@@ -139,8 +134,7 @@ function llenar_tabla_tarea(){
 	$("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-desp/", function(data){
-        console.log(data)
+    $.get("listado-desp/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -162,7 +156,7 @@ function llenar_tabla_tarea(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "40%", "targets": 0 },
@@ -211,8 +205,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 function editar_cab(idcabecera_despacho){
     vistacargando("m","Espere por favor")
-    $.get("/editar-cab-despacho/"+idcabecera_despacho, function(data){
-        console.log(data)
+    $.get("editar-cab-despacho/"+idcabecera_despacho, function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -260,14 +253,13 @@ function visualizarListado(){
 }
 
 function imprimir_desp(idCab){
-    window.location.href='/despacho-pdf/'+idCab
+    window.location.href='despacho-pdf/'+idCab
 }
 
 function eliminar_cabecera_desp(idcabecera_despacho){
     if(confirm('¿Quiere eliminar el registro?')){
         vistacargando("m","Espere por favor")
-        $.get("/eliminar-cab-despacho/"+idcabecera_despacho, function(data){
-            console.log(data)
+        $.get("eliminar-cab-despacho/"+idcabecera_despacho, function(data){
             vistacargando("")
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
@@ -319,8 +311,7 @@ function capturaDatosVeh(){
     
     if(idVeh=="" || idVeh==undefined){return}
 
-    $.get("/precio-detalle-comb/"+idVeh+"/"+idGasolinearaDes, function(data){
-        console.log(data)
+    $.get("precio-detalle-comb/"+idVeh+"/"+idGasolinearaDes, function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -369,8 +360,7 @@ function precioCombgas(){
     }
     let idTipoCom=$('#combustible_id').val()
     if(idTipoCom=="" || idTipoCom==undefined){return}
-    $.get("/precio-comb-gas/"+idTipoCom+"/"+idGasolinearaDes, function(data){
-        console.log(data)
+    $.get("precio-comb-gas/"+idTipoCom+"/"+idGasolinearaDes, function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -414,7 +404,6 @@ function calculartotal2(){
 }
 globalThis.TotalGlobalGalones=0
 function calculartotal(input){
-    console.log('ss')
     var galones=0; 
   
     var totalp = $(input).val();
@@ -448,8 +437,7 @@ function calculartotal(input){
 
 function cargartablaDetalle(){
   
-    $.get("/detalle-listado-des/"+idCabeceraDes, function (resultado) {    
-        console.log(resultado); 
+    $.get("detalle-listado-des/"+idCabeceraDes, function (resultado) {    
 
         var idtabla = "tabla_listado_desp";
         $(`#${idtabla}`).DataTable({
@@ -533,8 +521,7 @@ function cargartablaDetalle(){
 function editar_detalle(id){
     
     vistacargando("m","Espere por favor")  
-    $.get("/detalle-desp/editar/"+id, function (data) {
-        console.log(data.resultado.num_factura_ticket);
+    $.get("detalle-desp/editar/"+id, function (data) {
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error")
@@ -653,15 +640,14 @@ $("#form_idDetalleDesp").submit(function(e){
     let url_form=""
     if(AccionFormDetalle=="R"){
         tipo="POST"
-        url_form="/guardar-detalle-desp"
+        url_form="guardar-detalle-desp"
     }else{
         tipo="PUT"
-        url_form="/actualizar-detalle-desp/"+IdDetalleEditar
+        url_form="actualizar-detalle-desp/"+IdDetalleEditar
     }
   
     var FrmData=$("#form_idDetalleDesp").serialize();
    
-    console.log(FrmData)
     $.ajax({
         
         type: tipo,
@@ -672,7 +658,6 @@ $("#form_idDetalleDesp").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -702,7 +687,6 @@ $("#form_idDetalleDesp").submit(function(e){
             // }); 
                             
         }, error:function (data) {
-            console.log(data)
 
             vistacargando("");
             alertNotificar('Ocurrió un error','error');
@@ -745,8 +729,7 @@ function eliminardetalle(idesp){
     },
     function(isConfirm) {
         if (isConfirm) { 
-            $.get("/eliminar-detalle-desp/"+idesp, function(data){
-                console.log(data)
+            $.get("eliminar-detalle-desp/"+idesp, function(data){
               
                 if(data.error==true){
                     alertNotificar(data.mensaje,"error");
@@ -785,14 +768,12 @@ function limpiarCamposDetalleTxt(){
 
 function ver_detalledes(id){
     
-    $.get("/detalle-desp/editar/"+id, function (data) {
-        console.log(data);
+    $.get("detalle-desp/editar/"+id, function (data) {
 
         if(data.error==true){
             alertNotificar(data.mensaje,"error")
             return
         }
-        console.log(data)
         
         $('#DetalleDespacho').modal('show')
 
@@ -838,8 +819,7 @@ function ver_detalledes(id){
 function cargartareadetalle(idvehi,fecha){
     $('#tareamodalapr').html('');
     
-    $.get("/listar-tarea-veh/"+idvehi+'/'+fecha, function (data) {
-        console.log(data)
+    $.get("listar-tarea-veh/"+idvehi+'/'+fecha, function (data) {
         if(data.error == true){
             alertNotificar(data.mensaje,'error');
         }
@@ -897,14 +877,13 @@ $("#firma_aprobacion").submit(function(e){
 
     var FrmData = new FormData(this);
 
-    console.log(FrmData)
    
     // var iddetale = $("#iddetallef").val();
 
     $.ajax({
             
         type: 'POST',
-        url: '/aprobar-despacho-firma',
+        url: 'aprobar-despacho-firma',
         method: 'POST',             
         data: FrmData,
         dataType: 'json',
@@ -914,8 +893,6 @@ $("#firma_aprobacion").submit(function(e){
 
         success: function(data){
 
-            
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -930,7 +907,6 @@ $("#firma_aprobacion").submit(function(e){
             
                             
         }, error:function (data) {
-            console.log(data)
 
             // vistacargando("");
             alertNotificar('Ocurrió un error','error');

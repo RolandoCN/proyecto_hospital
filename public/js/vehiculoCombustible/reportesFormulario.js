@@ -50,14 +50,13 @@ $("#form_reporte").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-reportes"
+        url_form="guardar-reportes"
     }else{
         tipo="PUT"
-        url_form="/actualizar-rol/"+idRolEditar
+        url_form="actualizar-rol/"+idRolEditar
     }
   
     var FrmData=$("#form_reporte").serialize();
-    console.log(FrmData)
     $.ajax({
             
         type: tipo,
@@ -68,7 +67,6 @@ $("#form_reporte").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -107,8 +105,7 @@ function llenar_tabla_reportes(){
 	$("#tabla_formulario tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-reportes/", function(data){
-        console.log(data)
+    $.get("listado-reportes/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -130,7 +127,7 @@ function llenar_tabla_reportes(){
                 order: [[ 3, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -170,7 +167,7 @@ function llenar_tabla_reportes(){
 }
 
 function reporteDescargar(id){
-    window.location.href="/descargar-reporte-form/"+id
+    window.location.href="descargar-reporte-form/"+id
 }
 
 $('.collapse-link').click();

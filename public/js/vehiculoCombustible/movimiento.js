@@ -247,10 +247,10 @@ $("#form_registro_tarea").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-movimiento"
+        url_form="guardar-movimiento"
     }else{
         tipo="PUT"
-        url_form="/actualizar-tarea/"+IdTareaEditar
+        url_form="actualizar-tarea/"+IdTareaEditar
     }
 
     var FrmData = new FormData(this);
@@ -359,8 +359,7 @@ function llenar_tabla_tarea(){
 	$("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-movimiento/", function(data){
-        console.log(data)
+    $.get("listado-movimiento/", function(data){
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
@@ -381,7 +380,7 @@ function llenar_tabla_tarea(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -482,8 +481,8 @@ function reporte_movimiento(id){
 //permite visualizarr el pdf de la emision en una modal
 function verpdf(nombre_pdf){
     var iframe=$('#iframePdf');
-    iframe.attr("src", "/visualizar-documento/"+nombre_pdf);   
-    $("#vinculo").attr("href", '/descargar-doc/'+nombre_pdf);
+    iframe.attr("src", "visualizar-documento/"+nombre_pdf);   
+    $("#vinculo").attr("href", 'descargar-doc/'+nombre_pdf);
     $("#documentopdf").modal("show");
     $('#titulo').html('Emisión');
 }
@@ -526,7 +525,7 @@ function visualizarListado(){
 
 function btn_eliminar_movimi(idmovimiento){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-movimiento/"+idmovimiento, function(data){
+        $.get("eliminar-movimiento/"+idmovimiento, function(data){
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");
@@ -553,7 +552,7 @@ function cargartarea(){
     }
     $('#tbody_dato_salida').html('');
     $('#tareasguard').val('');
-    $.get("/carga-tarea/"+idveh, function (data) {
+    $.get("carga-tarea/"+idveh, function (data) {
         if(data.error == true){
             alertNotificar(data.mensaje,"error");
         }
@@ -586,7 +585,6 @@ function cargartarea(){
         
             $("#table_dato_salida").show(700);
             $.each(data.resultado, function(i,item){
-                console.log(item.id_tarea);
             
                 $('#tbody_dato_salida').append(
                     `<tr>
@@ -681,7 +679,6 @@ $('#n_ticket').select2({
     dataType: 'json',
     delay: 250,
     processResults: function (data) {
-        console.log(data)
         return {
         results:  $.map(data, function (item) {
                 return {
@@ -700,7 +697,7 @@ function cargaInfoTicket(){
     let n_ticket=$('#n_ticket').val()
     if(n_ticket=="" || n_ticket==null){return}
     vistacargando("m","Espere por favor")
-    $.get("/info-veh-ticket/"+n_ticket, function(data){
+    $.get("info-veh-ticket/"+n_ticket, function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");

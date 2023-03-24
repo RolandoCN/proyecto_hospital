@@ -34,7 +34,7 @@ $("#form_reporte").submit(function(e){
 
     //comprobamos si es registro o edicion
     let tipo="POST"
-    let url_form="/guardar-ordenes"
+    let url_form="guardar-ordenes"
     
     var FrmData=$("#form_reporte").serialize();
     console.log(FrmData)
@@ -90,7 +90,7 @@ function llenar_tabla_reportes(data){
         order: [[ 3, "desc" ]],
         sInfoFiltered:false,
         language: {
-            url: '/json/datatables/spanish.json',
+            url: 'json/datatables/spanish.json',
         },
         columnDefs: [
             { "width": "5%", "targets": 0 },
@@ -134,8 +134,8 @@ function llenar_tabla_reportes(data){
 //permite visualizarr el pdf de la emision en una modal
 function visualizarOrden(nombre_pdf){
     var iframe=$('#iframePdf');
-    iframe.attr("src", "/visualizar-documento/"+nombre_pdf);   
-    $("#vinculo").attr("href", '/descargar-doc/'+nombre_pdf);
+    iframe.attr("src", "visualizar-documento/"+nombre_pdf);   
+    $("#vinculo").attr("href", 'descargar-doc/'+nombre_pdf);
     $("#documentopdf").modal("show");
     $('#titulo').html('Orden');
 }

@@ -22,14 +22,14 @@ $("#form_combustible").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-combustible"
+        url_form="guardar-combustible"
     }else{
         tipo="PUT"
-        url_form="/actualizar-combustible/"+idCombustibleEditar
+        url_form="actualizar-combustible/"+idCombustibleEditar
     }
   
     var FrmData=$("#form_combustible").serialize();
-    console.log(FrmData)
+
     $.ajax({
             
         type: tipo,
@@ -40,7 +40,6 @@ $("#form_combustible").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -53,7 +52,6 @@ $("#form_combustible").submit(function(e){
             llenar_tabla_combustible()
                             
         }, error:function (data) {
-            console.log(data)
 
             // vistacargando("");
             alertNotificar('Ocurrió un error','error');
@@ -70,8 +68,7 @@ function llenar_tabla_combustible(){
 	$("#tabla_combustible tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-combustible/", function(data){
-        console.log(data)
+    $.get("listado-combustible/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -93,7 +90,7 @@ function llenar_tabla_combustible(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 0 },
@@ -136,8 +133,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editarCombust(id_gaso){
-    $.get("/editar-combustible/"+id_gaso, function(data){
-        console.log(data)
+    $.get("editar-combustible/"+id_gaso, function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -183,8 +179,7 @@ function visualizarListado(){
 
 function eliminarCombust(id_gaso){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-combustible/"+id_gaso, function(data){
-            console.log(data)
+        $.get("eliminar-combustible/"+id_gaso, function(data){
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");

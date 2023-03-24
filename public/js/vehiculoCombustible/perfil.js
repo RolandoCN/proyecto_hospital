@@ -23,10 +23,10 @@ $("#form_registro_rol").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-rol"
+        url_form="guardar-rol"
     }else{
         tipo="PUT"
-        url_form="/actualizar-rol/"+idRolEditar
+        url_form="actualizar-rol/"+idRolEditar
     }
 
     vistacargando("m","Espere por favor")
@@ -70,7 +70,7 @@ function llenar_tabla_rol(){
 	$("#tabla_rol tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-rol/", function(data){
+    $.get("listado-rol/", function(data){
              
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -92,7 +92,7 @@ function llenar_tabla_rol(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 0 },
@@ -140,7 +140,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 function accesos(id_perfil, abiertaModal=null){
     
     vistacargando("m","Espere por favor")
-    $.get("/acceso-perfil/"+id_perfil, function(data){
+    $.get("acceso-perfil/"+id_perfil, function(data){
         
         vistacargando("")
 
@@ -164,7 +164,7 @@ function accesos(id_perfil, abiertaModal=null){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 0 },
@@ -227,7 +227,7 @@ function accionAcceso(id){
 function AggQuitarMenuPerfil(id_menu, tipo){
     
     vistacargando("m","Espere por favor")
-    $.get("/acceso-por-perfil/"+id_menu+"/"+tipo+"/"+PerfilSeleccionado, function(data){
+    $.get("acceso-por-perfil/"+id_menu+"/"+tipo+"/"+PerfilSeleccionado, function(data){
         vistacargando("")
         if(data.error==true){
             if(tipo=="A"){
@@ -258,7 +258,7 @@ function AggQuitarMenuPerfil(id_menu, tipo){
 
 function editarRol(id_perfil){
     vistacargando("m","Espere por favor")
-    $.get("/editar-rol/"+id_perfil, function(data){
+    $.get("editar-rol/"+id_perfil, function(data){
         vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -305,7 +305,7 @@ function visualizarListado(){
 function eliminarRol(id_perfil){
     vistacargando("m","Espere por favor")
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-rol/"+id_perfil, function(data){
+        $.get("eliminar-rol/"+id_perfil, function(data){
             vistacargando("")
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");

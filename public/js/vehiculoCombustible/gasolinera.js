@@ -22,14 +22,13 @@ $("#form_registro_gaso").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-gasolinera"
+        url_form="guardar-gasolinera"
     }else{
         tipo="PUT"
-        url_form="/actualizar-gasolinera/"+idGasolineraEditar
+        url_form="actualizar-gasolinera/"+idGasolineraEditar
     }
   
     var FrmData=$("#form_registro_gaso").serialize();
-    console.log(FrmData)
     $.ajax({
             
         type: tipo,
@@ -40,7 +39,6 @@ $("#form_registro_gaso").submit(function(e){
         processData:false, 
 
         success: function(data){
-            console.log(data)
             // vistacargando("");                
             if(data.error==true){
                 alertNotificar(data.mensaje,'error');
@@ -53,7 +51,6 @@ $("#form_registro_gaso").submit(function(e){
             llenar_tabla_gasolinera()
                             
         }, error:function (data) {
-            console.log(data)
 
             // vistacargando("");
             alertNotificar('Ocurrió un error','error');
@@ -71,8 +68,7 @@ function llenar_tabla_gasolinera(){
 	$("#tabla_gasolinera tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-gasolinera/", function(data){
-        console.log(data)
+    $.get("listado-gasolinera/", function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -94,7 +90,7 @@ function llenar_tabla_gasolinera(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "20%", "targets": 0 },
@@ -137,8 +133,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editarGasoli(id_gaso){
-    $.get("/editar-gasolinera/"+id_gaso, function(data){
-        console.log(data)
+    $.get("editar-gasolinera/"+id_gaso, function(data){
       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
@@ -185,8 +180,7 @@ function visualizarListado(){
 
 function eliminarGasolinera(id_gaso){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-gasolinera/"+id_gaso, function(data){
-            console.log(data)
+        $.get("eliminar-gasolinera/"+id_gaso, function(data){
           
             if(data.error==true){
                 alertNotificar(data.mensaje,"error");

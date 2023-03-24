@@ -55,10 +55,10 @@ $("#form_registro_tarea").submit(function(e){
     let url_form=""
     if(AccionForm=="R"){
         tipo="POST"
-        url_form="/guardar-tarea"
+        url_form="guardar-tarea"
     }else{
         tipo="PUT"
-        url_form="/actualizar-tarea/"+IdTareaEditar
+        url_form="actualizar-tarea/"+IdTareaEditar
     }
   
     var FrmData=$("#form_registro_tarea").serialize();
@@ -108,7 +108,7 @@ function llenar_tabla_tarea(){
 	$("#tabla_tarea tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("/listado-tarea/", function(data){
+    $.get("listado-tarea/", function(data){
         console.log(data)
       
         if(data.error==true){
@@ -131,7 +131,7 @@ function llenar_tabla_tarea(){
                 order: [[ 1, "desc" ]],
                 sInfoFiltered:false,
                 language: {
-                    url: '/json/datatables/spanish.json',
+                    url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
@@ -177,7 +177,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 
 function editarTarea(id_tarea){
-    $.get("/editar-tarea/"+id_tarea, function(data){
+    $.get("editar-tarea/"+id_tarea, function(data){
         console.log(data)
       
         if(data.error==true){
@@ -237,7 +237,7 @@ function visualizarListado(){
 
 function btn_eliminar_tarea(id_tarea){
     if(confirm('¿Quiere eliminar el registro?')){
-        $.get("/eliminar-tarea/"+id_tarea, function(data){
+        $.get("eliminar-tarea/"+id_tarea, function(data){
             console.log(data)
           
             if(data.error==true){
