@@ -127,14 +127,19 @@
                                 <textarea class="form-control" placeholder="Ingrese el motivo" id="motivo" maxlength="200" onKeyPress="if(this.value.length==200) return false;"  name="motivo"></textarea>                          
                             </div>
                             <div class="form-group" >
-                                <label for="inputPassword3" >Autorizado Por</label>                            
-                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2"  name="autorizado" id="autorizado" >
+                                <label for="inputPassword3" >Área Solicita</label>                            
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2"  name="area_sol" id="area_sol" >
                                     
-                                    @foreach ($autorizado as $dato)
+                                    @foreach ($area as $dato)
                                         <option value=""></option>
-                                        <option value="{{ $dato->id_autorizado_salida  }}" >{{ $dato->nombres }} </option>
+                                        <option value="{{ $dato->id_area   }}" >{{ $dato->descripcion }} </option>
                                     @endforeach
                                 </select>                            
+                            </div>
+
+                            <div class="form-group" id="div_novedad" style="display:none">
+                                <label for="inputPassword3" >Novedad</label>
+                                <textarea class="form-control" placeholder="Ingrese la novedad" id="txt_novedad" name="txt_novedad"> </textarea>                
                             </div>
 
                         </div>   
@@ -180,13 +185,17 @@
 
 
                             <div class="form-group" >
-                                <label for="inputPassword3" >Presenta Novedad</label>                            
-                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" onchange="cambiaNovedad()" name="tiene_novedad" id="tiene_novedad" >
+                                <label for="inputPassword3" >Autorizado Por</label>                            
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2"  name="autorizado" id="autorizado" >
                                     
-                                    <option value="No" selected>No</option>
-                                    <option value="Si">Si</option>
+                                    @foreach ($autorizado as $dato)
+                                        <option value=""></option>
+                                        <option value="{{ $dato->id_autorizado_salida  }}" >{{ $dato->nombres }} </option>
+                                    @endforeach
                                 </select>                            
                             </div>
+
+                           
                             
 
                         </div>
@@ -227,13 +236,19 @@
 
                             <div class="form-group ">
                                 <label for="inputPassword3" >Solicitado Por</label>
-                                <textarea  maxlength="100" onKeyPress="if(this.value.length==100) return false;" class="form-control"id="solicitante" name="solicitante" placeholder="Ingrese el área solicitante" ma ></textarea>
+                                <textarea  maxlength="100" onKeyPress="if(this.value.length==100) return false;" class="form-control"id="solicitante" name="solicitante" placeholder="Ingrese el funcionario solicitante"  ></textarea>
                             </div>
 
-                            <div class="form-group" id="div_novedad" style="display:none">
-                                <label for="inputPassword3" >Novedad</label>
-                                <textarea class="form-control" placeholder="Ingrese la novedad" id="txt_novedad" name="txt_novedad"> </textarea>                
+                            <div class="form-group" >
+                                <label for="inputPassword3" >Presenta Novedad</label>                            
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" onchange="cambiaNovedad()" name="tiene_novedad" id="tiene_novedad" >
+                                    
+                                    <option value="No" selected>No</option>
+                                    <option value="Si">Si</option>
+                                </select>                            
                             </div>
+
+                           
 
                         </div>
 
@@ -283,7 +298,7 @@
                 <div class="modal-content">
            
                     <div class="modal-body">
-                        <span style="font-size: 150%; color: green" class="fa fa-file"></span> <label id="titulo" class="modal-title" style="font-size: 130%; color: black ;">EMISIÓN</label>
+                        <span style="font-size: 150%; color: green" class="fa fa-file"></span> <label id="titulo" class="modal-title" style="font-size: 130%; color: black ;">RUTAS</label>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span style="font-size: 35px"aria-hidden="true">&times;</span>
                         </button>

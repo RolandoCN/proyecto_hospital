@@ -109,7 +109,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     //TICKET
     Route::get('/ticket', [TicketController::class, 'index'])->middleware('validarRuta');
-    Route::get('/listado-ticket', [TicketController::class, 'listar']);
+    Route::get('/obtener-ticket', [TicketController::class, 'listar']);
     Route::post('/guardar-ticket', [TicketController::class, 'guardar']);
     Route::get('/editar-ticket/{id}', [TicketController::class, 'editar']);
     Route::put('/actualizar-ticket/{id}', [TicketController::class, 'actualizar']);
@@ -136,11 +136,14 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/listado-movimiento', [MovimientoVehController::class, 'listar']);
     Route::get('/eliminar-movimiento/{id}', [MovimientoVehController::class, 'eliminar']);
     Route::get('/reporte-mov-ind/{idmov}', [MovimientoVehController::class, 'reporteIndividual']);
-
     Route::get('/visualizar-documento/{documentName}',[MovimientoVehController::class, 'visualizarDocumento']);
     Route::get('/descargar-doc/{documentName}', [MovimientoVehController::class, 'descargar']);
+    Route::get('/descargar-doc-elim/{documentName}', [MovimientoVehController::class, 'descargarElimina']);
     Route::get('/buscar-ticket', [MovimientoVehController::class, 'buscarTicket']);
     Route::get('/ticket-vehiculo/{nroticket}', [MovimientoVehController::class, 'ticketVehiculo']);
+
+    Route::get('/listado-salidas', [MovimientoVehController::class, 'vistaSalidas'])->middleware('validarRuta');
+    Route::get('/obtener-salidas', [MovimientoVehController::class, 'obtenerSalidas']);
 
     //GASOLINERAS
     Route::get('/gasolinera', [GasolineraController::class, 'index'])->middleware('validarRuta');
@@ -196,10 +199,15 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     //REPORTES
     Route::get('/reporte-ordenes', [ReportesCombustibleController::class, 'vistaOrdenes'])->middleware('validarRuta');
     Route::get('/listado-reporte-orden', [ReportesCombustibleController::class, 'listadoOrden']);
-    Route::post('/guardar-ordenes', [ReportesCombustibleController::class, 'guardarOrden']);
+    Route::post('/buscar-ordenes', [ReportesCombustibleController::class, 'buscarOrden']);
     Route::get('/genera-orden-pdf/{id}/{nro}', [ReportesCombustibleController::class, 'pdfOrden']);
 
+    //CONSOLIDADO
+    Route::get('/reporte-consolidado', [ReportesCombustibleController::class, 'vistaConsolidado']);
+    Route::get('/listado-consolidado/{ini}/{fin}', [ReportesCombustibleController::class, 'listarConsolidado']);
 
     //testreporte
     Route::get('/genera-orden-pdf/{id}/{nro}/{iddet}/{t}', [DespachoCombustibleController::class, 'pdfOrden']);
+
+    Route::get('/genera-consolidado-pdf/{ini}/{fin}', [ReportesCombustibleController::class, 'pdfConsolidado']);
 });

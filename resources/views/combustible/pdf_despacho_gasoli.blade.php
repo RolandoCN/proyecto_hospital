@@ -36,6 +36,11 @@
             text-align: center;
             line-height: 20px;
         }
+        .ltable
+        {
+            border-collapse: collapse;
+            /* font-family: sans-serif; */
+        }
 
         .td_qr {
             border-bottom: 0px;
@@ -110,78 +115,72 @@
             <tbody class="fuenteSubtitulo">
 
 
-                <tr style="font-size: 9px">
+                <tr style="font-size: 11px">
+
                     <td style="text-align:center; background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-color: #D3D3D3; "
-                        class="pad"><b># Despacho </b> </td>
+                        class="pad"  colspan="1"><b># Despacho </b> 
+                    </td>
+
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>Fecha-Hora</b></td>
-                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"colspan="4"
-                        class="pad"><b>Conductor</b></td>
+                        colspan="2" class="pad"><b>Fecha-Hora</b>
+                    </td>
+
+                    <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"colspan="3"
+                        class="pad"><b>Conductor</b>
+                    </td>
+
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"colspan="2"
-                        class="pad"><b>Número Ticket</b></td>
+                        class="pad"><b>Número Ticket</b>
+                    </td>
+
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="3" class="pad"><b>Vehículo</b></td>
-                   
-                   
+                        colspan="3" class="pad"><b>Vehículo</b>
+                    </td>
+                                      
                     <td style="text-align:#D3D3D3;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>Combustible</b></td>
+                        colspan="1" class="pad"><b>Combustible</b>
+                    </td>
+
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>Galones</b></td>
+                        colspan="1" class="pad"><b>Galones</b>
+                    </td>
+
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-right: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>P. Unitario</b></td>
+                        colspan="1" class="pad"><b>P. Unitario</b>
+                    </td>
+
                     <td style="text-align:center;background-color: #D3D3D3;border-top: 0px;border-left: 0px;border-color: #D3D3D3"
-                        colspan="1" class="pad"><b>SubTotal</b></td>
+                        colspan="1" class="pad"><b>SubTotal</b>
+                    </td>
+
                 </tr>
                 @php
                     $total_parcial1 = 0;
                     $tt = 0;
                 @endphp
                 @foreach ($detalle as $dato)
-                    <tr style="font-size: 9px">
-                        <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
-                            {{ $dato->iddetalle_despacho }}</td>
-                        <td style="border-color: #D3D3D3"colspan="1" class="pad">
-                            {{ $dato->fecha_hora_despacho }}</td>
-                        <td style="border-color: #D3D3D3" colspan="4" class="pad">
-                            {{ $dato->chofer->nombres }} {{ $dato->chofer->apellidos }}</td>
+                    <tr style="font-size: 10px">
+                        <td align="center" style="border-color: #D3D3D3; border:0px"colspan="1" class="pad "  colspan="1">
+                            {{ $dato->iddetalle_despacho }}
+                        </td>
 
+                        <td  align="center" style="border-color: #D3D3D3" colspan="2" class="pad">
+                            {{ $dato->ticket->f_despacho }}
+                        </td>
 
+                        <td style="border-color: #D3D3D3" colspan="3" class="pad">
+                            {{ $dato->chofer->nombres }} {{ $dato->chofer->apellidos }}
+                        </td>
 
                         <td align="center" style="border-color: #D3D3D3"colspan="2" class="pad">
                            {{ $dato->num_factura_ticket}}
                                 
                         </td>
-                        <td style="border-color: #D3D3D3" colspan="3" class="pad">
+
+                        <td  align="center"style="border-color: #D3D3D3" colspan="3" class="pad">
                             {{ $dato->vehiculo['descripcion'] . ' ' .$dato->vehiculo['codigo_institucion'].' ['. $dato->vehiculo['placa'].']' }}
                         </td>
-                        {{-- <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
-                            {{ $dato->kilometraje }}</td>
-                        <td align="center" style="border-color: #D3D3D3"colspan="1" class="pad">
-                            @if ($dato->horometraje != null)
-                                {{ $dato->horometraje }}
-                            @endif --}}
-                        {{-- </td> --}}
-                      
-                        {{-- <td style="border-color: #D3D3D3" colspan="2" class="pad">
-
-                            @php
-                                $tareasVeh=\DB::table('vc_tarea')
-                                ->WhereDate('fecha_inicio','<=',$datos->fecha)
-                                ->WhereDate('fecha_fin','>=',$datos->fecha)
-                                ->where('estado','!=','Eliminada')
-                                ->where('id_vehiculo',$dato->id_vehiculo)
-                                ->get()
-                            @endphp
-                            <ul style="margin-left: 0px">
-                              
-                                    @foreach ($tareasVeh as $tarea)
-                                        <li style="margin-left: 0px">{{ $tarea->motivo }}</li>
-                                    @endforeach
-                               
-                            </ul>
-                            
-                        </td> --}}
-                     
+                        
                
                         <td style=";border-color: #D3D3D3" colspan="1" class="pad">
                             {{ $dato->tipocombustible['detalle'] }}</td>

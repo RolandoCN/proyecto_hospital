@@ -31,7 +31,7 @@
     @endisset
     
     <!-- jQuery -->
-    <script src="{{ asset('../../bower_components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             var alto= $(window).height()-5;

@@ -99,21 +99,24 @@ $("#form_registro_tarea").submit(function(e){
     let acompanante=$('#acompanante').val()
     
     let solicitante=$('#solicitante').val()
+    let area_sol=$('#area_sol').val()
     let tiene_novedad=$('#tiene_novedad').val()
     let txt_novedad= $('#txt_novedad').val()
 
     let autorizado=$('#autorizado').val()
-    
-    if(vehiculo=="" || vehiculo==null){
-        alertNotificar("Seleccione el vehículo","error")
-        return
-    } 
 
     if(n_ticket=="" || n_ticket==null){
         alertNotificar("Ingrese el número de ticket","error")
         $('#n_ticket').focus()
         return
     } 
+    
+    if(vehiculo=="" || vehiculo==null){
+        alertNotificar("Seleccione el vehículo","error")
+        return
+    } 
+
+   
 
 
     if(fecha_h_salida_patio=="" || fecha_h_salida_patio==null){
@@ -215,10 +218,17 @@ $("#form_registro_tarea").submit(function(e){
     }
 
     if(solicitante=="" || solicitante==null){
-        alertNotificar("Ingrese el área solicitante'","error")
+        alertNotificar("Ingrese el funcionario solicitante","error")
         $('#solicitante').focus()
         return
     } 
+
+    if(area_sol=="" || area_sol==null){
+        alertNotificar("Seleccione el área solicitante'","error")
+
+        return
+    } 
+    
 
     if(autorizado=="" || autorizado==null){
         alertNotificar("Seleccione la persona que autoriza'","error")
@@ -336,6 +346,7 @@ function limpiarCampos(){
     $('#motivo').val('')
     $('#acompanante').val('')
     $('#solicitante').val('')
+    $('#area_sol').val('')
     
     $('#div_novedad').hide()
 
@@ -482,9 +493,9 @@ function reporte_movimiento(id){
 function verpdf(nombre_pdf){
     var iframe=$('#iframePdf');
     iframe.attr("src", "visualizar-documento/"+nombre_pdf);   
-    $("#vinculo").attr("href", 'descargar-doc/'+nombre_pdf);
+    $("#vinculo").attr("href", 'descargar-doc-elim/'+nombre_pdf);
     $("#documentopdf").modal("show");
-    $('#titulo').html('Emisión');
+    $('#titulo').html('Rutas');
 }
 
 //limpiamos los datos de la modal

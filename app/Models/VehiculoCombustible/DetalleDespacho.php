@@ -26,9 +26,17 @@ class DetalleDespacho extends Model
     public function chofer(){
         return $this->belongsTo('App\Models\Persona', 'idconductor', 'idpersona');
     }
+   
+    public function ticket(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\Ticket', 'num_factura_ticket', 'numero_ticket');
+    }
+
+    public function movimiento(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\Movimiento', 'num_factura_ticket', 'nro_ticket')->with('autoriza');
+    }
 
     public function tareasDespacho(){
-        return $this->hasMany('App\Models\VehiculoCombustible\TareaDetalleDespacho', 'iddetalle_despacho', 'iddetalle_despacho')->with('detalleTarea');
+        return $this->hasMany('App\Models\Movimiento\TareaDetalleDespacho', 'iddetalle_despacho', 'iddetalle_despacho')->with('detalleTarea');
     }
 
     public function movimientosDespacho(){

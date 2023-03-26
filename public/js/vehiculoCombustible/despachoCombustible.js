@@ -438,7 +438,7 @@ function calculartotal(input){
 function cargartablaDetalle(){
   
     $.get("detalle-listado-des/"+idCabeceraDes, function (resultado) {    
-
+        console.log(resultado)
         var idtabla = "tabla_listado_desp";
         $(`#${idtabla}`).DataTable({
             dom: ""
@@ -466,16 +466,27 @@ function cargartablaDetalle(){
                     previous: "Anterior"
                 },
             },
+            columnDefs: [
+                { "width": "7%", "targets": 0 },
+                { "width": "8%", "targets": 1 },
+                { "width": "20%", "targets": 2 },
+                { "width": "20%", "targets": 3 },
+                { "width": "10%", "targets": 4 },
+                { "width": "10%", "targets": 5 },
+                { "width": "10%", "targets": 6 },
+                { "width": "15%", "targets": 7 },
+               
+            ],
             
             data: resultado.resultado,
             
             columns:[
                 {data: "iddetalle_despacho" },
-                {data: "vehiculo.placa" },
+                {data: "num_factura_ticket" },
+                {data: "vehiculo.descripcion" },
+                {data: "tipocombustible.detalle" },
                 {data: "tipocombustible.detalle" },
                 {data: "total" },
-                {data: "fecha_hora_despacho" },
-                {data: "fecha_hora_despacho" },
                 {data: "estado" },
                 {data: "estado" },                              
                 
@@ -483,7 +494,8 @@ function cargartablaDetalle(){
             ],
             "rowCallback": function( row, data, index ){
                 
-                $('td', row).eq(1).html(data.vehiculo.descripcion+" "+data.vehiculo.codigo_institucion);
+                $('td', row).eq(2).html(data.vehiculo.descripcion+" "+data.vehiculo.codigo_institucion);
+                $('td', row).eq(3).html(data.chofer.apellidos+" "+data.chofer.nombres);
 
                 $('td', row).eq(7).html(`
                     <button type="button" onclick="editar_detalle('${data.iddetalle_despacho}')" data-toggle="tooltip" data-original-title="Ver detalle" class="btn btn-sm btn-info btn_icon" style="margin-bottom: 0;"><i class="fa fa-edit"></i></button>
@@ -505,7 +517,7 @@ function cargartablaDetalle(){
                     $('td',row).eq(6).html('<span style="min-width: 90px !important;font-size: 12px" class="label label-danger estado_validado"> No aprobado &nbsp;</span>');
 
                 } 
-                $('td',row).eq(5).html(`${data.num_factura_ticket}`); 
+                // $('td',row).eq(5).html(`${data.num_factura_ticket}`); 
                  
             } 
 

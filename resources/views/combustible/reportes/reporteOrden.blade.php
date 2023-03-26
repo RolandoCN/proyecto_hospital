@@ -191,7 +191,8 @@
                 <br><br><br><br><br>
                     
                 <hr style="color:black !important">
-                <p style="text-align: center">Responsable de Servicios Institucionales <br>
+                <p style="text-align: center">{{ $responsable->nombre }}<br>
+                Responsable de Servicios Institucionales 
                     
                 </p>
             </td>
@@ -240,7 +241,7 @@
 
                 <td class="pad"
                 style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                width="100%"><b>Solicitado por:</b> {{$movimiento->area}}
+                width="100%"><b>Solicitado por:</b> {{$movimiento->persona_solicita}}
                
             </td>
 
@@ -318,8 +319,8 @@
             <td width="25%" style="text-align: center; border:0px">
                 <br><br><br><br><br>
                 <hr style="color:black !important">
-                <p style="text-align: center">Autorizado por <br>
-                    {{ $movimiento->abreviacion_titulo }} {{ $movimiento->autorizador }}
+                <p style="text-align: center">{{ $movimiento->abreviacion_titulo }} {{ $movimiento->autorizador }} <br>Autorizado por
+                    
                 </p>
             </td>
             <td width="30%" style="border:0px">
@@ -330,8 +331,10 @@
                 <br><br><br><br><br>
                     
                 <hr style="color:black !important">
-                <p style="text-align: center">Conductor <br>
-                    {{ $movimiento->nombres }}  {{ $movimiento->apellidos }}
+                <p style="text-align: center">
+                    {{ $movimiento->nombres }}  {{ $movimiento->apellidos }}<br>
+                    Conductor 
+                   
                 </p>
             </td>
             <td width="10%" style="border:0px"></td>

@@ -1,23 +1,32 @@
 @extends('layouts.app')
 
 @section('content')
-
     <style>
-       
+        a:hover, a:active, a:focus {
+            outline: none;
+            text-decoration: none;
+            color: #f4f4f4;
+        }
+        .img_firma{
+            width: 90px;
+        }
     </style>
+    
     <section class="content-header">
         <h1>
-            Gestión Reportes Ordenes
+            Listado Salidas Vehicular
         </h1>
 
     </section>
 
+
+   
+
     <section class="content" id="content_form">
 
-        <div class="box" id="listado_formulario">
-
+        <div class="box" id="listado_veh">
             <div class="box-header with-border">
-                <h3 class="box-title" id="titulo_form"> Buscar Ordenes</h3>
+                <h3 class="box-title">Listado </h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
@@ -26,56 +35,23 @@
                     </button>
                     
                 </div>
+
+              
             </div>
-            
             <div class="box-body">
 
-                <div id="form_ing">
-                    <form class="form-horizontal" id="form_reporte" autocomplete="off" method="post"
-                    action="">
-                     {{ csrf_field() }}
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Inicio</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una descripción" id="fecha_ini" name="fecha_ini">
-                            </div>
-                            
-                        </div>
+                
 
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-3 control-label">Fecha Fin</label>
-                            <div class="col-sm-8">
-                                <input type="date" class="form-control" placeholder="Ingrese una fecha" id="fecha_fin" name="fecha_fin">
-                            </div>
-                            
-                        </div>
-
-                    
-                      
-                        <div class="form-group">
-                            <div class="col-sm-12 col-md-offset-3" >
-                            
-                                <button type="submit" class="btn btn-success btn-sm">
-                                Buscar
-                                </button>
-                              
-                            </div>
-                        </div>
-                    </form>
-                    <hr>
-                </div>
-
-                <div class="table-responsive" >
-                    <table id="tabla_formulario" width="100%"class="table table-bordered table-striped">
+                <div class="table-responsive">
+                    <table id="tabla_salidas" width="100%"class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Fecha</th>
                                 <th>Vehículo</th>
-                               
-                                <th>Nro Ticket</th>
-                                <th>Chofer</th>
-                                <th style="min-width: 30%">Opciones</th>
+                                <th style="text-align: center">Chofer</th>
+                                <th style="text-align: center">Patio</th>
+                                <th style="text-align: center">Destino</th>
+                                <th>N° Ticket</th>
+                                <th style="min-width: 10%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,13 +69,12 @@
 
         </div>
 
-
         <div class="modal fade" id="documentopdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
            
                     <div class="modal-body">
-                        <span style="font-size: 150%; color: green" class="fa fa-file"></span> <label id="titulo" class="modal-title" style="font-size: 130%; color: black ;">ORDEN</label>
+                        <span style="font-size: 150%; color: green" class="fa fa-file"></span> <label id="titulo" class="modal-title" style="font-size: 130%; color: black ;">RUTAS</label>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span style="font-size: 35px"aria-hidden="true">&times;</span>
                         </button>
@@ -125,14 +100,24 @@
 
     </section>
 
+    
+  
 @endsection
 @section('scripts')
 
-    <script src="{{ asset('js/vehiculoCombustible/reportesOrdenes.js?v='.rand())}}"></script>
+    <script src="{{asset('canvasLibrary/js/numeric-1.2.6.min.js')}}"></script> 
+    <script src="{{asset('canvasLibrary/js/bezier.js')}}"></script>
+    <script src="{{asset('canvasLibrary/js/jquery.signaturepad.js')}}"></script> 
+    <script type='text/javascript' src="{{asset('canvasLibrary/js/html2canvas.js')}}"></script>
 
+    <script src="{{ asset('js/vehiculoCombustible/salidas.js?v='.rand())}}"></script>
 
     <script>
-        // llenar_tabla_reportes()
+        //cargamos el datos del chofer el usuario logueado
+       
+        llenar_tabla_salidas()
+        limpiarCampos()
     </script>
+
 
 @endsection

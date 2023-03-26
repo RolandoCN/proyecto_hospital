@@ -47,7 +47,7 @@
 		<div class="container-2">
 			<center><h1 id="modal_cargando_title">Cargando</h1></center>
 			{{-- <div class="loader3C" id="loader">Loading...</div> --}}
-			<div align="center" id="loader"><img width="7%" src="/img/cargargif.gif" alt=""></div>
+			<div align="center" id="loader"><img width="7%" src="img/cargargif.gif" alt=""></div>
 		</div>
 	</div>
 </div>

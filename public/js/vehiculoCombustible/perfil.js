@@ -303,8 +303,9 @@ function visualizarListado(){
 }
 
 function eliminarRol(id_perfil){
-    vistacargando("m","Espere por favor")
+    
     if(confirm('¿Quiere eliminar el registro?')){
+        vistacargando("m","Espere por favor")
         $.get("eliminar-rol/"+id_perfil, function(data){
             vistacargando("")
             if(data.error==true){

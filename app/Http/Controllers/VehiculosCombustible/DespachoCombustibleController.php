@@ -502,7 +502,7 @@ class DespachoCombustibleController extends Controller
 
     public function listarDetalleDesp($idCab){
         try{
-            $detalleDesp=DetalleDespacho::with('vehiculo','tipocombustible')
+            $detalleDesp=DetalleDespacho::with('vehiculo','tipocombustible', 'chofer')
             ->where('idcabecera_despacho', $idCab)
             ->where('estado','!=','Eliminado')->get();
             return response()->json([
@@ -569,9 +569,11 @@ class DespachoCombustibleController extends Controller
             setlocale(LC_ALL,"es_ES@euro","es_ES","esp"); //IDIOMA ESPAÑOL
             $fecha= $fechaw;
             $fecha = strftime("%d de %B de %Y", strtotime($fecha));
-           
 
-            $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha]);
+            $responsable=DB::table('vc_responsable_servicios')
+            ->first();
+
+            $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha, "responsable"=>$responsable]);
             $crearpdf->setPaper("A4", "portrait");
             $estadoarch = $crearpdf->stream();
 
@@ -888,9 +890,11 @@ class DespachoCombustibleController extends Controller
 
     public function despachoPdfGasolinera($idCab){
             try{
-                $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
+                $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer','ticket')
                 ->where('idcabecera_despacho',$idCab)->where('estado','Aprobado')
                 ->orderBy('fecha_hora_despacho', 'desc')->get();
+
+                // dd($detalle);
 
                 if(sizeof($detalle)<=0){
                     return back()->with(['mensajePInfoDespacho'=>'Aún no se han registrado despachos aprobados','estadoP'=>'danger']);

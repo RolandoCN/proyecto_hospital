@@ -23,10 +23,7 @@ class Ticket extends Model
         return $this->belongsTo('App\Models\Persona', 'idchofer', 'idpersona');
     }
 
-    // public function combustible(){
-    //     return $this->belongsTo('App\Models\VehiculoCombustible\TipoCombustible', 'id_tipocombustible ', 'id_tipocombustible');
-    // }
-
+  
     public function combustible(){
         return $this->belongsTo('App\Models\VehiculoCombustible\TipoCombustible', 'id_tipocombustible', 'id_tipocombustible');
     }

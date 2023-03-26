@@ -52,10 +52,10 @@ $("#form_registro_veh").submit(function(e){
     } 
 
     
-    if(tipousocombo=="" || tipousocombo==null){
-        alertNotificar("Seleccione el tipo de uso del vehículo","error")
-        return
-    } 
+    // if(tipousocombo=="" || tipousocombo==null){
+    //     alertNotificar("Seleccione el tipo de uso del vehículo","error")
+    //     return
+    // } 
 
     if(chasis=="" || chasis==null){
         alertNotificar("Ingrese el chasis del vehículo","error")
@@ -184,11 +184,11 @@ function llenar_tabla_vehiculo(){
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
-                    { "width": "30%", "targets": 1 },
-                    { "width": "10%", "targets": 2 },
-                    { "width": "15%", "targets": 3 },
-                    { "width": "10%", "targets": 3 },
-                    { "width": "15%", "targets": 4 },
+                    { "width": "35%", "targets": 1 },
+                    { "width": "15%", "targets": 2 },
+                    { "width": "20%", "targets": 3 },
+                    { "width": "10%", "targets": 4 },
+                   
                    
                 ],
                 data: data.resultado,
@@ -196,12 +196,12 @@ function llenar_tabla_vehiculo(){
                         {data: "codigo_institucion"},
                         {data: "descripcion" },
                         {data: "placa"},
-                        {data: "tipo_uso.detalle"},
+                        // {data: "tipo_uso.detalle"},
                         {data: "estado_vehiculo"},
                         {data: "placa"},
                 ],    
                 "rowCallback": function( row, data ) {
-                    $('td', row).eq(5).html(`
+                    $('td', row).eq(4).html(`
                                   
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarVehi(${data.id_vehiculo})">Editar</button>
                                                                                 

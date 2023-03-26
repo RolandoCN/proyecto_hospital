@@ -34,7 +34,7 @@ $("#form_reporte").submit(function(e){
 
     //comprobamos si es registro o edicion
     let tipo="POST"
-    let url_form="guardar-ordenes"
+    let url_form="buscar-ordenes"
     
     var FrmData=$("#form_reporte").serialize();
     console.log(FrmData)
@@ -87,23 +87,25 @@ function llenar_tabla_reportes(data){
         "destroy":true,
         pageLength: 10,
         autoWidth : true,
-        order: [[ 3, "desc" ]],
+        order: [[ 1, "desc" ]],
         sInfoFiltered:false,
         language: {
             url: 'json/datatables/spanish.json',
         },
         columnDefs: [
-            { "width": "5%", "targets": 0 },
-            { "width": "20%", "targets": 1 },
-            { "width": "15%", "targets": 2 },
-            { "width": "40%", "targets": 3 },
-            { "width": "10%", "targets": 4 },
+            { "width": "10%", "targets": 0 },
+            { "width": "15%", "targets": 1 },
+            { "width": "20%", "targets": 2 },
+            { "width": "15%", "targets": 3 },
+            { "width": "30%", "targets": 4 },
+            { "width": "15%", "targets": 5 },
            
             
         ],
         data: data,
         columns:[
             {data: "estado"},
+            {data: "fecha_cabecera_despacho"},
             {data: "vehiculo.descripcion" },
             {data: "num_factura_ticket"},
             {data: "chofer.apellidos"},
@@ -113,9 +115,9 @@ function llenar_tabla_reportes(data){
         ],    
         "rowCallback": function( row, data, index ) {
             $('td', row).eq(0).html(index+1)
-            $('td', row).eq(1).html(data.vehiculo.descripcion+" "+data.vehiculo.codigo_institucion)
-            $('td', row).eq(3).html(data.chofer.apellidos+" "+data.chofer.nombres)
-            $('td', row).eq(4).html(`
+            $('td', row).eq(2).html(data.vehiculo.descripcion+" "+data.vehiculo.codigo_institucion)
+            $('td', row).eq(4).html(data.chofer.apellidos+" "+data.chofer.nombres)
+            $('td', row).eq(5).html(`
                             
                                     <button type="button" class="btn btn-success btn-xs" onclick="visualizarOrden('${data.pdf_orden}')">Visualizar</button>
 

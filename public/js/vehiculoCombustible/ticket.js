@@ -115,7 +115,8 @@ function llenar_tabla_ticket(){
 	$("#tabla_ticket tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
    
     
-    $.get("listado-ticket/", function(data){
+    $.get("obtener-ticket/", function(data){
+        console.log(data)
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_ticket tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);

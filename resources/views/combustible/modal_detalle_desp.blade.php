@@ -16,37 +16,34 @@
 
                             <li style="border-color: white"><a><i class="fa fa-car text-green"></i> <b class="text-black" style="font-weight: 650 !important">Vehículo</b>: <span id="vehiculomodalapr"></span></a></li>
 
-                            <li style="border-color: white"><a><i class="fa fa-clock-o text-blue"></i> <b class="text-black" style="font-weight: 650 !important">Horometro</b>: <span id="horometromodalapr"></span></a></li>
-
+                           
 
                             <li style="border-color: white"><a><i class="fa fa-flask text-black"></i> <b class="text-black" style="font-weight: 650 !important">Galones</b>: <span id="galonesmodalapr"></span></a></li>
 
 
                             <li style="border-color: white"><a><i class="fa fa-money text-red"></i> <b class="text-black" style="font-weight: 650 !important">Total</b>: <span id="totalmodalapr"></span></a></li>
 
-                            <li style="border-color: white"><a><i class="fa fa-calendar text-green"></i> <b class="text-black" style="font-weight: 650 !important">Fecha Aprobación</b>: <span id="fechaaprmodalapr"></span></a></li>
+                            {{-- <li style="border-color: white"><a><i class="fa fa-tasks text-green"></i> <b class="text-black" style="font-weight: 650 !important">Tareas</b>: 
+                                <span id="tar">
+                                    <ul id="tareamodalapr"></ul>
+                                </span></a>
+                            </li> --}}
 
                            
                         </ul>
                     </div>     
                     <div class="col-md-6">
                         <ul class="nav nav-pills nav-stacked" style="margin-left:12px">
-                            <li style="border-color: white"><a><i class="fa fa-keyboard-o text-red"></i> <b class="text-black" style="font-weight: 650 !important">Fecha Despacho:</b> <span id="fechadespachomodalapr"></span></a></li>
+                            <li style="border-color: white"><a><i class="fa fa-keyboard-o text-red"></i> <b class="text-black" style="font-weight: 650 !important">Fecha :</b> <span id="fechadespachomodalapr"></span></a></li>
 
-                            <li style="border-color: white"><a><i class="fa fa-clock-o text-green"></i> <b class="text-black" style="font-weight: 650 !important">Kilometraje</b>: <span id="kilometrajemodalapr"></span></a></li>
-
-
+                          
                             <li style="border-color: white"><a><i class="fa fa-tint text-blue"></i> <b class="text-black" style="font-weight: 650 !important">Combustible</b>: <span id="combustiblemodalapr"></span></a></li>
 
                             <li style="border-color: white"><a><i class="fa fa-money text-black"></i> <b class="text-black" style="font-weight: 650 !important">Precio Unitario</b>: <span id="preciounitmodal"></span></a></li>
                             
                             <li style="border-color: white"><a><i class="fa fa-user text-user"></i> <b class="text-black" style="font-weight: 650 !important">Conductor</b>: <span id="conductormodalapr"></span></a></li>
 
-                            <li style="border-color: white"><a><i class="fa fa-tasks text-green"></i> <b class="text-black" style="font-weight: 650 !important">Tareas</b>: 
-                                <span id="tar">
-                                    <ul id="tareamodalapr"></ul>
-                                </span></a>
-                            </li>
+                           
                         </ul>
                     </div> 
                     <div class="col-md-12">

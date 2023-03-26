@@ -40,14 +40,14 @@
                                 <th>Código</th>
                                 <th>Descripción</th>
                                 <th>Placa</th>
-                               
+                                <th>Uso</th>
                                 <th>Estado</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="6"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -119,23 +119,36 @@
                                 <input type="text" class="form-control" placeholder="Ingrese el modelo" name="modelo" id="modelo">
                             </div>
 
+                            <label for="inputPassword3" class="col-sm-2 control-label">Tipo Uso</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" name="cmb_tipouso" id="tipousocombo" >
+                                
+                                    @foreach ($tipo_uso as $dato)
+                                        <option value="{{ $dato->id_tipouso }}" >{{ $dato->detalle }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
                             <label for="inputPassword3" class="col-sm-2 control-label">Número de chasis</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" placeholder="Ingrese el número de chasis"name="chasis" id="chasis">
                             </div>
 
-
-                            
-                        </div>
-
-                        <div class="form-group">
-
-                            
                             <label for="inputPassword3" class="col-sm-2 control-label">Año fabricación</label>
                             <div class="col-sm-4" >
                                 <input type="number" max="{{date('Y')}}" placeholder="Ingrese el año de fabricación" min="1950"class="form-control" name="fabricacion" id="fabricacion">
                             </div>
 
+
+                        </div>
+
+                        <div class="form-group">
+
+                            
                             <label for="inputPassword3" class="col-sm-2 control-label">Tipo Combustible</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="Seleccione Una Opción" style="width: 100%;" class="form-control select2" name="cmb_tipocombustible" id="cmb_tipocombustible" >
@@ -146,16 +159,18 @@
                                 </select>
                             </div>
 
-
-                        </div>
-
-                        <div class="form-group">
-
                             <label for="inputPassword3" class="col-sm-2 control-label">Capacidad Galon</label>
                             <div class="col-sm-4">
                                 <input type="number" class="form-control" placeholder="Ingrese Capacidad"name="capacidad" id="capacidad">
 
                             </div>
+
+                        
+                            
+
+                        </div>
+
+                        <div class="form-group">
 
                             <label for="inputPassword3" class="col-sm-2 control-label">Tipo Medición</label>
                             <div class="col-sm-4">
@@ -167,12 +182,6 @@
                                 </select>
 
                             </div>
-
-                        </div>
-
-                        <div class="form-group">
-
-                            
 
                             <label for="inputPassword3" class="col-sm-2 control-label">Estado</label>
                             <div class="col-sm-4">

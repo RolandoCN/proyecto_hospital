@@ -38,11 +38,16 @@ class MovimientoVehController extends Controller
         ->where('estado','A')
         ->where('estado_autoriza','Activo')
         ->get();
+
+        $area=DB::table('vc_area')
+        ->where('estado','A')
+        ->get();
        
         return view('combustible.patio',[
             "persona"=>$persona,
             "vehiculo"=>$vehiculo,
             "autorizado"=>$autorizado,
+            "area"=>$area,
         ]);
     }
 
@@ -51,10 +56,33 @@ class MovimientoVehController extends Controller
         try{
 
             //comprobamos si hay tareas sin fecha final y actualizamos el estado en caso d q tenga fecha fin menor a la actual
-            $comprobar=$this->objTareas->actualizaTarea();
+            // $comprobar=$this->objTareas->actualizaTarea();
 
             $mov=Movimiento::with('vehiculo','chofer')->where('estado','!=','Eliminada')
             ->where('id_chofer', auth()->user()->id_persona)
+            ->get();
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$mov
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('MovimientoVehController => listar => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
+
+    public function vistaSalidas(){
+        return view('combustible.salidas');
+    }
+
+    public function obtenerSalidas(){
+        try{
+
+            $mov=Movimiento::with('vehiculo','chofer')->where('estado','!=','Eliminada')
             ->get();
             return response()->json([
                 'error'=>false,
@@ -178,14 +206,27 @@ class MovimientoVehController extends Controller
 
     }
 
+    public function descargarElimina($archivo)
+    {
+        
+        $exists = Storage::disk('public')
+        ->exists($archivo);       
+        if($exists){
+            // return Storage::disk('public')->download($archivo);
+            return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
+        }else{
+            return back()->with(['error'=>'No se pudo descargar el archivo','estadoP'=>'danger']);
+        }
+      
+    }
+
     public function descargar($archivo)
     {
         
         $exists = Storage::disk('public')
         ->exists($archivo);       
         if($exists){
-            return Storage::disk('public')
-            ->download($archivo);
+            return Storage::disk('public')->download($archivo);
         }else{
             return back()->with(['error'=>'No se pudo descargar el archivo','estadoP'=>'danger']);
         }
@@ -257,6 +298,17 @@ class MovimientoVehController extends Controller
                 }
             }
 
+            //validar que no se repita el numero de ticket
+            $existe_ticket=Movimiento::where('estado','!=','Eliminada')
+            ->where('nro_ticket', $request->n_ticket)
+            ->first();
+            if(!is_null($existe_ticket)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El número de ticket ya se encuentra asociado a otra salida'
+                ]);
+            }
+
             //validar que la fecha de salida este dentro del rango de despacho ticket
             $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
             ->where('estado','A')
@@ -288,7 +340,8 @@ class MovimientoVehController extends Controller
             $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
             $guarda_movi->id_chofer=auth()->user()->id_persona;
             $guarda_movi->motivo=$request->motivo;
-            $guarda_movi->area=$request->solicitante;
+            $guarda_movi->persona_solicita=$request->solicitante;
+            $guarda_movi->id_area_solicita=$request->area_sol;
             $guarda_movi->acompanante=$request->acompanante;
             $guarda_movi->nro_ticket=$request->n_ticket;
             $guarda_movi->tiene_novedad=$request->tiene_novedad;
@@ -328,46 +381,52 @@ class MovimientoVehController extends Controller
             $guarda_movi->fecha_registro=date('Y-m-d H:i:s');
             $guarda_movi->estado="Activo";
 
-            //validar que no se repita el numero de ticket
-            $existe_ticket=Movimiento::where('estado','!=','Eliminada')
-            ->where('nro_ticket', $guarda_movi->nro_ticket)
-            ->first();
-            if(!is_null($existe_ticket)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El número de ticket ya se encuentra asociado a otra salida'
-                ]);
-            }
-
-            //comprobamos que el vehiculo no se encuentre ocupado en el rango de fecha
-            $salida=$guarda_movi->fecha_salida_patio;
-            $llegada=$guarda_movi->fecha_llega_patio;
-            $verificaVeh=Movimiento::where(function($c)use($salida,$llegada) {
-                $c->WhereDate('fecha_salida_patio','>=',$salida)
-                ->Where('fecha_llega_patio', '<=', $llegada);
+                      
+            $hora_fecha_sale=$guarda_movi->fecha_hora_salida_patio;
+            $hora_fecha_llega=$guarda_movi->fecha_hora_llega_patio;
+            $verificaFecha=Movimiento::where(function($c)use($hora_fecha_sale,$hora_fecha_llega) {
+                $c->whereBetween('fecha_hora_salida_patio',[$hora_fecha_sale, $hora_fecha_llega])
+                ->orwhereBetween('fecha_hora_llega_patio', [$hora_fecha_sale, $hora_fecha_llega]);
             })
             ->where('id_vehiculo',$guarda_movi->id_vehiculo)
             ->where('estado','!=','Eliminada')
             ->first();
-            if(!is_null($verificaVeh)){
+            if(!is_null($verificaFecha)){
                 return response()->json([
                     'error'=>true,
                     'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
                 ]);
             }
 
+            $verificaFecha2=Movimiento::where(function($c)use($hora_fecha_sale,$hora_fecha_llega) {
+                $c->where('fecha_hora_salida_patio', '<=', $hora_fecha_sale)
+                ->where('fecha_hora_llega_patio','>=', $hora_fecha_llega);
+            })
+         
+            ->where('id_vehiculo',$guarda_movi->id_vehiculo)
+            ->where('estado','!=','Eliminada')
+            ->first();
+            if(!is_null($verificaFecha)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
+                ]);
+            }
+
+
             $ultimoCod=Movimiento::where('estado','!=','Eliminada')
             ->get()->last();
+            // dd($ultimoCod);
             if(!is_null($ultimoCod)){
                 $codigo=$ultimoCod->codigo_orden;  
                 $codigo=explode('-', $codigo);
-                $codigo=$codigo[2]+1;  
-                $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codigo);
+                $codigo=$codigo[1]+1;  
+                $cod='HGNDV-'.sprintf("%'.05d",$codigo);
             }else{
                 $codi=1;
-                $cod='HGNDV-'.date('Y').'-'.sprintf("%'.05d",$codi);
+                $cod='HGNDV-'.sprintf("%'.05d",$codi);
             }
-            //dd($cod);
+         
                 
             if($guarda_movi->save()){
 
@@ -404,7 +463,7 @@ class MovimientoVehController extends Controller
 
 
         }catch (\Throwable $e) {
-            Log::error('MovimientoVehController => guardar => mensaje => '.$e->getMessage());
+            Log::error('MovimientoVehController => guardar => mensaje => '.$e->getMessage(). ' Linea => '.$e->getLine());
             return response()->json([
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error'

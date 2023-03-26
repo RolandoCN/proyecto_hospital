@@ -91,7 +91,6 @@ class ReportesCombustibleController extends Controller
                     }
                 }
 
-                // dd($lista_final_agrupada);
                
                 if($request->formulario=="F6"){
                    
@@ -137,11 +136,7 @@ class ReportesCombustibleController extends Controller
                 }else{
                    
                     $nombrePDF="despachoCombustibleDepartamento7_".date('YmdHis').".pdf";// $nombrePDF  
-                   
-                    //creamos el objeto
-                    // $pdf=new PDF();
-                    //habilitamos la opcion php para mostrar la paginacion
-                    // $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
+                                 
                     // enviamos a la vista para crear el documento que los datos repsectivos
                     $crearpdf=PDF::loadView('combustible.reportes.reporteForm7',['datos'=>$lista_final_agrupada,'detalle'=>$detale=[],'desde'=>$fecha_ini,'hasta'=>$fecha_fin]);
                     $crearpdf->setPaper("A4", "landscape");
@@ -235,40 +230,33 @@ class ReportesCombustibleController extends Controller
         }
     }
 
-    //consulta y genera el documento
-    public function guardarOrden(Request $request){
-      
-        $transaction=DB::transaction(function() use ($request){
-            try{
+    //buscar ordenes despacho en rango de fecha
+    public function buscarOrden(Request $request){
+    
+        try{
 
-                $desde=$request->fecha_ini;
-                $hasta=$request->fecha_fin;
+            $desde=$request->fecha_ini;
+            $hasta=$request->fecha_fin;
 
-                $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
-                ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
-                ->orderBy('id_vehiculo', 'asc')->get();
-                
+            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
+            ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
+            ->orderBy('id_vehiculo', 'asc')->get();
+            
 
-                return response()->json([
-                    'error'=>false,
-                    'data'=>$detalle
-                ]);
+            return response()->json([
+                'error'=>false,
+                'data'=>$detalle
+            ]);
 
-                  
-                
-
-
-            }catch (\Throwable $e) {
-                DB::rollback();
-                Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea ".$e->getLine());           
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'Ocurrió un error, intentelo más tarde'
-                ]);
-            }    
-        });
-        return ($transaction);           
-        
+        }catch (\Throwable $e) {
+            
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea ".$e->getLine());           
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error, intentelo más tarde'
+            ]);
+        }    
+       
     }
 
     public function pdfOrden($id, $nro){
@@ -287,7 +275,10 @@ class ReportesCombustibleController extends Controller
         ->where('nro_ticket',$nro)
         ->first();
 
-        $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha]);
+        $responsable=DB::table('vc_responsable_servicios')
+        ->first();
+
+        $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha, "responsable"=>$responsable]);
         $crearpdf->setPaper("A4", "portrait");
         
         $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
@@ -305,8 +296,90 @@ class ReportesCombustibleController extends Controller
             ];
         }
 
+    }
+
+    public function vistaConsolidado(){
+        return view ('combustible.reportes.vistaConsolidado');
+    }
+
+     //buscar ordenes despacho en rango de fecha
+    public function listarConsolidado($desde, $hasta){
+    
+        try{
+
+            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','movimiento','chofer')
+            ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
+            ->orderBy('id_vehiculo', 'asc')->get();
+            
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$detalle
+            ]);
+
+        }catch (\Throwable $e) {
+            
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea ".$e->getLine());           
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error, intentelo más tarde'
+            ]);
+        }    
        
     }
+
+    public function pdfConsolidado($desde, $hasta){
+    
+        try{
+
+            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','movimiento','chofer', 'ticket')
+            ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
+            ->orderBy('fecha_cabecera_despacho', 'asc')->get();
+
+            $data_vehiculo=DB::table('vc_vehiculo as v')
+            ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 'v.id_tipocombustible')
+            ->leftJoin('vc_marca as m', 'm.id_marca', 'v.id_marca')
+            ->select('v.id_vehiculo', 'm.detalle as marca', 'v.descripcion as tipo', 'c.detalle as combustible', 'v.estado as estado', 'v.estado_vehiculo as estado_vehiculo','v.codigo_institucion')
+            ->where('v.estado','A')
+            ->get();
+
+            $responsable=DB::table('vc_responsable_servicios')
+            ->first();
+
+            $crearpdf=PDF::loadView('combustible.reportes.reporteConsolidado',['datos'=>$detalle, "desde"=>$desde, "hasta"=>$hasta, "data_vehiculo"=>$data_vehiculo,'responsable'=>$responsable]);
+            $crearpdf->setPaper("A4", "landscape");
+
+            $estadoarch =$crearpdf->stream();
+
+            $nombrePDF="Consolidado.pdf";
+            Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = Storage::disk('public')->exists($nombrePDF); 
+            if($exists_destino){   
+               
+                return [
+                    'error'=>false,
+                    'pdf'=>$nombrePDF
+                ];
+            }else{
+                return [
+                    'error'=>true,
+                    'mensaje'=>'No se pudo crear el documento'
+                ];
+            }
+           
+
+        }catch (\Throwable $e) {
+            
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea ".$e->getLine());           
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error, intentelo más tarde'
+            ]);
+        }    
+       
+    }
+
+    
+
 }
 
 
