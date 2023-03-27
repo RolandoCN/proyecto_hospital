@@ -202,7 +202,7 @@ $('#form_cambio_claves').submit(function (e) {
 
     $.ajax({
         type: "POST",
-            url: '/cambiar-clave',
+            url: 'cambiar-clave',
             data: new FormData(this),
             contentType: false,
             cache: false,

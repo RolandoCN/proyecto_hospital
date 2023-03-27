@@ -116,6 +116,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/eliminar-ticket/{id}', [TicketController::class, 'eliminar']);
     Route::get('/buscar-ticket-persona', [TicketController::class, 'buscaTicketChofer']);
     Route::get('/info-veh-ticket/{num}', [TicketController::class, 'infoTicketChofer']);
+    Route::get('/vehiculo-combustibe/{idveh}', [TicketController::class, 'infoVehiCombustible']);
 
     Route::get('/listado-ticket', [TicketController::class, 'listado'])->middleware('validarRuta');
     Route::get('/listado-ticket-todos', [TicketController::class, 'listarGeneral']);

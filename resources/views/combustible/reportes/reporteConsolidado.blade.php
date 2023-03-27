@@ -132,7 +132,7 @@
                     width="35%"><b>LLegada</b></td>
 
                     <td style="height:25px;text-align: center;border-color:black; " rowspan="1" colspan="1"
-                    width="30%"><b>Extra</b></td>
+                    width="30%"><b>Eco</b></td>
 
                     <td style="height:25px;text-align: center;border-color:black; " rowspan="1" colspan="1"
                     width="30%"><b>Super</b></td>
@@ -195,7 +195,7 @@
 
                         <td style="height:25px;text-align: center;border-color:black; " rowspan="1" colspan="1"
                         width="30%">
-                            @if($item->tipocombustible->detalle=="Extra")
+                            @if($item->tipocombustible->detalle=="Eco")
                                 {{$item->total}}
                             @endif
                         </td>
@@ -300,7 +300,7 @@
 
 
                     <td style="height:25px;text-align: center;border-color:black; " rowspan="1" colspan="1"
-                    width="15%"><b>Extra</b></td>
+                    width="15%"><b>Eco</b></td>
 
                     <td style="height:25px;text-align: center;border-color:black; " rowspan="1" colspan="1"
                     width="15%"><b>Super</b></td>
@@ -356,7 +356,7 @@
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1" width="15%">
                             
-                            @if($veh->id_vehiculo == $id_veh && $comb == "Extra")
+                            @if($veh->id_vehiculo == $id_veh && $comb == "Eco")
                                 {{number_format(($total_veh),2,'.', '')}}   
 
                             @endif

@@ -206,8 +206,8 @@ $("#form_registro_tarea").submit(function(e){
     }
 
     if(acompanante=="" || acompanante==null){
-        alertNotificar("Ingrese el motivo","error")
-        $('#motivo').focus()
+        alertNotificar("Ingrese el acompanante","error")
+        $('#acompanante').focus()
         return
     }
 

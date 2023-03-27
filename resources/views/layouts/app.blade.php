@@ -8,6 +8,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="icon" href="https://seeklogo.com/images/M/msp-ministerio-de-salud-publica-logo-867969877C-seeklogo.com.png" sizes="32x32" />
+
+
     <title>SisVehi</title>
 
     <!-- Fonts -->
@@ -44,8 +47,7 @@
 
     <link rel="stylesheet" href="{{asset('css/spinners.css')}}">
 
-    <link rel="icon" href="https://seeklogo.com/images/M/msp-ministerio-de-salud-publica-logo-867969877C-seeklogo.com.png" sizes="32x32" />
-
+    
     <style>
 
         .select2-container--default .select2-selection--multiple .select2-selection__choic {
@@ -88,7 +90,7 @@
 
         <header class="main-header">
             <!-- Logo -->
-            <a href="/" class="logo">
+            <a href="{{url('/')}}" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b>S</b>Vehi</span>
                 <!-- logo for regular state and mobile devices -->
