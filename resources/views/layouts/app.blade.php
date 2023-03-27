@@ -44,6 +44,8 @@
 
     <link rel="stylesheet" href="{{asset('css/spinners.css')}}">
 
+    <link rel="icon" href="https://seeklogo.com/images/M/msp-ministerio-de-salud-publica-logo-867969877C-seeklogo.com.png" sizes="32x32" />
+
     <style>
 
         .select2-container--default .select2-selection--multiple .select2-selection__choic {

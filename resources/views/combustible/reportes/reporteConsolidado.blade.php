@@ -215,7 +215,9 @@
                         </td>
 
                         <td style="height:25px;text-align: center;border-color:black; " rowspan="1" colspan="1"
-                        width="60%"></td>
+                        width="60%">
+                            {{$item->movimiento->area->descripcion}}
+                        </td>
 
                         <td style="height:25px;text-align: left;border-color:black; " rowspan="1" colspan="1"
                         width="60%">

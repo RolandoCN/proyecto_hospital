@@ -46,7 +46,7 @@ class DespachoCombustibleController extends Controller
     public function listar(){
         try{
             //comprobamos si hay tareas sin fecha final y actualizamos el estado en caso d q tenga fecha fin menor a la actual
-            $comprobar=$this->objTareas->actualizaTarea();
+            // $comprobar=$this->objTareas->actualizaTarea();
             
             $cab=CabeceraDespacho::with('gasolinera')->where('estado','!=','Eliminado')->get();
             return response()->json([
@@ -651,13 +651,14 @@ class DespachoCombustibleController extends Controller
         try{
             $fechaDesp=date('Y-m-d', strtotime($fecha));
            
-            $bucartarea=Tarea::where('id_vehiculo',$idVeh)
-            ->where('estado','!=','Eliminada')
-            ->where(function($query)use($fechaDesp){
-                $query->WhereDate('fecha_inicio','<=',$fechaDesp)
-                ->WhereDate('fecha_fin','>=',$fechaDesp);
-            })
-            ->get();
+            // $bucartarea=Tarea::where('id_vehiculo',$idVeh)
+            // ->where('estado','!=','Eliminada')
+            // ->where(function($query)use($fechaDesp){
+            //     $query->WhereDate('fecha_inicio','<=',$fechaDesp)
+            //     ->WhereDate('fecha_fin','>=',$fechaDesp);
+            // })
+            // ->get();
+            $bucartarea=[];
             if($interno==null){
                 return response()->json([
                     'error'=>false,

@@ -38,7 +38,7 @@ class MovimientoVehController extends Controller
         try{
 
             //comprobamos si hay tareas sin fecha final y actualizamos el estado en caso d q tenga fecha fin menor a la actual
-            $comprobar=$this->objTareas->actualizaTarea();
+            // $comprobar=$this->objTareas->actualizaTarea();
 
             $mov=Movimiento::with('vehiculo','chofer')->where('estado','!=','Eliminada')->get();
             return response()->json([
@@ -57,11 +57,13 @@ class MovimientoVehController extends Controller
 
     public function tareaVehiculo($id){
         try{
-            $tarea=Tarea::where('estado','Pendiente')
-            ->where('id_vehiculo', $id)
-            ->WhereDate('fecha_inicio','<=',date('Y-m-d'))
-            ->WhereDate('fecha_fin','>=',date('Y-m-d'))
-            ->get();
+            // $tarea=Tarea::where('estado','Pendiente')
+            // ->where('id_vehiculo', $id)
+            // ->WhereDate('fecha_inicio','<=',date('Y-m-d'))
+            // ->WhereDate('fecha_fin','>=',date('Y-m-d'))
+            // ->get();
+
+            $bucartarea=[];
 
             $medicion=Vehiculo::with('TipoMedicion')->where('id_vehiculo',$id)->first();
 

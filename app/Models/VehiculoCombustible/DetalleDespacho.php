@@ -15,6 +15,8 @@ class DetalleDespacho extends Model
         ->with('departamento');
     }
 
+  
+
     public function tipocombustible(){
         return $this->belongsTo('App\Models\VehiculoCombustible\TipoCombustible', 'id_tipocombustible', 'id_tipocombustible');
     }
@@ -32,7 +34,7 @@ class DetalleDespacho extends Model
     }
 
     public function movimiento(){
-        return $this->belongsTo('App\Models\VehiculoCombustible\Movimiento', 'num_factura_ticket', 'nro_ticket')->with('autoriza');
+        return $this->belongsTo('App\Models\VehiculoCombustible\Movimiento', 'num_factura_ticket', 'nro_ticket')->with('autoriza', 'area');
     }
 
     public function tareasDespacho(){

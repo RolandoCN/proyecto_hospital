@@ -16,6 +16,10 @@ class Movimiento extends Model
         ->with('marca');
     }
 
+    public function area(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\Area', 'id_area_solicita', 'id_area');
+    }
+
     public function chofer(){
         return $this->belongsTo('App\Models\Persona', 'id_chofer', 'idpersona');
     }
