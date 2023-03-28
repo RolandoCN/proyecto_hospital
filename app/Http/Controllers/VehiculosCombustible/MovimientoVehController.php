@@ -100,11 +100,13 @@ class MovimientoVehController extends Controller
 
     public function tareaVehiculo($id){
         try{
-            $tarea=Tarea::where('estado','Pendiente')
-            ->where('id_vehiculo', $id)
-            ->WhereDate('fecha_inicio','<=',date('Y-m-d'))
-            ->WhereDate('fecha_fin','>=',date('Y-m-d'))
-            ->get();
+            // $tarea=Tarea::where('estado','Pendiente')
+            // ->where('id_vehiculo', $id)
+            // ->WhereDate('fecha_inicio','<=',date('Y-m-d'))
+            // ->WhereDate('fecha_fin','>=',date('Y-m-d'))
+            // ->get();
+
+            $tarea=[];
 
             $medicion=Vehiculo::with('TipoMedicion')->where('id_vehiculo',$id)->first();
 

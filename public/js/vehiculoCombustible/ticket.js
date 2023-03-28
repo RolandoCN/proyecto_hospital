@@ -187,6 +187,28 @@ $('.datatable_wrapper').children('.row').css('overflow','inherit !important');
 $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});
 
 
+function capturaCombustible(){
+    id_veh=$('#id_vehiculo').val()
+    
+    if(id_veh=="" || id_veh==null){
+        return
+    }
+    // return
+    $.get("vehiculo-combustibe/"+id_veh, function(data){
+        
+        vistacargando("")
+       
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        $('#cmb_tipocombustible').val(data.resultado.id_tipocombustible).trigger('change.select2')
+
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
 
 function editarTicket(idticket){
     vistacargando("m","Espere por favor")

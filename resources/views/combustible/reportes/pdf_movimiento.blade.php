@@ -103,7 +103,7 @@
 
             <tr style="border-color:blue">
                 <td style="height:25px;text-align: left;border-color:black; "colspan="9"
-                width="60%"><b>Entidad solicitante:</b> {{$datos[0]->area }}</td>
+                width="60%"><b>Entidad solicitante:</b> {{$datos[0]->area->descripcion }}</td>
                 <td style="height:25px;text-align: left;border-color:black"colspan="7" rowspan="2"
                 width="40%"><b>Objetivo de la comisión:</b> {{$datos[0]->motivo }}</td>
             </tr>

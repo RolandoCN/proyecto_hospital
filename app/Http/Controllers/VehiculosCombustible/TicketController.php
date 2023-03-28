@@ -136,6 +136,24 @@ class TicketController extends Controller
             
         }
     }
+
+    public function infoVehiCombustible($idveh){
+        try{
+            $vehiculoCom=Vehiculo::where('id_vehiculo',$idveh)
+            ->first();
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$vehiculoCom
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('TicketController => infoVehiCombustible => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
     
 
     public function guardar(Request $request){
@@ -248,26 +266,29 @@ class TicketController extends Controller
                     'mensaje'=>'El ticket ingresado ya existe'
                 ]);
             }
+            
+            $consulta_ticket_ingresado=Ticket::find($id);
+            $numero_ticket_ingresado=$consulta_ticket_ingresado->numero_ticket;
 
             $veri_Movimiento=DB::table('vc_movimiento')
-            ->where('nro_ticket',$actualiza_ticket->numero_ticket)
+            ->where('nro_ticket',$numero_ticket_ingresado)
             ->where('estado','!=', 'Eliminada')
             ->first();
             if(!is_null($veri_Movimiento)){
                 return response()->json([
                     'error'=>true,
-                    'mensaje'=>'El ticket está asociado a una orden de salida y no se puede actualizar'
+                    'mensaje'=>'El ticket #'.$numero_ticket_ingresado. ' está asociado a una orden de salida y no se puede actualizar'
                 ]);
             }
 
             $veri_Despacho=DB::table('vc_detalle_despacho')
-            ->where('num_factura_ticket',$actualiza_ticket->numero_ticket)
+            ->where('num_factura_ticket',$numero_ticket_ingresado)
             ->where('estado','!=', 'Eliminado')
             ->first();
             if(!is_null($veri_Despacho)){
                 return response()->json([
                     'error'=>true,
-                    'mensaje'=>'El ticket está asociado a un despacho de combustible y no se puede actualizar'
+                    'mensaje'=>'El ticket #'.$numero_ticket_ingresado. ' está asociado a un despacho de combustible y no se puede actualizar'
                 ]);
             }
            

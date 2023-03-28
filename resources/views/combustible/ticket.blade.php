@@ -86,14 +86,14 @@
                                 <input type="number" minlength="1" maxlength="20" onKeyPress="if(this.value.length==20) return false;"  class="form-control" id="numero_ticket" name="numero_ticket" placeholder="Ticket">
                                
                             </div>
-                            
+                             
                         </div>
 
                         <div class="form-group">
 
                             <label for="inputPassword3" class="col-sm-3 control-label">Vehiculo</label>
                             <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="id_vehiculo" id="id_vehiculo">
+                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;" class="form-control select2" name="id_vehiculo" id="id_vehiculo" onchange="capturaCombustible()">
                                     @foreach ($vehiculo as $dato)
                                         <option value=""></option>
                                         <option value="{{ $dato->id_vehiculo }}" >{{ $dato->descripcion }} {{ $dato->codigo_institucion }} [{{ $dato->placa }}] </option>

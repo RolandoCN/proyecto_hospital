@@ -63,7 +63,7 @@ class DespachoCombustibleController extends Controller
     public function listar(){
         try{
             //comprobamos si hay tareas sin fecha final y actualizamos el estado en caso d q tenga fecha fin menor a la actual
-            $comprobar=$this->objTareas->actualizaTarea();
+            // $comprobar=$this->objTareas->actualizaTarea();
             
             $cab=CabeceraDespacho::with('gasolinera')->where('estado','!=','Eliminado')->get();
             return response()->json([
