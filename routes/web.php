@@ -211,3 +211,14 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     Route::get('/genera-consolidado-pdf/{ini}/{fin}', [ReportesCombustibleController::class, 'pdfConsolidado']);
 });
+
+Route::get('/clear', function() {
+
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+ 
+    return "Cleared!";
+ 
+ });
