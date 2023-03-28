@@ -418,15 +418,27 @@ class MovimientoVehController extends Controller
 
             $ultimoCod=Movimiento::where('estado','!=','Eliminada')
             ->get()->last();
-            // dd($ultimoCod);
+            
             if(!is_null($ultimoCod)){
-                $codigo=$ultimoCod->codigo_orden;  
-                $codigo=explode('-', $codigo);
-                $codigo=$codigo[1]+1;  
-                $cod='HGNDV-'.sprintf("%'.05d",$codigo);
+                //si es enero y el primero del año, reseteamos a 1
+                $verifica_codigo=$ultimoCod->codigo_orden;
+                $separa=explode('-', $verifica_codigo);
+                $anio=$separa[1];
+                if(date('m')==1 && date('Y')!=$anio){
+                    $codi=1;
+                    $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
+                }else{
+                    //continuamos la secuencia
+                    $codigo=$ultimoCod->codigo_orden;  
+                    $codigo=explode('-', $codigo);
+                    $codigo=$codigo[3]+1;  
+                    $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codigo);
+                }
+  
             }else{
+                //si no existe
                 $codi=1;
-                $cod='HGNDV-'.sprintf("%'.05d",$codi);
+                $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
             }
          
                 
