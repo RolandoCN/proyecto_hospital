@@ -121,10 +121,11 @@ function llenar_tabla_persona(){
                 },
                 columnDefs: [
                     { "width": "10%", "targets": 0 },
-                    { "width": "30%", "targets": 1 },
-                    { "width": "10%", "targets": 2 },
-                    { "width": "25%", "targets": 3 },
+                    { "width": "20%", "targets": 1 },
+                    { "width": "20%", "targets": 2 },
+                    { "width": "10%", "targets": 3 },
                     { "width": "15%", "targets": 4 },
+                    { "width": "15%", "targets": 5 },
                    
                 ],
                 data: data.resultado,
@@ -134,10 +135,22 @@ function llenar_tabla_persona(){
                         {data: "apellidos"},
                         {data: "telefono"},
                         {data: "telefono"},
+                        {data: "telefono"},
                 ],    
                 "rowCallback": function( row, data ) {
-                    $('td', row).eq(4).html(`
-                                  
+
+                    if(data.firma_persona==null){
+                        
+                        $('td',row).eq(4).html('<span">  &nbsp; &nbsp;&nbsp;</span>'); 
+                    }
+                    else{
+                        $('td',row).eq(4).html(`<img src='data:image/png;base64,${data.firma_persona}') class="img_firma">`);
+                    } 
+
+                    $('td', row).eq(5).html(`
+
+                                            <button type="button" class="btn btn-success btn-xs" onclick="firmaPersona('${data.idpersona}','${data.cedula}','${data.nombres}','${data.apellidos}')">Firmar</button>
+                                            
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarPersona(${data.idpersona })">Editar</button>
                                                                                 
                                             <a onclick="btn_eliminar_tarea(${data.idpersona })" class="btn btn-danger btn-xs"> Eliminar </a>
@@ -159,6 +172,83 @@ $('.collapse-link').click();
 $('.datatable_wrapper').children('.row').css('overflow','inherit !important');
 
 $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});
+
+function firmaPersona(id, cedula, nombres, apellidos){
+  
+    $('#cedula_modal').html(cedula)
+    $('#persona_modal').html(nombres +" "+apellidos)
+    $('#idPersonaFirma').val(id)
+    $('#FirmaPersona').modal('show')
+
+    $('#signArea').signaturePad({drawOnly:true, drawBezierCurves:true, lineTop:190});
+    $('#signArea_edit').signaturePad({drawOnly:true, drawBezierCurves:true, lineTop:190});
+    limpiarSingArea()
+}
+
+function limpiarSingArea(){
+    $('#signArea').signaturePad().clearCanvas();
+}
+
+$("#firma_persona").submit(function(e){
+    e.preventDefault();
+        
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    //comprobamos si es registro o edicion
+    let tipo="POST"
+    let url_form="guardar-firma-persona"
+ 
+    var FrmData = new FormData(this);
+    vistacargando("m", "Espere por favor")
+    
+    html2canvas([document.getElementById('sign-pad')], {
+        onrendered: function (canvas) {
+            var canvas_img_data = canvas.toDataURL('image/png');
+            var img_data = canvas_img_data.replace(/^data:image\/(png|jpg);base64,/, "");
+            if($( "p" ).hasClass("error")){
+                alertNotificar("Debes firmar para poder registrar", "error")
+                return
+            }
+
+            FrmData.append("b64_firma",img_data);
+
+            $.ajax({
+                    
+                type: tipo,
+                url: url_form,
+                method: tipo,             
+                data: FrmData,
+                dataType: 'json',
+                contentType:false,
+                cache:false,
+                processData:false,
+            
+
+                success: function(data){
+                    vistacargando("");                
+                    if(data.error==true){
+                        alertNotificar(data.mensaje,'error');
+                        return;                      
+                    }
+                  
+                    alertNotificar(data.mensaje,"success");
+                    $('#cerra_modal').click()
+                    limpiarSingArea()
+                    llenar_tabla_persona()
+                                    
+                }, error:function (data) {
+
+                    vistacargando("");
+                    alertNotificar('Ocurrió un error','error');
+                }
+            });
+        }
+    })
+})
 
 
 

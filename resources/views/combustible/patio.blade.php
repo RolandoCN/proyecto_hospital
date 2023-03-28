@@ -48,8 +48,8 @@
                     <table id="tabla_tarea" width="100%"class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Vehículo</th>
-                                <th style="text-align: center">Chofer</th>
+                                <th style="text-align: center">Detalle</th>
+                                {{-- <th style="text-align: center">Chofer</th> --}}
                                 <th style="text-align: center">Patio</th>
                                 <th style="text-align: center">Destino</th>
                                 <th>Firma</th>
@@ -58,7 +58,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="6"><center>No hay Datos Disponibles</td>
+                                <td colspan="5"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -248,32 +248,9 @@
                                 </select>                            
                             </div>
 
-                           
-
                         </div>
 
-                       
 
-                        
-                        <div id="content_firma" class="form-group col-md-12">
-                            <label class="control-label col-md-4 col-sm-2 col-xs-12" for="icono_gestione"></label>
-                            <div class="col-md-4 col-sm-12 col-xs-12">
-                                <div id="signArea" style="margin: 0; margin-bottom: 12px; width: fit-content;">
-                                    <h2 class="tag-ingo"> Firma</h2>
-                                    <div class="sig sigWrapper" style="height:auto; border:1px solid #000;">
-                                        <div class="typed"></div>
-                                        <canvas class="sign-pad" id="sign-pad" width="350%" height="200"></canvas>
-                                        
-                                    </div>
-                                    <button type="button" class="btn btn-default btn-sm" style="margin-top: 10px;" type="button" onclick="limpiarSingArea()"><i class="fa fa-eraser"></i> Limpiar</button>
-                                </div>
-                            </div>
-                            <div id="preview_firma" class="col-md-4 col-sm-4 col-xs-12" style="display: none;">
-                                <h2 class="tag-ingo">Firma Actual</h2>
-                                <img id="img_preview_firma" class="preview_firma" src="" alt="">
-                            </div>
-                
-                        </div>
                         <hr>
                         <div class="col-sm-12 text-center" >
                             <input type="hidden" id="idchofer_loguea" name="idchofer" value="{{auth()->user()->id_persona}}">

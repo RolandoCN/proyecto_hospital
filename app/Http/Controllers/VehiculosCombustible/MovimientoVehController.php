@@ -372,9 +372,8 @@ class MovimientoVehController extends Controller
             $guarda_movi->hora_llega_patio=date('H:i:s',strtotime($request->fecha_h_llegada_patio));
             $guarda_movi->fecha_hora_llega_patio=date('Y-m-d H:i:s',strtotime($request->fecha_h_llegada_patio));
 
-            $guarda_movi->firmaconductor=$request->b64_firma;
-
-            
+            // $guarda_movi->firmaconductor=$request->b64_firma;
+         
             $guarda_movi->kilometraje=$request->kilometraje;
             $guarda_movi->horometro=$request->horometro;
             $guarda_movi->km_hm_recorrido=$valorRecorrido;

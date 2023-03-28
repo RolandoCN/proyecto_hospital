@@ -265,50 +265,39 @@ $("#form_registro_tarea").submit(function(e){
 
     var FrmData = new FormData(this);
 
-    html2canvas([document.getElementById('sign-pad')], {
-        onrendered: function (canvas) {
-            var canvas_img_data = canvas.toDataURL('image/png');
-            var img_data = canvas_img_data.replace(/^data:image\/(png|jpg);base64,/, "");
-            if($( "p" ).hasClass("error")){
-                alertNotificar("Debes firmar para poder aprobar la información", "error")
-                return
-            }
-
-            FrmData.append("b64_firma",img_data);
-
-            $.ajax({
-                    
-                type: tipo,
-                url: url_form,
-                method: tipo,             
-                data: FrmData,
-                dataType: 'json',
-                contentType:false,
-                cache:false,
-                processData:false,
+  
+    $.ajax({
             
+        type: tipo,
+        url: url_form,
+        method: tipo,             
+        data: FrmData,
+        dataType: 'json',
+        contentType:false,
+        cache:false,
+        processData:false,
+    
 
-                success: function(data){
-                    // vistacargando("");                
-                    if(data.error==true){
-                        alertNotificar(data.mensaje,'error');
-                        return;                      
-                    }
-                    limpiarCampos()
-                    alertNotificar(data.mensaje,"success");
-                    $('#form_ing').hide(200)
-                    $('#listado_veh').show(200)
-                    llenar_tabla_tarea()
-                    limpiarSingArea()
-                                    
-                }, error:function (data) {
+        success: function(data){
+            // vistacargando("");                
+            if(data.error==true){
+                alertNotificar(data.mensaje,'error');
+                return;                      
+            }
+            limpiarCampos()
+            alertNotificar(data.mensaje,"success");
+            $('#form_ing').hide(200)
+            $('#listado_veh').show(200)
+            llenar_tabla_tarea()
+            // limpiarSingArea()
+                            
+        }, error:function (data) {
 
-                    // vistacargando("");
-                    alertNotificar('Ocurrió un error','error');
-                }
-            });
+            // vistacargando("");
+            alertNotificar('Ocurrió un error','error');
         }
-    })
+    });
+       
 })
 
 function limpiarCampos(){
@@ -317,6 +306,7 @@ function limpiarCampos(){
     $('#horometro').val('')
     $('#entrada_salida').val('').trigger('change.select2')
     $('#vehiculo_tarea').val('').trigger('change.select2')
+    $('#area_sol').val('').trigger('change.select2')
     $('#chofer').val('').trigger('change.select2')
 
     $('#autorizado').val('').trigger('change.select2')
@@ -394,12 +384,11 @@ function llenar_tabla_tarea(){
                     url: 'json/datatables/spanish.json',
                 },
                 columnDefs: [
-                    { "width": "10%", "targets": 0 },
-                    { "width": "15%", "targets": 1 },
+                    { "width": "25%", "targets": 0 },
+                    { "width": "30%", "targets": 1 },
                     { "width": "30%", "targets": 2 },
-                    { "width": "30%", "targets": 3 },
-                    { "width": "15%", "targets": 4 },
-                    { "width": "10%", "targets": 5 },
+                    { "width": "15%", "targets": 3 },
+                    { "width": "10%", "targets": 4 },
                    
                 ],
                 data: data.resultado,
@@ -409,13 +398,22 @@ function llenar_tabla_tarea(){
                         {data: "fecha_registro"},
                         {data: "fecha_registro"},
                         {data: "fecha_registro"},
-                        {data: "fecha_registro"},
+                       
                 ],    
                 "rowCallback": function( row, data ) {
-                    $('td',row).eq(0).html(data.vehiculo.descripcion +" ["+data.vehiculo.placa+"]")
-                    $('td',row).eq(1).html(data.chofer.nombres +" "+data.chofer.apellidos)
+                    // $('td',row).eq(0).html(data.vehiculo.descripcion +" ["+data.vehiculo.placa+"]")
+                    // $('td',row).eq(1).html(data.chofer.nombres +" "+data.chofer.apellidos)
 
-                    $('td',row).eq(2).html(`<li> <b>Lugar:</b> ${data.lugar_salida_patio} </li>
+                    $('td',row).eq(0).html(`<li>
+                                                <b>Vehiculo:</b> ${data.vehiculo.descripcion} ${data.vehiculo.codigo_institucion} [${data.vehiculo.placa}]  
+                                            </li>
+                                            <li> 
+                                                <b>Chofer:</b> ${data.chofer.nombres} ${data.chofer.apellidos}
+                                            </li>
+                                            <li> <b>Número Ticket:</b> ${data.nro_ticket} </li>
+                                            `)
+
+                    $('td',row).eq(1).html(`<li> <b>Lugar:</b> ${data.lugar_salida_patio} </li>
                                             <li> <b>Fecha Salida:</b> ${data.fecha_hora_salida_patio} </li>
                                             <li> <b>Km Salida:</b> ${data.km_salida_patio} </li>
 
@@ -423,7 +421,7 @@ function llenar_tabla_tarea(){
                                             <li>  <b>Km Llegada:</b> ${data.km_llegada_patio}</li>
 
                                             `)
-                    $('td',row).eq(3).html(`<li> <b>Lugar:</b> ${data.lugar_llegada_destino} </li>
+                    $('td',row).eq(2).html(`<li> <b>Lugar:</b> ${data.lugar_llegada_destino} </li>
 
                                             <li>  <b>Fecha Llegada:</b> ${data.fecha_hora_llega_destino}</li>
                                             <li>  <b>Km Llegada:</b> ${data.km_llegada_destino}</li>
@@ -435,16 +433,16 @@ function llenar_tabla_tarea(){
                                             `)
 
 
-                    if(data.firmaconductor==null){
+                    if(data.chofer.firma_persona==null){
                         
-                        $('td',row).eq(4).html('<span"> Sin Firmar &nbsp; &nbsp;&nbsp;</span>'); 
+                        $('td',row).eq(3).html('<span"> Sin Firmar &nbsp; &nbsp;&nbsp;</span>'); 
                     }
                     else{
-                            // estad="Atendido"
-                    $('td',row).eq(4).html(`<img src='data:image/png;base64,${data.firmaconductor}') class="img_firma">`);
+                    
+                        $('td',row).eq(3).html(`<img src='data:image/png;base64,${data.chofer.firma_persona}') class="img_firma">`);
                     } 
 
-                    $('td', row).eq(5).html(`
+                    $('td', row).eq(4).html(`
                                   
                                             
                                             <a onclick="btn_eliminar_movimi(${data.idmovimiento })" class="btn btn-danger btn-xs"> Eliminar </a><br>
@@ -531,7 +529,7 @@ function visualizarListado(){
     $('#form_ing').hide(200)
     $('#listado_veh').show(200)
     limpiarCampos()
-    limpiarSingArea()
+    // limpiarSingArea()
 }
 
 function btn_eliminar_movimi(idmovimiento){
