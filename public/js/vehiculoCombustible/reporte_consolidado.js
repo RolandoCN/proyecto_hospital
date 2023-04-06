@@ -19,8 +19,7 @@ function buscarDespachos(){
         $('#hasta').focus()
         return
     }
-    $('#listado_turno').show()
-    $('#content_consulta').hide(200)
+    
     var num_col = $("#tabla_consolidado thead tr th").length; //obtenemos el numero de columnas de la tabla
 	$("#tabla_consolidado tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
 
@@ -28,6 +27,7 @@ function buscarDespachos(){
 
     $.get("listado-consolidado/"+desde+"/"+hasta, function(data){
         console.log(data)
+       
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_consolidado tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
@@ -44,7 +44,8 @@ function buscarDespachos(){
                 return;  
             }
             
-            
+            $('#listado_turno').show()
+            $('#content_consulta').hide(200)
             $('#tabla_consolidado').DataTable({
                 "destroy":true,
                 pageLength: 10,
@@ -149,4 +150,5 @@ function visualizarListado(){
     $('#listado_turno').hide()
   
 }
+
 
