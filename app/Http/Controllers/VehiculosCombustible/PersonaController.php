@@ -56,6 +56,38 @@ class PersonaController extends Controller
         }
     }
     
+    public function guardarFirma(Request $request){
+        try{
+            if(is_null($request->b64_firma)){
+                return [
+                    'error'=>true,
+                    'mensaje'=>'Se necesita la firma'
+                ];
+            }
+
+            //buscamos la persona para agregar o actualizar su firma
+            $personaFirma=Persona::find($request->idPersonaFirma);
+            $personaFirma->firma_persona=$request->b64_firma;
+            if($personaFirma->save()){
+                return [
+                    'error'=>false,
+                    'mensaje'=>'Firma agregada exitosamente'
+                ];
+            }else{
+                return [
+                    'error'=>true,
+                    'mensaje'=>'No se pudo registrar la firma'
+                ];
+            }
+        }catch (\Throwable $e) {
+            Log::error('PersonaController => guardarFirma => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
 
     public function guardar(Request $request){
         

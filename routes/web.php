@@ -40,6 +40,8 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/editar-persona/{id}', [PersonaController::class, 'editar']);
     Route::put('/actualizar-persona/{id}', [PersonaController::class, 'actualizar']);
     Route::get('/eliminar-persona/{id}', [PersonaController::class, 'eliminar']);
+    Route::post('/guardar-firma-persona', [PersonaController::class, 'guardarFirma']);
+    
 
 
     //ROLES

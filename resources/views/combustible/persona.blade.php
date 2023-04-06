@@ -1,7 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-
+    <style>
+        a:hover, a:active, a:focus {
+            outline: none;
+            text-decoration: none;
+            color: #f4f4f4;
+        }
+        .img_firma{
+            width: 90px;
+        }
+    </style>
     
     <section class="content-header">
         <h1>
@@ -40,12 +49,13 @@
                                 <th>Nombres</th>
                                 <th>Apellidos</th>
                                 <th>Teléfono</th>
+                                <th>Firma</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5"><center>No hay Datos Disponibles</td>
+                                <td colspan="6"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>
@@ -149,6 +159,75 @@
             </form>
         </div>
 
+        <div class="modal fade_ detalle_class"  id="FirmaPersona" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">REGISTRO DE FIRMA</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            
+                            <div class="col-md-6">
+                                <ul class="nav nav-pills nav-stacked" style="margin-left:12px">
+                                    <li style="border-color: white"><a><i class="fa fa-keyboard-o text-red"></i> <b class="text-black" style="font-weight: 650 !important">Cedula :</b> <span id="cedula_modal"></span></a></li>
+        
+                                </ul>
+                            </div> 
+
+                            <div class="col-md-6">
+                                <ul class="nav nav-pills nav-stacked" style="margin-left:12px">
+                                    <li style="border-color: white"><a><i class="fa fa-user text-red"></i> <b class="text-black" style="font-weight: 650 !important">Nombres :</b> <span id="persona_modal"></span></a></li>
+        
+                                </ul>
+                            </div> 
+
+                            <div class="col-md-12">
+                                <form name="firma_persona" id="firma_persona">
+                                  
+                                    <input type="hidden" name="idPersonaFirma"id="idPersonaFirma">
+        
+                                    <div id="content_firma" class="form-group">
+                                        <label class="control-label col-md-3 col-sm-2 col-xs-12" for="icono_gestione"></label>
+                                        <div class="col-md-4 col-sm-12 col-xs-12">
+                                            <div id="signArea" style="margin: 0; margin-bottom: 20px; width: fit-content;">
+                                                <h2 class="tag-ingo"> Firma</h2>
+                                                <div class="sig sigWrapper" style="height:auto; border:1px solid #000;">
+                                                    <div class="typed"></div>
+                                                    <canvas class="sign-pad" id="sign-pad" width="300%" height="200"></canvas>
+                                                    
+                                                </div>
+                                                <button type="button" class="btn btn-default btn-sm" style="margin-top: 10px;" type="button" onclick="limpiarSingArea()"><i class="fa fa-eraser"></i> Limpiar</button>
+                                            </div>
+                                        </div>
+                                        <div id="preview_firma" class="col-md-4 col-sm-4 col-xs-12" style="display: none;">
+                                            <h2 class="tag-ingo">Firma Actual</h2>
+                                            <img id="img_preview_firma" class="preview_firma" src="" alt="">
+                                        </div>
+                            
+                                    </div>
+                
+                                    <div class="col-xs-12 col-sm-12">
+                                        <center>
+                                            
+                                            <button type="submit"id="aprob" class="btn btn-success"><i class="fa fa-thumbs-up"></i> Guardar</button>
+    
+                                            <button type="button" class="btn btn-warning" data-dismiss="modal" value="Cancel" id="cerra_modal"><i class="fa fa-times"></i> Cerrar</button>
+                                        
+                                        </center>
+                                    </div>
+        
+                                  
+                                </form>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </section>
 
@@ -156,7 +235,10 @@
 @section('scripts')
 
     <script src="{{ asset('js/vehiculoCombustible/persona.js?v='.rand())}}"></script>
-
+    <script src="{{ asset('canvasLibrary/js/numeric-1.2.6.min.js') }}"></script>
+    <script src="{{ asset('canvasLibrary/js/bezier.js') }}"></script>
+    <script src="{{ asset('canvasLibrary/js/jquery.signaturepad.js') }}"></script>
+    <script type='text/javascript' src="{{ asset('canvasLibrary/js/html2canvas.js') }}"></script>
     <script>
         llenar_tabla_persona()
         limpiarCampos()

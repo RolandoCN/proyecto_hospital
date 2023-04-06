@@ -348,7 +348,7 @@
             </td>
             <td width="25%" style="border:0px">
                 <div style="text-align: center">
-                    <img src="data:image/png;base64,'.{{ $datos[0]->firmaconductor }}.'" class="img_firma-" style="width: 90px">
+                    <img src="data:image/png;base64,'.{{ $datos[0]->chofer->firma_persona }}.'" class="img_firma-" style="width: 90px">
                 </div>
                     
                 <hr style="color:black !important">
