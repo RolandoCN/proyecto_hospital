@@ -133,15 +133,16 @@ function llenar_tabla_reportes(data){
 
 }
 
-//permite visualizarr el pdf de la emision en una modal
+//permite visualizarr el pdf en una modal
 function visualizarOrden(nombre_pdf){
+   
     var iframe=$('#iframePdf');
     iframe.attr("src", "visualizar-documento/"+nombre_pdf);   
     $("#vinculo").attr("href", 'descargar-doc/'+nombre_pdf);
     $("#documentopdf").modal("show");
     $('#titulo').html('Orden');
 }
-
+ 
 //limpiamos los datos de la modal
 $('#documentopdf').on('hidden.bs.modal', function (e) {            
     var iframe=$('#iframePdf');

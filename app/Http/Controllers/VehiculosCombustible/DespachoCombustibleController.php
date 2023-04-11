@@ -577,8 +577,6 @@ class DespachoCombustibleController extends Controller
             $crearpdf->setPaper("A4", "portrait");
             $estadoarch = $crearpdf->stream();
 
-            // return $crearpdf->stream("pdf.pdf");
-            
             
             $exists_destino = Storage::disk('public')->exists($nombrePDF);
             
