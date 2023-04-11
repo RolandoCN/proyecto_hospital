@@ -5,18 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SisVehi | Log in</title>
-
+    <link rel="icon" href="{{asset('logo_icono.png')}}" sizes="32x32" />
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
 
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{asset('bower_components/font-awesome/css/font-awesome.min.css')}}">
 
-    <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="{{asset('bower_components/Ionicons/css/ionicons.min.css')}}">
 
-    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="{{asset('dist/css/AdminLTE.min.css')}}">
+    
 
     <style>
         .login-page,
@@ -35,7 +36,7 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a href="../../index2.html"><b style="font-size: 16px; color:black ">Hospital General Dr. Napoleón Dávila Córdova</a>
+            <a href="../../index2.html"><b style="font-size: 16px; color:black "></a>
         </div>
 
         <div class="login-box-body">
@@ -80,9 +81,9 @@
     </div>
 
 
-    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="{{asset('bower_components/jquery/dist/jquery.min.js')}}"></script>
 
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="{{asset('bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
 
   
 </body>
