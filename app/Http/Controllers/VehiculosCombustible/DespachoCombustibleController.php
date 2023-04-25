@@ -16,10 +16,14 @@ use App\Models\User;
 use App\Models\VehiculoCombustible\Ticket;
 use \Log;
 use DB;
-use Storage;
+use Illuminate\Support\Facades\Storage;
+
 use PDF;
 use Illuminate\Http\Request;
 use App\Http\Controllers\VehiculosCombustible\TareasController;
+
+use League\Flysystem\Sftp\SftpAdapter;
+
 
 class DespachoCombustibleController extends Controller
 {
@@ -33,6 +37,7 @@ class DespachoCombustibleController extends Controller
     }
 
     public function index(){
+
         $perfil=DB::table('vc_perfil as pe')
         ->where('pe.estado', 'A')
         ->where('pe.descripcion', 'Choferes')
@@ -577,15 +582,16 @@ class DespachoCombustibleController extends Controller
             $crearpdf->setPaper("A4", "portrait");
             $estadoarch = $crearpdf->stream();
 
-            
-            $exists_destino = Storage::disk('public')->exists($nombrePDF);
+             
+            // $exists_destino = Storage::disk('public')->exists($nombrePDF);
+            $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF);
             
             if($exists_destino){   
-                Storage::disk('public')->delete($nombrePDF);
+                Storage::disk('OrdenesCombustible')->delete($nombrePDF);
             }
 
-            Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-            $exists_destino = Storage::disk('public')->exists($nombrePDF); 
+            Storage::disk('OrdenesCombustible')->put(str_replace("", "",$nombrePDF), $estadoarch);
+            $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF); 
             if($exists_destino){   
                
                 return [
@@ -753,9 +759,9 @@ class DespachoCombustibleController extends Controller
                     $movimiento->save();
                     
                     $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
-                    $exists_destino = Storage::disk('public')->exists($nombrePDF);
+                    $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF);
                     if($exists_destino){   
-                        Storage::disk('public')->delete($nombrePDF);
+                        Storage::disk('OrdenesCombustible')->delete($nombrePDF);
                     }                   
 
                     //eliminamos la informacion de las movimiemtoDetalle

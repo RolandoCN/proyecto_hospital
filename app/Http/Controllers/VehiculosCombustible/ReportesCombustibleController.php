@@ -97,10 +97,7 @@ class ReportesCombustibleController extends Controller
                     $nombrePDF="despachoCombustibleDepartamento6_".date('YmdHis').".pdf";// $nombrePDF  
                  
                     //creamos el objeto
-                    // $pdf=new PDF();
-                    //habilitamos la opcion php para mostrar la paginacion
-                    // $crearpdf=$pdf::setOptions(['isPhpEnabled'=>true]);
-                    // enviamos a la vista para crear el documento que los datos repsectivos
+                    
                     $crearpdf=PDF::loadView('combustible.reportes.reporteForm6',['datos'=>$lista_final_agrupada,'detalle'=>$detale=[],'desde'=>$fecha_ini,'hasta'=>$fecha_fin]);
                     $crearpdf->setPaper("A4", "landscape");
         
@@ -376,6 +373,44 @@ class ReportesCombustibleController extends Controller
             ]);
         }    
        
+    }
+
+    //funcion que permite visualizar un documento selecciondo
+    public function visualizarDocumentoOrden($documentName){
+        try {
+            //obtenemos la extension
+            $info = new \SplFileInfo($documentName);
+            $extension = $info->getExtension();
+            if($extension!= "pdf" && $extension!="PDF"){
+                return \Storage::disk('OrdenesCombustible')->download($documentName);
+            }else{
+                // obtenemos el documento del disco en base 64
+                $documentEncode= base64_encode(\Storage::disk('OrdenesCombustible')->get($documentName));
+                return view("vistaPrevia")->with([
+                    "documentName"=>$documentName,
+                    "documentEncode"=>$documentEncode
+                ]);        
+            }            
+        }   catch (\Throwable $e) {
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage()." Linea ".$e->getLine()); 
+            abort("404");            
+        }
+
+    }
+
+    public function descargarOrden($archivo)
+    {
+        
+        $exists = Storage::disk('OrdenesCombustible')
+        ->exists($archivo);   
+     
+        if($exists){
+            return Storage::disk('OrdenesCombustible')->download($archivo);
+           
+        }else{
+            return back()->with(['error'=>'No se pudo descargar el archivo','estadoP'=>'danger']);
+        }
+      
     }
 
     

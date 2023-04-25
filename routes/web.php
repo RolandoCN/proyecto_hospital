@@ -144,6 +144,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/descargar-doc-elim/{documentName}', [MovimientoVehController::class, 'descargarElimina']);
     Route::get('/buscar-ticket', [MovimientoVehController::class, 'buscarTicket']);
     Route::get('/ticket-vehiculo/{nroticket}', [MovimientoVehController::class, 'ticketVehiculo']);
+    
 
     Route::get('/listado-salidas', [MovimientoVehController::class, 'vistaSalidas'])->middleware('validarRuta');
     Route::get('/obtener-salidas', [MovimientoVehController::class, 'obtenerSalidas']);
@@ -204,6 +205,8 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/listado-reporte-orden', [ReportesCombustibleController::class, 'listadoOrden']);
     Route::post('/buscar-ordenes', [ReportesCombustibleController::class, 'buscarOrden']);
     Route::get('/genera-orden-pdf/{id}/{nro}', [ReportesCombustibleController::class, 'pdfOrden']);
+    Route::get('/visualizar-documento-orden/{documentName}',[ReportesCombustibleController::class, 'visualizarDocumentoOrden']);
+    Route::get('/descargar-doc-orden/{documentName}', [ReportesCombustibleController::class, 'descargarOrden']);
 
     //CONSOLIDADO
     Route::get('/reporte-consolidado', [ReportesCombustibleController::class, 'vistaConsolidado']);
