@@ -137,8 +137,8 @@ function llenar_tabla_reportes(data){
 function visualizarOrden(nombre_pdf){
    
     var iframe=$('#iframePdf');
-    iframe.attr("src", "visualizar-documento/"+nombre_pdf);   
-    $("#vinculo").attr("href", 'descargar-doc/'+nombre_pdf);
+    iframe.attr("src", "visualizar-documento-orden/"+nombre_pdf);   
+    $("#vinculo").attr("href", 'descargar-doc-orden/'+nombre_pdf);
     $("#documentopdf").modal("show");
     $('#titulo').html('Orden');
 }
