@@ -58,7 +58,6 @@ return [
 
         'OrdenesCombustible' => [
             'driver' => 'sftp',
-            // 'host' =>'http://172.10.150.254/alimsys',
             'host' => env('SERVIDOR_ARCHIVO'),
             'port' => 22,
             'username' => 'tics',
@@ -66,7 +65,7 @@ return [
             'root' => 'OrdenesCombustible',
         ],
 
-                
+    
     ],
 
     /*

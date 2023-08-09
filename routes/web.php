@@ -107,6 +107,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::post('/guardar-autorizador', [AutorizadorController::class, 'guardar']);
     Route::get('/editar-autorizador/{id}', [AutorizadorController::class, 'editar']);
     Route::put('/actualizar-autorizador/{id}', [AutorizadorController::class, 'actualizar']);
+    Route::post('/subir-p12', [AutorizadorController::class, 'subirP12']);
     Route::get('/eliminar-autorizador/{id}', [AutorizadorController::class, 'eliminar']);
 
     //TICKET

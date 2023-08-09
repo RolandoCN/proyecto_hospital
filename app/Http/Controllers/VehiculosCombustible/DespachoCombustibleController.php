@@ -577,7 +577,7 @@ class DespachoCombustibleController extends Controller
 
             $responsable=DB::table('vc_responsable_servicios')
             ->first();
-
+ 
             $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha, "responsable"=>$responsable]);
             $crearpdf->setPaper("A4", "portrait");
             $estadoarch = $crearpdf->stream();
@@ -696,8 +696,8 @@ class DespachoCombustibleController extends Controller
                     $fecha_cabecera=$actualiza_detalle->fecha_cabecera_despacho;
                   
                     //eliminamos la informacion de las movimiemtoDetalle
-                    $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
-                    $eliminaMovimDetalle->delete();
+                    //$eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
+                    //$eliminaMovimDetalle->delete(); 
                     
                     $listaMov=$this->listarMovimientoVeh($request->vehiculo_id, $fecha_cabecera);
                     if($listaMov['error']==true){
@@ -708,12 +708,12 @@ class DespachoCombustibleController extends Controller
                         ]);
                     }else{
                         if(sizeof($listaMov['resultado'])>0){
-                            foreach($listaMov['resultado'] as $movi){
-                                $movimientoDespacho= new MovimientoDetalleDespacho();
-                                $movimientoDespacho->id_movimiento=$movi->idmovimiento;
-                                $movimientoDespacho->iddetalle_despacho=$actualiza_detalle->iddetalle_despacho;
-                                $movimientoDespacho->save();
-                            }  
+                            // foreach($listaMov['resultado'] as $movi){
+                            //     $movimientoDespacho= new MovimientoDetalleDespacho();
+                            //     $movimientoDespacho->id_movimiento=$movi->idmovimiento;
+                            //     $movimientoDespacho->iddetalle_despacho=$actualiza_detalle->iddetalle_despacho;
+                            //     $movimientoDespacho->save();
+                            // }  
                         }    
                     }
 
@@ -765,8 +765,8 @@ class DespachoCombustibleController extends Controller
                     }                   
 
                     //eliminamos la informacion de las movimiemtoDetalle
-                    $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
-                    $eliminaMovimDetalle->delete();
+                    // $eliminaMovimDetalle=MovimientoDetalleDespacho::where('iddetalle_despacho', $id);
+                    // $eliminaMovimDetalle->delete();
 
                     return response()->json([
                         'error'=>false,

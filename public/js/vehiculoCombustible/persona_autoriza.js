@@ -138,6 +138,8 @@ function llenar_tabla_persona(){
                     $('td', row).eq(5).html(`
                                   
                                             <button type="button" class="btn btn-primary btn-xs" onclick="editarPersona(${data.id_autorizado_salida })">Editar</button>
+
+                                            <button type="button" class="btn btn-warning btn-xs" onclick="subirP12(${data.id_autorizado_salida })">Archivo</button>
                                                                                 
                                             <a onclick="btn_eliminar_tarea(${data.id_autorizado_salida })" class="btn btn-danger btn-xs"> Eliminar </a>
                                        
@@ -192,6 +194,13 @@ function editarPersona(id_autorizado_salida){
     });
 }
 
+function subirP12(id){
+   $('#form_p12').show(200);
+   $('#listado_persona').hide(200)
+    globalThis.idAutorizadorEditarP12=id
+   
+}
+
 function visualizarForm(tipo){
     $('#form_ing').show(200)
     $('#listado_persona').hide(200)
@@ -209,6 +218,7 @@ function visualizarForm(tipo){
 
 function visualizarListado(){
     $('#form_ing').hide(200)
+    $('#form_p12').hide(200);
     $('#listado_persona').show(200)
     limpiarCampos()
 }
@@ -233,4 +243,123 @@ function btn_eliminar_tarea(id_autorizado_salida){
         });
     }
    
+}
+
+    $("#formulario_p12").submit(function(e){
+        e.preventDefault();
+        
+        //validamos los campos obligatorios
+        let archivo=$('#p12').val()
+        let contrasena=$('#contrasena').val()
+        
+        if(archivo=="" || archivo==null){
+            alertNotificar("Debe subir un archivo","error")
+            $('#archivo').focus()
+            return
+        } 
+
+        if(contrasena=="" || contrasena==null){
+            alertNotificar("Ingrese la contraseña","error")
+            $('#contrasena').focus()
+            return
+        } 
+
+    
+        vistacargando("m","Espere por favor")
+        //var formData=$("#formulario_p12").serialize();
+        var f = $(this);
+        var formData = new FormData(this);
+        formData.append("idpersona", idAutorizadorEditarP12);
+        //formData.append(f.attr("file"), $(this)[0].files[0]);
+    
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+
+        $.ajax({
+            url: 'subir-p12',
+            method: 'POST',
+            data: formData,
+            dataType: 'json',
+            contentType:false,
+            cache:false,
+            processData:false, 
+            success: function(data){
+           
+                vistacargando("");                
+                if(data.error==true){
+                    alertNotificar(data.mensaje,'error');
+                    return;                      
+                }
+                limpiarCampos()
+                alertNotificar(data.mensaje,"success");
+                $('#form_ing').hide(200)
+                $('#listado_persona').show(200)
+                llenar_tabla_persona()
+                                
+            }, error:function (data) {
+               
+                vistacargando("");
+                alertNotificar('Ocurrió un error','error');
+            }
+        })
+    })
+
+
+
+    $("#frm_Bajas").submit(function(e){
+        e.preventDefault();
+        var motivo=$('#motivo_').val();
+        var archivo=$('#archivo').val();
+        if(motivo=="" || motivo==null){
+            alertNotificar("Debe registrar un motivo","error");
+            return;
+        }
+        if(archivo=="" || archivo==null){
+            alertNotificar("Debes subir un archivo","error");
+            return;
+        }
+        
+        vistacargando("m","Espere por favor");        
+        var idcont= $('#idcontr').val();
+       
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+           
+        var FrmData = new FormData(this);
+        $.ajax({
+            type: "post",
+            url: 'subir-p12',
+            data: FrmData,
+            contentType:false,
+            cache:false,
+            processData:false, 
+            success: function(data){
+                vistacargando("");                
+                if(data.estadoP=='error'){
+                    alertNotificar(data.mensaje,'error');
+                    return;                      
+                }
+                $('#baja_modal').modal('hide');
+                regresar();
+                alertNotificar(data.mensaje,data.estadoP);
+                                
+            }, error:function (data) {
+                vistacargando("");
+                alertNotificar('Ocurrió un error','error');
+            }
+        });
+            
+    })
+
+
+function aplicar_bajas_titulos()    {
+$("#frm_Bajas").submit();
 }

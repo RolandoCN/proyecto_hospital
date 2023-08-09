@@ -9,6 +9,7 @@ use App\Models\VehiculoCombustible\Tarea;
 use App\Models\VehiculoCombustible\TipoMedicion;
 use App\Models\VehiculoCombustible\Movimiento;
 use App\Models\VehiculoCombustible\TareaMovimento;
+use App\Models\VehiculoCombustible\DetalleDespacho;
 use \Log;
 use Storage;
 use Illuminate\Http\Request;
@@ -214,7 +215,7 @@ class MovimientoVehController extends Controller
         $exists = Storage::disk('public')
         ->exists($archivo);       
         if($exists){
-            // return Storage::disk('public')->download($archivo);
+            //  return Storage::disk('public')->download($archivo);
             return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
         }else{
             return back()->with(['error'=>'No se pudo descargar el archivo','estadoP'=>'danger']);
@@ -242,6 +243,7 @@ class MovimientoVehController extends Controller
             $data=Movimiento::where(function($query)use($text){
                 $query->where('nro_ticket', 'like', '%'.$text.'%');
             })
+            ->where('estado','Activo')
             ->take(10)->get();
         }
         
@@ -413,15 +415,16 @@ class MovimientoVehController extends Controller
                     'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
                 ]);
             }
-
-
+            
+            $cod=null;
             $ultimoCod=Movimiento::where('estado','!=','Eliminada')
             ->get()->last();
-            
+            //dd($ultimoCod);
             if(!is_null($ultimoCod)){
                 //si es enero y el primero del año, reseteamos a 1
                 $verifica_codigo=$ultimoCod->codigo_orden;
                 $separa=explode('-', $verifica_codigo);
+               
                 $anio=$separa[1];
                 if(date('m')==1 && date('Y')!=$anio){
                     $codi=1;
@@ -439,7 +442,13 @@ class MovimientoVehController extends Controller
                 $codi=1;
                 $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
             }
-         
+            
+            if(is_null($cod)){
+                return response()->json([
+                    'error'=>true,
+                    'mensaje'=>'No se pudo generar el codigo de orden'
+                ]);
+            }
                 
             if($guarda_movi->save()){
 
@@ -488,9 +497,13 @@ class MovimientoVehController extends Controller
 
     public function eliminar($id){
         try{
-            //verificamos que no se haya generado despacho
+            
             $mov=Movimiento::find($id);
-            if(!is_null($mov->codigo_orden)){
+            //verificamos que no se haya generado despacho
+            $despacho=DetalleDespacho::where('num_factura_ticket',$mov->nro_ticket)
+            ->where('estado','Aprobado')->first();
+           
+            if(!is_null($despacho)){
                 return response()->json([
                     'error'=>true,
                     'mensaje'=>'Ya existen despacho generado con esta orden'
@@ -502,8 +515,8 @@ class MovimientoVehController extends Controller
             $mov->estado="Eliminada";
             if($mov->save()){
                 //eliminamos las tareas movimientos
-                $eliminaTareasMov=TareaMovimento::where('id_movimiento',$id);
-                $eliminaTareasMov->delete();
+                // $eliminaTareasMov=TareaMovimento::where('id_movimiento',$id);
+                // $eliminaTareasMov->delete();
                 return response()->json([
                     'error'=>false,
                     'mensaje'=>'Información eliminada exitosamente'

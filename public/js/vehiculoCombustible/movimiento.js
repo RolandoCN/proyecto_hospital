@@ -310,6 +310,7 @@ function limpiarCampos(){
     $('#chofer').val('').trigger('change.select2')
 
     $('#autorizado').val('').trigger('change.select2')
+    $('#n_ticket').val('').trigger('change.select2')
    
     $('#observacion').val('')
     // limpiarSingArea()

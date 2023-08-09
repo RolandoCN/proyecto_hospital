@@ -215,6 +215,117 @@ class AutorizadorController extends Controller
         }
     }
 
+    
+    public function subirP12(Request $request){
+       
+        try{
+
+            $messages = [
+                'idpersona.required' => 'No se pudo obtener la informacion de la empresa',
+                'contrasena.required' => 'Debe ingresar la contraseña',
+                'p12.required' => 'Debe subir el archivo'
+            ];
+
+            $rules = [
+                'idpersona' =>"required",
+                'contrasena' =>"required|max:50",
+                'p12' =>"required"
+            ];
+
+            $this->validate($request, $rules, $messages);
+
+            //verificamos si no se le a cargado un archivo previamente
+            $data_firma=Autoriza::where('id_autorizado_salida',$request->idpersona)->first();
+        
+            $archivo = $request->p12;
+        
+            $extension = pathinfo($archivo->getClientOriginalName(), PATHINFO_EXTENSION);
+            $nombre_arch= pathinfo($archivo->getClientOriginalName(),PATHINFO_FILENAME);
+
+            $arch_tamanio= $_FILES['p12']['size'];           
+            $arch_subido= fopen($_FILES['p12']['tmp_name'], 'r');           
+            $binario_arch=fread($arch_subido, $arch_tamanio);
+
+            $nombre_arch_certifi =$nombre_arch.".".$extension;
+                      
+            if(!isset($request->contrasena)){
+                $mensajeError="Faltan datos por ingresar"; goto RETORNARERROR;
+            }
+            
+            if($extension != "p12"){
+                $mensajeError="El archivo del certificado debe ser formato .p12"; goto RETORNARERROR;
+            }
+
+            $datos_certificado = $this->obtenerInformacionCertificado(file_get_contents($archivo), $request->contrasena);
+        
+            if(sizeof($datos_certificado)==0){
+                $mensajeError="Archivo o contraseña incorrectos"; goto RETORNARERROR;
+            }
+        
+            //verificamos si el archivo esta exirado
+            $fecha_actual = date('Y-m-d H:m:s');
+            $datos_certificado["fecha_hasta"];
+            if(strtotime($datos_certificado["fecha_hasta"]) <= strtotime($fecha_actual)){
+                $mensajeError="El certificado cargado ya expiró"; goto RETORNARERROR;
+            }   
+                        
+            $data_firma->archivo_certificado = $nombre_arch_certifi;
+            $data_firma->valido_arch_desde = date(env('FORMATO_FECHA'), strtotime($datos_certificado["fecha_de"]));
+            $data_firma->valido_arch_hasta = date(env('FORMATO_FECHA'), strtotime($datos_certificado["fecha_hasta"]));
+            $data_firma->password_certif = base64_encode($request->contrasena);
+            //$data_firma->base_firma = base64_encode($binario_arch);//
+            $data_firma->save();
+
+            \Storage::disk('public')->put($nombre_arch.".".$extension,  \File::get($archivo));
+
+            return response()->json([
+                'mensaje' => "Configuración realizada exitosamente",
+                'error' => false
+            ]);
+
+           
+
+
+            RETORNARERROR:
+            return response()->json([
+                'mensaje' => $mensajeError,
+                'error' => true
+            ]);
+        
+        }catch (\Throwable $e) {
+            Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage());
+            return response()->json([
+                "error"=>true,
+                "mensaje"=>'Ocurrió un error, intentelo más tarde'
+            ]);
+        }
+    }
+
+     // recibe la ruta de un certificado.p12 y la contraseña y retorna la informacion del propietario de la firma
+     public function obtenerInformacionCertificado($archivo_p12, $clave){
+
+        try {
+            $datos_certificado = [];
+            $informacion_archivo = array();
+    
+            if (openssl_pkcs12_read($archivo_p12, $informacion_archivo, $clave)) {
+                if (isset($informacion_archivo['cert'])) {
+                    openssl_x509_export($informacion_archivo['cert'], $informacion_archivo);   
+                    $informacion_archivo = openssl_x509_parse($informacion_archivo);
+                    $datos_certificado["fecha_de"] = date('Y-m-d H:i:s', $informacion_archivo['validFrom_time_t']);
+                    $datos_certificado["fecha_hasta"] = date('Y-m-d H:i:s', $informacion_archivo['validTo_time_t']);
+                    $datos_certificado["propietario"] = $informacion_archivo["subject"]["CN"];
+                }
+            }
+    
+            return $datos_certificado;
+
+        }catch(\Throwable $th){
+            return $th->getMessage();;
+        }
+
+    }
+
     public function eliminar($id){
         try{
             
