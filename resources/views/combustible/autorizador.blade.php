@@ -169,9 +169,65 @@
             </form>
         </div>
 
+        <div id="form_p12" style="display: none" >
+            <form class="form-horizontal" id="formulario_p12" enctype="multipart/form-data" action ="multipart/form-data">
+               
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title" id="titulo_form_"> </h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            
+                        </div>
+                    </div>
+                    <div class="box-body">
+
+                        
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-3 control-label">Archivo</label>
+                            <div class="col-sm-8">
+                                <input type="file" name="p12" id="p12" class="form-control"  placeholder="Archivo">
+                                
+                            </div>
+                            
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-3 control-label">Contraseña</label>
+                            <div class="col-sm-8">
+                                <input type="password" name="contrasena" id="contrasena" class="form-control"  placeholder="Contraseña">
+                                
+                            </div>
+                            
+                        </div>
+
+                       
+                        <hr>
+                        <div class="form-group">
+                            <div class="col-sm-12 text-center" >
+                            
+                                <button type="submit" class="btn btn-success btn-sm">
+                                  Guardar
+                                </button>
+                                <button type="button" onclick="visualizarListado()" class="btn btn-danger btn-sm">Cancelar</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                </div>
+            
+            </form>
+        </div>
+
+      
 
     </section>
-
+ 
 @endsection
 @section('scripts')
 

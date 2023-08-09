@@ -58,7 +58,6 @@ return [
 
         'OrdenesCombustible' => [
             'driver' => 'sftp',
-            // 'host' =>'http://172.10.150.254/alimsys',
             'host' => env('SERVIDOR_ARCHIVO'),
             'port' => 22,
             'username' => 'tics',
@@ -66,15 +65,7 @@ return [
             'root' => 'OrdenesCombustible',
         ],
 
-        'diskMantenimientoImagen' => [
-            'driver' => 'sftp',
-            'host' =>'172.30.4.239',
-            'username' => 'documental',
-            'password' => 'documentalFileServer2019..',
-            'root' => 'MantenimientoImagen',
-        ],
-
-        
+    
     ],
 
     /*

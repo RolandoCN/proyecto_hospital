@@ -257,7 +257,7 @@ class ReportesCombustibleController extends Controller
     }
 
     public function pdfOrden($id, $nro){
-
+       
         $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
         ->where('estado','Aprobado')
         ->where('idcabecera_despacho',$id)
