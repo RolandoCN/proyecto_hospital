@@ -66,15 +66,7 @@ return [
             'root' => 'OrdenesCombustible',
         ],
 
-        'diskMantenimientoImagen' => [
-            'driver' => 'sftp',
-            'host' =>'172.30.4.239',
-            'username' => 'documental',
-            'password' => 'documentalFileServer2019..',
-            'root' => 'MantenimientoImagen',
-        ],
-
-        
+                
     ],
 
     /*
