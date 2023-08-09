@@ -448,7 +448,7 @@ function llenar_tabla_tarea(){
                                             
                                             <a onclick="btn_eliminar_movimi(${data.idmovimiento })" class="btn btn-danger btn-xs"> Eliminar </a><br>
 
-                                            <a onclick="reporte_movimiento(${data.idmovimiento })" class="btn btn-success btn-xs"
+                                            <a onclick="verpdf(${data.idmovimiento })" class="btn btn-success btn-xs"
                                             style="margin-top:3px"> Reporte </a>
                                        
                                     
@@ -489,10 +489,11 @@ function reporte_movimiento(id){
 }
 
 //permite visualizarr el pdf de la emision en una modal
-function verpdf(nombre_pdf){
+function verpdf(id){
+    var nombre_pdf="movimiento_"+id+".pdf";
     var iframe=$('#iframePdf');
-    iframe.attr("src", "visualizar-documento/"+nombre_pdf);   
-    $("#vinculo").attr("href", 'descargar-doc-elim/'+nombre_pdf);
+    iframe.attr("src", "visualizar-documento-orden/"+nombre_pdf);   
+    $("#vinculo").attr("href", 'descargar-doc-orden/'+nombre_pdf);
     $("#documentopdf").modal("show");
     $('#titulo').html('Rutas');
 }

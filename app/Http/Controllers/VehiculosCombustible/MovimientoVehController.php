@@ -101,12 +101,7 @@ class MovimientoVehController extends Controller
 
     public function tareaVehiculo($id){
         try{
-            // $tarea=Tarea::where('estado','Pendiente')
-            // ->where('id_vehiculo', $id)
-            // ->WhereDate('fecha_inicio','<=',date('Y-m-d'))
-            // ->WhereDate('fecha_fin','>=',date('Y-m-d'))
-            // ->get();
-
+           
             $tarea=[];
 
             $medicion=Vehiculo::with('TipoMedicion')->where('id_vehiculo',$id)->first();
@@ -132,7 +127,7 @@ class MovimientoVehController extends Controller
     }
 
     public function reporteIndividual($id){
-      
+       
         $movimiento = Movimiento::with('vehiculo','chofer', 'autoriza')
         ->where('idmovimiento',$id)->where('estado','Activo')
         ->get();
@@ -155,6 +150,14 @@ class MovimientoVehController extends Controller
         $nombrePDF="movimiento_".$movimiento[0]->idmovimiento.".pdf"; 
         $numero_ticket=$movimiento[0]->nro_ticket;
 
+        $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF); 
+        if($exists_destino){   
+            return response()->json([
+                'error'=>false,
+                'pdf'=>$nombrePDF
+            ]);
+        }
+
         $ticket=Ticket::where('estado','A')
         ->where('numero_ticket',$numero_ticket )
         ->first();
@@ -167,9 +170,10 @@ class MovimientoVehController extends Controller
         $estadoarch = $crearpdf->stream();
                         
         //lo guardamos en el disco temporal
-        Storage::disk('public')->put(str_replace("", "",$nombrePDF), $estadoarch);
-        $exists_destino = Storage::disk('public')->exists($nombrePDF); 
+        Storage::disk('OrdenesCombustible')->put(str_replace("", "",$nombrePDF), $estadoarch);
+        $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF); 
         if($exists_destino){   
+
             return response()->json([
                 'error'=>false,
                 'pdf'=>$nombrePDF
@@ -215,8 +219,8 @@ class MovimientoVehController extends Controller
         $exists = Storage::disk('public')
         ->exists($archivo);       
         if($exists){
-            //  return Storage::disk('public')->download($archivo);
-            return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
+            return Storage::disk('public')->download($archivo);
+            //return response()->download( storage_path('app/public/'.$archivo))->deleteFileAfterSend(true);
         }else{
             return back()->with(['error'=>'No se pudo descargar el archivo','estadoP'=>'danger']);
         }
@@ -457,18 +461,7 @@ class MovimientoVehController extends Controller
                 $movim->codigo_orden=$cod;
                 $movim->save();
 
-                //guardamos las tareas asociados al vehiculo en el movimiento
-                if(isset($request->tareasguard)){
-                    if(sizeof($request->tareasguard)>0 ){
-                        foreach($request->tareasguard as $tarea){
-                            $tareaMov=new TareaMovimento();
-                            $tareaMov->id_tarea=$tarea;
-                            $tareaMov->id_movimiento=$guarda_movi->idmovimiento;
-                            $tareaMov->save();
-                        }
-                    }
-                }
-                    
+                $generaPdf=$this->reporteIndividual($movim->idmovimiento);
                     
                 return response()->json([
                     'error'=>false,
@@ -514,9 +507,10 @@ class MovimientoVehController extends Controller
             $mov->fecha_act=date('Y-m-d H:i:s');
             $mov->estado="Eliminada";
             if($mov->save()){
-                //eliminamos las tareas movimientos
-                // $eliminaTareasMov=TareaMovimento::where('id_movimiento',$id);
-                // $eliminaTareasMov->delete();
+                //eliminamos el archivo
+                Storage::disk('OrdenesCombustible')
+                ->delete("movimiento_".$id.".pdf"); 
+
                 return response()->json([
                     'error'=>false,
                     'mensaje'=>'Información eliminada exitosamente'
