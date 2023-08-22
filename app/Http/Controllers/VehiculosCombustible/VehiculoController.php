@@ -295,16 +295,16 @@ class VehiculoController extends Controller
         try{
 
             //verificamos que no este asociado a un tarea, movimiento y despacho en estado activo
-            $veri_Tarea=DB::table('vc_tarea')
-            ->where('id_vehiculo',$id)
-            ->where('estado','!=', 'Eliminada')
-            ->first();
-            if(!is_null($veri_Tarea)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El vehículo está asociado a una tarea y no se puede eliminar'
-                ]);
-            }
+            // $veri_Tarea=DB::table('vc_tarea')
+            // ->where('id_vehiculo',$id)
+            // ->where('estado','!=', 'Eliminada')
+            // ->first();
+            // if(!is_null($veri_Tarea)){
+            //     return response()->json([
+            //         'error'=>true,
+            //         'mensaje'=>'El vehículo está asociado a una tarea y no se puede eliminar'
+            //     ]);
+            // }
 
             $veri_Ticket=DB::table('vc_ticket')
             ->where('id_vehiculo',$id)
