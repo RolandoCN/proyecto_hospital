@@ -197,16 +197,16 @@ class PersonaController extends Controller
             } 
             
             //verificamos que no este asociado a un tarea, movimiento y despacho en estado activo
-            $veri_Tarea=DB::table('vc_tarea')
-            ->where('id_chofer',$id)
-            ->where('estado','!=', 'Eliminada')
-            ->first();
-            if(!is_null($veri_Tarea)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'La persona está asociado a una tarea y no se puede actualizar'
-                ]);
-            }
+            // $veri_Tarea=DB::table('vc_tarea')
+            // ->where('id_chofer',$id)
+            // ->where('estado','!=', 'Eliminada')
+            // ->first();
+            // if(!is_null($veri_Tarea)){
+            //     return response()->json([
+            //         'error'=>true,
+            //         'mensaje'=>'La persona está asociado a una tarea y no se puede actualizar'
+            //     ]);
+            // }
 
             $veri_Movimiento=DB::table('vc_movimiento')
             ->where('id_chofer',$id)
@@ -278,16 +278,16 @@ class PersonaController extends Controller
     public function eliminar($id){
         try{
             //verificamos que no este asociado a un tarea, movimiento y despacho en estado activo
-            $veri_Tarea=DB::table('vc_tarea')
-            ->where('id_chofer',$id)
-            ->where('estado','!=', 'Eliminada')
-            ->first();
-            if(!is_null($veri_Tarea)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'La persona está asociado a una tarea y no se puede eliminar'
-                ]);
-            }
+            // $veri_Tarea=DB::table('vc_tarea')
+            // ->where('id_chofer',$id)
+            // ->where('estado','!=', 'Eliminada')
+            // ->first();
+            // if(!is_null($veri_Tarea)){
+            //     return response()->json([
+            //         'error'=>true,
+            //         'mensaje'=>'La persona está asociado a una tarea y no se puede eliminar'
+            //     ]);
+            // }
 
             $veri_Movimiento=DB::table('vc_movimiento')
             ->where('id_chofer',$id)
