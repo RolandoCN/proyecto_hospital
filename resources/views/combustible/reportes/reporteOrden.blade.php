@@ -79,273 +79,272 @@
     </header>
 
     <br>
-    <table class="ltable" style="width:99%;table-layout: fixed;  ">
-        <tbody class="fuenteSubtitulo">
-            <tr style="font-size: 13px" class="fuenteSubtitulo ">
-                <th class="pad"
-                    style="height:25px;text-align: center;background-color: #D3D3D3;border-top: 0px;border-bottom: 0px;border-color:#D3D3D3"colspan="8"
-                    width="100%">ORDEN DE PEDIDO DE COMBUSTIBLE Nº {{$movimiento->codigo_orden}}</th>
+   
+        <table class="ltable" style="width:99%;table-layout: fixed;  ">
+            <tbody class="fuenteSubtitulo">
+                <tr style="font-size: 13px" class="fuenteSubtitulo ">
+                    <th class="pad"
+                        style="height:25px;text-align: center;background-color: #D3D3D3;border-top: 0px;border-bottom: 0px;border-color:#D3D3D3"colspan="8"
+                        width="100%">ORDEN DE PEDIDO DE COMBUSTIBLE Nº {{$movimientodata[0]->codigo_orden}}</th>
 
-            </tr>
+                </tr>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b></b></td>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b></b></td>
 
-            </tr>
+                </tr>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:20px;text-align: right;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%">Chone, {{$fecha}}</td>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: right;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%">Chone, {{$fecha}}</td>
 
-            </tr>
+                </tr>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b>Sirvase a entregar al SR: </b>{{$datos[0]->chofer->nombres}}
-                    {{$datos[0]->chofer->apellidos}}
-                </td>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b>Sirvase a entregar al SR: </b>{{$datos[0]->chofer->nombres}}
+                        {{$datos[0]->chofer->apellidos}}
+                    </td>
 
-              
-            </tr>
-
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>Para el carro N°</b> {{$datos[0]->vehiculo->descripcion}}
-                    {{$datos[0]->vehiculo->codigo_institucion}}
-                </td>
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>Marca: </b> {{$datos[0]->vehiculo->marca->detalle}}
-                </td>
-
-
-            </tr>
-
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:30px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>TIPO COMBUSTIBLE</b>
-                </td>
-
-                <td class="pad"
-                    style="height:30px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>VALOR</b>
-                </td>
-               
-            </tr>
-
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%">{{$datos[0]->tipocombustible->detalle}}
-                </td>
-
-                <td class="pad"
-                    style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%">{{$datos[0]->total}}
-                </td>
-            </tr>
-
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b>MOTIVO DE LA SALIDA</b>
-                </td>
-             
-            </tr>
-
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%">
-                    <li style="margin-left:12px">{{$movimiento->motivo}}</li>
-                </td>
-             
-            </tr>
-
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b>Acompañante: </b>{{$movimiento->acompanante}}
-                </td>
-             
-            </tr>
-
-           
-        </tbody>
-    </table>
-
-    <table width="100%">
-        <tr style="font-size:11px">
-            
-            <td width="35%" style="text-align: center; border:0px">
                 
-            </td>
-            <td width="30%" style="border:0px">
+                </tr>
+
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>Para el carro N°</b> {{$datos[0]->vehiculo->descripcion}}
+                        {{$datos[0]->vehiculo->codigo_institucion}}
+                    </td>
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>Marca: </b> {{$datos[0]->vehiculo->marca->detalle}}
+                    </td>
+
+
+                </tr>
+
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:30px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>TIPO COMBUSTIBLE</b>
+                    </td>
+
+                    <td class="pad"
+                        style="height:30px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>VALOR</b>
+                    </td>
+                
+                </tr>
+
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%">{{$datos[0]->tipocombustible->detalle}}
+                    </td>
+
+                    <td class="pad"
+                        style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%">{{$datos[0]->total}}
+                    </td>
+                </tr>
+
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b>MOTIVO DE LA SALIDA</b>
+                    </td>
+                
+                </tr>
+
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%">
+                        <li style="margin-left:12px">{{$movimientodata[0]->motivo}}</li>
+                    </td>
+                
+                </tr>
+
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b>Acompañante: </b>{{$movimientodata[0]->acompanante}}
+                    </td>
+                
+                </tr>
+
             
-                <br><br><br><br><br>
+            </tbody>
+        </table>
+
+        <table width="100%">
+            <tr style="font-size:11px">
+                
+                <td width="35%" style="text-align: center; border:0px">
                     
-                <hr style="color:black !important">
-                <p style="text-align: center">{{ $responsable->nombre }}<br>
-                Responsable de Servicios Institucionales 
-                    
-                </p>
-            </td>
-            <td width="35%" style="border:0px">
-               
-            </td>
-            
-        </tr>
-    </table>
+                </td>
+                <td width="30%" style="border:0px">
+                
+                    <br><br><br><br><br>
+                        
+                    <hr style="color:black !important">
+                    <p style="text-align: center">{{ $responsable->nombre }}<br>
+                    Responsable de Servicios Institucionales 
+                        
+                    </p>
+                </td>
+                <td width="35%" style="border:0px">
+                
+                </td>
+                
+            </tr>
+        </table>
+        
+        <br>
     
-    <br>
+    @foreach($movimientodata as $movimiento)
+        <table class="ltable" style="width:99%;table-layout: fixed; margin-top:62px ">
+            <tbody class="fuenteSubtitulo">
+                <tr style="font-size: 13px" class="fuenteSubtitulo ">
+                    <th class="pad"
+                        style="height:25px;text-align: center;background-color: #D3D3D3;border-top: 0px;border-bottom: 0px;border-color:#D3D3D3"colspan="8"
+                        width="100%">ORDEN DE SALIDA DE VEHÍCULOS Nº {{$movimiento->codigo_orden}}</th>
 
-    <table class="ltable" style="width:99%;table-layout: fixed; margin-top:42px ">
-        <tbody class="fuenteSubtitulo">
-            <tr style="font-size: 13px" class="fuenteSubtitulo ">
-                <th class="pad"
-                    style="height:25px;text-align: center;background-color: #D3D3D3;border-top: 0px;border-bottom: 0px;border-color:#D3D3D3"colspan="8"
-                    width="100%">ORDEN DE SALIDA DE VEHÍCULOS Nº {{$movimiento->codigo_orden}}</th>
+                </tr>
 
-            </tr>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b></b></td>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b></b></td>
+                </tr>
 
-            </tr>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: LEFT;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>Salida del Carro N°:  </b> {{$datos[0]->vehiculo->descripcion}}
+                        {{$datos[0]->vehiculo->codigo_institucion}}</td>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
+                    <td class="pad"
                     style="height:20px;text-align: LEFT;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>Salida del Carro N°:  </b> {{$datos[0]->vehiculo->descripcion}}
-                    {{$datos[0]->vehiculo->codigo_institucion}}</td>
+                    width="100%"> <b> Marca: </b> {{$datos[0]->vehiculo->marca->detalle}}</td>
 
-                <td class="pad"
-                style="height:20px;text-align: LEFT;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                width="100%"> <b> Marca: </b> {{$datos[0]->vehiculo->marca->detalle}}</td>
+                </tr>
 
-            </tr>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>Para viajar a: </b>{{$movimiento->lugar_llegada_destino}}
+                    </td>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
+                    <td class="pad"
                     style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>Para viajar a: </b>{{$movimiento->lugar_llegada_destino}}
+                    width="100%"><b>Solicitado por:</b> {{$movimiento->persona_solicita}}
+                
                 </td>
 
-                <td class="pad"
-                style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                width="100%"><b>Solicitado por:</b> {{$movimiento->persona_solicita}}
-               
-            </td>
+                
+                </tr>
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%">
+                        
+                    </td>
+                
+                </tr>
+                
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b>COMISIÓN</b>
+                    </td>
+                
+                </tr>
 
-              
-            </tr>
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%">
+                <tr style="font-size: 12px">   
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%">
+                        <li style="margin-left:12px">{{$movimiento->motivo}}</li>
+                    </td>
+                
+                </tr>
+
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
+                        width="100%"><b>Acompañante:</b> {{$movimiento->acompanante}}
                     
-                </td>
-             
-            </tr>
-              
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: center;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b>COMISIÓN</b>
-                </td>
-             
-            </tr>
+                    </td>
+                
 
-            <tr style="font-size: 12px">   
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%">
-                    <li style="margin-left:12px">{{$movimiento->motivo}}</li>
-                </td>
-             
-            </tr>
+                </tr>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
-                    style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                    width="100%"><b>Acompañante:</b> {{$movimiento->acompanante}}
-                   
-                </td>
-               
+                
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>Chofer: </b>{{$datos[0]->chofer->nombres}}
+                        {{$datos[0]->chofer->apellidos}}
+                    </td>
 
-            </tr>
-
-            
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
+                    <td class="pad"
                     style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>Chofer: </b>{{$datos[0]->chofer->nombres}}
-                    {{$datos[0]->chofer->apellidos}}
+                    width="100%"><b>Fecha de la salida:</b> {{$movimiento->fecha_salida_patio}}
+                
                 </td>
 
-                <td class="pad"
-                style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                width="100%"><b>Fecha de la salida:</b> {{$movimiento->fecha_salida_patio}}
-               
-            </td>
+                <tr style="font-size: 12px" class="fuenteSubtitulo ">
+                    <td class="pad"
+                        style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
+                        width="100%"><b>Autorizado por: </b> {{ $movimiento->abreviacion_titulo }} {{ $movimiento->autorizador }}
+                    </td>
 
-            <tr style="font-size: 12px" class="fuenteSubtitulo ">
-                <td class="pad"
+                    <td class="pad"
                     style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                    width="100%"><b>Autorizado por: </b> {{ $movimiento->abreviacion_titulo }} {{ $movimiento->autorizador }}
+                    width="100%"><b>Lugar y fecha:</b> Chone, {{$fecha}}
+                
                 </td>
 
-                <td class="pad"
-                style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                width="100%"><b>Lugar y fecha:</b> Chone, {{$fecha}}
-               
-            </td>
+                
+            </tbody>
+        </table>
 
-            
-        </tbody>
-    </table>
-
-    <table width="100%" style="margin-top:22px">
-        <tr style="font-size:11px">
-            <td width="10%" style="border:0px"></td>
-            <td width="25%" style="text-align: center; border:0px">
-                <br><br><br><br><br>
-                <hr style="color:black !important">
-                <p style="text-align: center">{{ $movimiento->abreviacion_titulo }} {{ $movimiento->autorizador }} <br>Autorizado por
+        <table width="100%" style="margin-top:22px">
+            <tr style="font-size:11px">
+                <td width="10%" style="border:0px"></td>
+                <td width="25%" style="text-align: center; border:0px">
+                    <br><br><br><br><br>
+                    <hr style="color:black !important">
+                    <p style="text-align: center">{{ $movimiento->abreviacion_titulo }} {{ $movimiento->autorizador }} <br>Autorizado por
+                        
+                    </p>
+                </td>
+                <td width="30%" style="border:0px">
+                
+                
+                </td>
+                <td width="25%" style="border:0px">
+                    <div style="text-align: center">
+                        <img src="data:image/png;base64,'.{{ $movimiento->firma_persona }}.'" class="img_firma-" style="width: 90px">
+                    </div>
+                        
+                    <hr style="color:black !important">
+                    <p style="text-align: center">
+                        {{ $movimiento->nombres }}  {{ $movimiento->apellidos }}<br>
+                        Conductor  
                     
-                </p>
-            </td>
-            <td width="30%" style="border:0px">
-            
-            
-            </td>
-            <td width="25%" style="border:0px">
-                <div style="text-align: center">
-                    <img src="data:image/png;base64,'.{{ $movimiento->firma_persona }}.'" class="img_firma-" style="width: 90px">
-                </div>
-                    
-                <hr style="color:black !important">
-                <p style="text-align: center">
-                    {{ $movimiento->nombres }}  {{ $movimiento->apellidos }}<br>
-                    Conductor  
-                   
-                </p>
-            </td>
-            <td width="10%" style="border:0px"></td>
-        </tr>
-    </table>
-
-
-  
-
+                    </p>
+                </td>
+                <td width="10%" style="border:0px"></td>
+            </tr>
+        </table>
+    @endforeach
 
 
     <script type="text/php">

@@ -17,12 +17,14 @@ use PDF;
 use DB;
 use SplFileInfo;
 use App\Http\Controllers\VehiculosCombustible\TareasController;
+use App\Http\Controllers\VehiculosCombustible\DespachoCombustibleController;
 
 class MovimientoVehController extends Controller
 {
     public function __construct() {
         try {       
             $this->objTareas = new TareasController();
+            $this->objDespacho = new DespachoCombustibleController();
                            
         } catch (\Throwable $e) {
             Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage());
@@ -244,11 +246,22 @@ class MovimientoVehController extends Controller
         if($request->has('q')){
             $search = $request->q;
             $text=mb_strtoupper($search);
-            $data=Movimiento::where(function($query)use($text){
+
+            // $data=Movimiento::where(function($query)use($text){
+            //     $query->where('nro_ticket', 'like', '%'.$text.'%');
+            // })
+            // ->where('estado','Activo')
+            // ->distinct()
+            // ->take(10)->get();
+
+            $data=DB::table('vc_movimiento')->where(function($query)use($text){
                 $query->where('nro_ticket', 'like', '%'.$text.'%');
             })
+            ->select('nro_ticket')
             ->where('estado','Activo')
+            ->distinct()
             ->take(10)->get();
+           
         }
         
         return response()->json($data);
@@ -283,208 +296,237 @@ class MovimientoVehController extends Controller
         ];
 
         $this->validate($request, $rules, $messages);
-        try{
-            $valorRecorrido=null;
+        $transaction=DB::transaction(function() use($request){ 
+            try{
+                $valorRecorrido=null;
+                
+                //ultimo km o hm
+                
+                if(!is_null($request->kilometraje)){
+                    //calculamos el valor recorrido
+                    $valorRecorrido=$request->km_llegada_patio -  $request->km_salida_patio;
             
-            //ultimo km o hm
-            
-            if(!is_null($request->kilometraje)){
+                }else{
                 //calculamos el valor recorrido
                 $valorRecorrido=$request->km_llegada_patio -  $request->km_salida_patio;
-           
-            }else{
-               //calculamos el valor recorrido
-               $valorRecorrido=$request->km_llegada_patio -  $request->km_salida_patio;
-            } 
-            
-            if($request->tiene_novedad=="Si"){
-                if(is_null($request->txt_novedad)){
+                } 
+                
+                if($request->tiene_novedad=="Si"){
+                    if(is_null($request->txt_novedad)){
+                        return response()->json([
+                            'error'=>true,
+                            'mensaje'=>'Ingrese la descripción de la novedad'
+                        ]);
+                    }
+                }
+
+                //validar que no se repita el numero de ticket
+                $existe_ticket=Movimiento::where('estado','!=','Eliminada')
+                ->where('nro_ticket', $request->n_ticket)
+                ->where('id_chofer','!=',auth()->user()->id_persona)
+                ->first();
+                if(!is_null($existe_ticket)){
                     return response()->json([
                         'error'=>true,
-                        'mensaje'=>'Ingrese la descripción de la novedad'
+                        'mensaje'=>'El número de ticket ya se encuentra asociado a otra salida'
                     ]);
                 }
-            }
 
-            //validar que no se repita el numero de ticket
-            $existe_ticket=Movimiento::where('estado','!=','Eliminada')
-            ->where('nro_ticket', $request->n_ticket)
-            ->first();
-            if(!is_null($existe_ticket)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El número de ticket ya se encuentra asociado a otra salida'
-                ]);
-            }
+                $fecha_salida=date('Y-m-d',strtotime($request->fecha_h_salida_patio));
 
-            //validar que la fecha de salida este dentro del rango de despacho ticket
-            $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
-            ->where('estado','A')
-            ->whereBetween('f_despacho', [$request->fecha_h_salida_patio, $request->fecha_h_llegada_patio])
-            ->first();
-           
-            if(is_null($valida_rango)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'La hora y fecha de despacho del ticket, esta fuera del rango de fecha del movimiento ingresado'
-                ]);
-            }
-            if($valida_rango->id_vehiculo!=$request->vehiculo_tarea){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El vehículo seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
-                ]);
-            }
+                //validar que la fecha de salida este dentro del rango de despacho ticket
+                $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
+                ->where('estado','A')
+                // ->whereBetween('f_despacho', [$request->fecha_h_salida_patio, $request->fecha_h_llegada_patio])
+                ->whereDate('f_despacho','=',$fecha_salida)
+                ->first(); 
 
-            if($valida_rango->idchofer!=auth()->user()->id_persona){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El chofer seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
-                ]);
-            }
+                if(is_null($valida_rango)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'La fecha de despacho del ticket, esta fuera del rango de fecha del movimiento ingresado'
+                    ]);
+                }
+                if($valida_rango->id_vehiculo!=$request->vehiculo_tarea){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El vehículo seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
+                    ]);
+                }
+
+                if($valida_rango->idchofer!=auth()->user()->id_persona){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El chofer seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
+                    ]);
+                }
+                
+
+                $guarda_movi=new Movimiento();
+                $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
+                $guarda_movi->id_chofer=auth()->user()->id_persona;
+                $guarda_movi->motivo=$request->motivo;
+                $guarda_movi->persona_solicita=$request->solicitante;
+                $guarda_movi->id_area_solicita=$request->area_sol;
+                $guarda_movi->acompanante=$request->acompanante;
+                $guarda_movi->nro_ticket=$request->n_ticket;
+                $guarda_movi->tiene_novedad=$request->tiene_novedad;
+                $guarda_movi->novedad=$request->txt_novedad;
+                $guarda_movi->id_autorizado_salida=$request->autorizado;
+
+                $guarda_movi->lugar_salida_patio="Chone";
+                $guarda_movi->km_salida_patio=$request->km_salida_patio;
+                $guarda_movi->fecha_salida_patio=date('Y-m-d',strtotime($request->fecha_h_salida_patio));
+                $guarda_movi->hora_salida_patio=date('H:i:s',strtotime($request->fecha_h_salida_patio));
+                $guarda_movi->fecha_hora_salida_patio=date('Y-m-d H:i:s',strtotime($request->fecha_h_salida_patio));
+
+                $guarda_movi->lugar_llegada_destino=$request->l_destino_ll;
+                $guarda_movi->km_llegada_destino=$request->km_destino_ll;
+                $guarda_movi->fecha_llega_destino=date('Y-m-d',strtotime($request->fecha_h_destino));
+                $guarda_movi->hora_llega_destino=date('H:i:s',strtotime($request->fecha_h_destino));
+                $guarda_movi->fecha_hora_llega_destino=date('Y-m-d H:i:s',strtotime($request->fecha_h_destino));
+
+                $guarda_movi->km_salida_destino=$request->km_salida_dest;
+                $guarda_movi->fecha_salida_destino=date('Y-m-d',strtotime($request->fecha_h_destino_salida));
+                $guarda_movi->hora_salida_destino=date('H:i:s',strtotime($request->fecha_h_destino_salida));
+                $guarda_movi->fecha_hora_salida_destino=date('Y-m-d H:i:s',strtotime($request->fecha_h_destino_salida));
+
+                $guarda_movi->km_llegada_patio=$request->km_llegada_patio;
+                $guarda_movi->fecha_llega_patio=date('Y-m-d',strtotime($request->fecha_h_llegada_patio));
+                $guarda_movi->hora_llega_patio=date('H:i:s',strtotime($request->fecha_h_llegada_patio));
+                $guarda_movi->fecha_hora_llega_patio=date('Y-m-d H:i:s',strtotime($request->fecha_h_llegada_patio));
+
+                // $guarda_movi->firmaconductor=$request->b64_firma;
             
+                $guarda_movi->kilometraje=$request->kilometraje;
+                $guarda_movi->horometro=$request->horometro;
+                $guarda_movi->km_hm_recorrido=$valorRecorrido;
 
-            $guarda_movi=new Movimiento();
-            $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
-            $guarda_movi->id_chofer=auth()->user()->id_persona;
-            $guarda_movi->motivo=$request->motivo;
-            $guarda_movi->persona_solicita=$request->solicitante;
-            $guarda_movi->id_area_solicita=$request->area_sol;
-            $guarda_movi->acompanante=$request->acompanante;
-            $guarda_movi->nro_ticket=$request->n_ticket;
-            $guarda_movi->tiene_novedad=$request->tiene_novedad;
-            $guarda_movi->novedad=$request->txt_novedad;
-            $guarda_movi->id_autorizado_salida=$request->autorizado;
+                $guarda_movi->idusuarioregistra=auth()->user()->id;
+                $guarda_movi->fecha_registro=date('Y-m-d H:i:s');
+                $guarda_movi->estado="Activo";
 
-            $guarda_movi->lugar_salida_patio="Chone";
-            $guarda_movi->km_salida_patio=$request->km_salida_patio;
-            $guarda_movi->fecha_salida_patio=date('Y-m-d',strtotime($request->fecha_h_salida_patio));
-            $guarda_movi->hora_salida_patio=date('H:i:s',strtotime($request->fecha_h_salida_patio));
-            $guarda_movi->fecha_hora_salida_patio=date('Y-m-d H:i:s',strtotime($request->fecha_h_salida_patio));
 
-            $guarda_movi->lugar_llegada_destino=$request->l_destino_ll;
-            $guarda_movi->km_llegada_destino=$request->km_destino_ll;
-            $guarda_movi->fecha_llega_destino=date('Y-m-d',strtotime($request->fecha_h_destino));
-            $guarda_movi->hora_llega_destino=date('H:i:s',strtotime($request->fecha_h_destino));
-            $guarda_movi->fecha_hora_llega_destino=date('Y-m-d H:i:s',strtotime($request->fecha_h_destino));
+                $hora_fecha_sale=$guarda_movi->fecha_hora_salida_patio;
+                $hora_fecha_llega=$guarda_movi->fecha_hora_llega_patio;
+                $verificaFecha=Movimiento::where(function($c)use($hora_fecha_sale,$hora_fecha_llega) {
+                    $c->whereBetween('fecha_hora_salida_patio',[$hora_fecha_sale, $hora_fecha_llega])
+                    ->orwhereBetween('fecha_hora_llega_patio', [$hora_fecha_sale, $hora_fecha_llega]);
+                })
+                ->where('id_vehiculo',$guarda_movi->id_vehiculo)
+                ->where('estado','!=','Eliminada')
+                ->first();
+                if(!is_null($verificaFecha)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionadoxx'
+                    ]);
+                }
 
-            $guarda_movi->km_salida_destino=$request->km_salida_dest;
-            $guarda_movi->fecha_salida_destino=date('Y-m-d',strtotime($request->fecha_h_destino_salida));
-            $guarda_movi->hora_salida_destino=date('H:i:s',strtotime($request->fecha_h_destino_salida));
-            $guarda_movi->fecha_hora_salida_destino=date('Y-m-d H:i:s',strtotime($request->fecha_h_destino_salida));
 
-            $guarda_movi->km_llegada_patio=$request->km_llegada_patio;
-            $guarda_movi->fecha_llega_patio=date('Y-m-d',strtotime($request->fecha_h_llegada_patio));
-            $guarda_movi->hora_llega_patio=date('H:i:s',strtotime($request->fecha_h_llegada_patio));
-            $guarda_movi->fecha_hora_llega_patio=date('Y-m-d H:i:s',strtotime($request->fecha_h_llegada_patio));
-
-            // $guarda_movi->firmaconductor=$request->b64_firma;
-         
-            $guarda_movi->kilometraje=$request->kilometraje;
-            $guarda_movi->horometro=$request->horometro;
-            $guarda_movi->km_hm_recorrido=$valorRecorrido;
-
-            $guarda_movi->idusuarioregistra=auth()->user()->id;
-            $guarda_movi->fecha_registro=date('Y-m-d H:i:s');
-            $guarda_movi->estado="Activo";
-
-                      
-            $hora_fecha_sale=$guarda_movi->fecha_hora_salida_patio;
-            $hora_fecha_llega=$guarda_movi->fecha_hora_llega_patio;
-            $verificaFecha=Movimiento::where(function($c)use($hora_fecha_sale,$hora_fecha_llega) {
-                $c->whereBetween('fecha_hora_salida_patio',[$hora_fecha_sale, $hora_fecha_llega])
-                ->orwhereBetween('fecha_hora_llega_patio', [$hora_fecha_sale, $hora_fecha_llega]);
-            })
-            ->where('id_vehiculo',$guarda_movi->id_vehiculo)
-            ->where('estado','!=','Eliminada')
-            ->first();
-            if(!is_null($verificaFecha)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
-                ]);
-            }
-
-            $verificaFecha2=Movimiento::where(function($c)use($hora_fecha_sale,$hora_fecha_llega) {
-                $c->where('fecha_hora_salida_patio', '<=', $hora_fecha_sale)
-                ->where('fecha_hora_llega_patio','>=', $hora_fecha_llega);
-            })
-         
-            ->where('id_vehiculo',$guarda_movi->id_vehiculo)
-            ->where('estado','!=','Eliminada')
-            ->first();
-            if(!is_null($verificaFecha)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
-                ]);
-            }
+                $verificaFecha2=Movimiento::where(function($c)use($hora_fecha_sale,$hora_fecha_llega) {
+                    $c->where('fecha_hora_salida_patio', '<=', $hora_fecha_sale)
+                    ->where('fecha_hora_llega_patio','>=', $hora_fecha_llega);
+                })
             
-            $cod=null;
-            $ultimoCod=Movimiento::where('estado','!=','Eliminada')
-            ->get()->last();
-            //dd($ultimoCod);
-            if(!is_null($ultimoCod)){
-                //si es enero y el primero del año, reseteamos a 1
-                $verifica_codigo=$ultimoCod->codigo_orden;
-                $separa=explode('-', $verifica_codigo);
-               
-                $anio=$separa[1];
-                if(date('m')==1 && date('Y')!=$anio){
+                ->where('id_vehiculo',$guarda_movi->id_vehiculo)
+                ->where('estado','!=','Eliminada')
+                ->first();
+                if(!is_null($verificaFecha)){
+                    DB::Rollback();
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
+                    ]);
+                }
+                
+                $cod=null;
+                $ultimoCod=Movimiento::where('estado','!=','Eliminada')
+                ->get()->last();
+            
+                if(!is_null($ultimoCod)){
+
+                    if(is_null($ultimoCod->codigo_orden)){
+                        $codi=1;
+                        $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
+                    }else{
+                        //si es enero y el primero del año, reseteamos a 1
+                        $verifica_codigo=$ultimoCod->codigo_orden;
+                        
+                        $separa=explode('-', $verifica_codigo);
+                    
+                        $anio=$separa[1];
+                        if(date('m')==1 && date('Y')!=$anio){
+                            $codi=1;
+                            $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
+                        }else{
+                            //continuamos la secuencia
+                            $codigo=$ultimoCod->codigo_orden;  
+                            $codigo=explode('-', $codigo);
+                            $codigo=$codigo[3]+1;  
+                            $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codigo);
+                        }
+                    }
+                  
+    
+                }else{
+                    //si no existe
                     $codi=1;
                     $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
-                }else{
-                    //continuamos la secuencia
-                    $codigo=$ultimoCod->codigo_orden;  
-                    $codigo=explode('-', $codigo);
-                    $codigo=$codigo[3]+1;  
-                    $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codigo);
                 }
-  
-            }else{
-                //si no existe
-                $codi=1;
-                $cod='HGNDC-'.date('Y').'-'.date('m').'-'.sprintf("%'.05d",$codi);
-            }
-            
-            if(is_null($cod)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'No se pudo generar el codigo de orden'
-                ]);
-            }
                 
-            if($guarda_movi->save()){
-
-              
-                $movim=Movimiento::where('nro_ticket',$request->n_ticket)->first();
-                $movim->codigo_orden=$cod;
-                $movim->save();
-
-                $generaPdf=$this->reporteIndividual($movim->idmovimiento);
+                if(is_null($cod)){
+                    DB::Rollback();
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'No se pudo generar el codigo de orden'
+                    ]);
+                }
                     
-                return response()->json([
-                    'error'=>false,
-                    'mensaje'=>'Información registrada exitosamente'
-                ]);
-            }else{
+                if($guarda_movi->save()){
+
+                
+                    $movim=Movimiento::where('idmovimiento',$guarda_movi->idmovimiento)->first();
+                    $movim->codigo_orden=$cod;
+                    $movim->save();
+
+                    // $generaPdf=$this->reporteIndividual($movim->idmovimiento);
+
+                    //verificamos si ya se registro el detalle despacho con ese ticket
+                    $detalle=DB::table('vc_detalle_despacho')
+                    ->where('num_factura_ticket',$movim->nro_ticket)
+                    ->where('estado','Aprobado')
+                    ->first();
+                    if(!is_null($detalle)){
+                        $actualizaOrden=$this->objDespacho->pdfOrden($detalle->idcabecera_despacho,$detalle->num_factura_ticket, $detalle->iddetalle_despacho, 'N');
+                    }
+                        
+                    return response()->json([
+                        'error'=>false,
+                        'mensaje'=>'Información registrada exitosamente'
+                    ]);
+                }else{
+                    DB::Rollback();
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'No se pudo registrar la información'
+                    ]);
+                }
+
+
+
+
+            }catch (\Throwable $e) {
+                DB::Rollback();    
+                Log::error('MovimientoVehController => guardar => mensaje => '.$e->getMessage(). ' Linea => '.$e->getLine());
                 return response()->json([
                     'error'=>true,
-                    'mensaje'=>'No se pudo registrar la información'
+                    'mensaje'=>'Ocurrió un error'
                 ]);
+                
             }
-
-
-
-
-        }catch (\Throwable $e) {
-            Log::error('MovimientoVehController => guardar => mensaje => '.$e->getMessage(). ' Linea => '.$e->getLine());
-            return response()->json([
-                'error'=>true,
-                'mensaje'=>'Ocurrió un error'
-            ]);
-            
-        }
+        });
+        return $transaction;
     }
 
 

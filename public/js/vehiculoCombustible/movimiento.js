@@ -448,7 +448,7 @@ function llenar_tabla_tarea(){
                                             
                                             <a onclick="btn_eliminar_movimi(${data.idmovimiento })" class="btn btn-danger btn-xs"> Eliminar </a><br>
 
-                                            <a onclick="verpdf(${data.idmovimiento })" class="btn btn-success btn-xs"
+                                            <a onclick="reporte_movimiento(${data.idmovimiento })" class="btn btn-success btn-xs"
                                             style="margin-top:3px"> Reporte </a>
                                        
                                     
@@ -474,6 +474,7 @@ function reporte_movimiento(id){
 //    window.location.href='reporte-mov-ind/'+id
    vistacargando("m","Espere por favor")
    $.get("reporte-mov-ind/"+id, function(data){
+        console.log(data)
         vistacargando("")
         
         if(data.error==true){
@@ -489,8 +490,9 @@ function reporte_movimiento(id){
 }
 
 //permite visualizarr el pdf de la emision en una modal
-function verpdf(id){
-    var nombre_pdf="movimiento_"+id+".pdf";
+function verpdf(nombre_pdf){
+    // var nombre_pdf="movimiento_"+id+".pdf";
+    // alert(nombre_pdf)
     var iframe=$('#iframePdf');
     iframe.attr("src", "visualizar-documento-orden/"+nombre_pdf);   
     $("#vinculo").attr("href", 'descargar-doc-orden/'+nombre_pdf);

@@ -548,17 +548,15 @@ class DespachoCombustibleController extends Controller
 
         try{
                
-
             $movimiento=DB::table('vc_movimiento as m')
             ->leftJoin('vc_autorizado_salida as a', 'a.id_autorizado_salida', 'm.id_autorizado_salida')
             ->leftJoin('persona as p', 'p.idpersona', 'm.id_chofer')
             ->where('m.estado','!=','Eliminado')
             ->where('nro_ticket',$nro)
             ->select('*', 'a.abreviacion_titulo', 'a.nombres as autorizador', 'p.nombres', 'p.apellidos')
-            ->first();
-           
+            ->get();
 
-            $nombrePDF="orden_".$movimiento->idmovimiento.".pdf";
+            $nombrePDF="orden_".$movimiento[0]->idmovimiento.".pdf";
 
             $act_det_des=DetalleDespacho::find($iddet);
             $act_det_des->pdf_orden=$nombrePDF;
@@ -576,9 +574,12 @@ class DespachoCombustibleController extends Controller
             $fecha = strftime("%d de %B de %Y", strtotime($fecha));
 
             $responsable=DB::table('vc_responsable_servicios')
-            ->first();
+            ->first(); 
  
-            $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimiento"=>$movimiento,"fecha"=>$fecha, "responsable"=>$responsable]);
+            $crearpdf=PDF::loadView('combustible.reportes.reporteOrden',['datos'=>$detalle, "movimientodata"=>$movimiento,"fecha"=>$fecha, "responsable"=>$responsable]);
+
+            // return $crearpdf->stream("a.pdf");
+
             $crearpdf->setPaper("A4", "portrait");
             $estadoarch = $crearpdf->stream();
 

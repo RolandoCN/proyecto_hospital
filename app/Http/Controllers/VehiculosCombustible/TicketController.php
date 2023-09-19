@@ -75,7 +75,7 @@ class TicketController extends Controller
             ->where('estado', 'A')
             ->take(10)->get();
         }
-        
+       
         return response()->json($data);
 
     }
