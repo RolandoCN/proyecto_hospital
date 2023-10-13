@@ -503,7 +503,8 @@ class MovimientoVehController extends Controller
                         
                     return response()->json([
                         'error'=>false,
-                        'mensaje'=>'Información registrada exitosamente'
+                        'mensaje'=>'Información registrada exitosamente',
+                        "idmovimiento"=>$movim->idmovimiento
                     ]);
                 }else{
                     DB::Rollback();

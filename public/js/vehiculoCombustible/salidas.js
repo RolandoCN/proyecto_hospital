@@ -168,7 +168,8 @@ function reporte_movimiento(id){
 
 //permite visualizarr el pdf de la emision en una modal
 function verpdf(id){
-    var nombre_pdf="movimiento_"+id+".pdf";
+    var nombre_pdf="movimiento_"+id+".pdf"; 
+   
     var iframe=$('#iframePdf');
     iframe.attr("src", "visualizar-documento-orden/"+nombre_pdf);   
     $("#vinculo").attr("href", 'descargar-doc-orden/'+nombre_pdf);

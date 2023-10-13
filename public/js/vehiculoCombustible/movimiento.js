@@ -289,6 +289,8 @@ $("#form_registro_tarea").submit(function(e){
             $('#form_ing').hide(200)
             $('#listado_veh').show(200)
             llenar_tabla_tarea()
+
+            reporte_movimiento(data.idmovimiento)
             // limpiarSingArea()
                             
         }, error:function (data) {
