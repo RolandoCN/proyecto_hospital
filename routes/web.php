@@ -17,7 +17,7 @@ use App\Http\Controllers\VehiculosCombustible\GasolineraCombustibleController;
 use App\Http\Controllers\VehiculosCombustible\CombustibleController;
 use App\Http\Controllers\VehiculosCombustible\ReportesCombustibleController;
 use App\Http\Controllers\VehiculosCombustible\TicketController;
-use App\Http\Controllers\VehiculosCombustible\AutorizadorController;
+use App\Http\Controllers\VehiculosCombustible\JobController;
 
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
@@ -217,6 +217,14 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/genera-orden-pdf/{id}/{nro}/{iddet}/{t}', [DespachoCombustibleController::class, 'pdfOrden']);
 
     Route::get('/genera-consolidado-pdf/{ini}/{fin}', [ReportesCombustibleController::class, 'pdfConsolidado']);
+
+
+    //despacho hoy manual
+    Route::get('/detalle-despachos-manual/{fecha}', [JobController::class, 'guardarDetalleDespachoManual']);
+
+    //despachos jobs
+    Route::get('/despacho-dia/{fecha}', [JobController::class, 'guardarDetalleDespachoJob']);
+
 });
 
 Route::get('/clear', function() {

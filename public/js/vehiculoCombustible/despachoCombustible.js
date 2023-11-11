@@ -177,7 +177,9 @@ function llenar_tabla_tarea(){
 
                                             <a onclick="editar_cab(${data.idcabecera_despacho })" class="btn btn-warning btn-xs"> Editar </a>
 
-                                            <a onclick="detalle_despacho('${data.idcabecera_despacho}','${data.id_gasolinera}','${data.gasolinera.descripcion}','${data.fecha}')" class="btn btn-primary btn-xs"> Detalle </a>  
+                                            <a disabled onclick="detalle_despacho('${data.idcabecera_despacho}','${data.id_gasolinera}','${data.gasolinera.descripcion}','${data.fecha}')" class="btn btn-primary btn-xs"> Detalle </a>  
+
+                                            <a onclick="generar_despacho('${data.fecha}')" class="btn btn-info btn-xs"> Generar </a>
 
                                             <a onclick="imprimir_desp(${data.idcabecera_despacho })" class="btn btn-success btn-xs"> Imprimir </a>
                                                             
@@ -201,7 +203,22 @@ $('.datatable_wrapper').children('.row').css('overflow','inherit !important');
 
 $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'border':'0', 'overflow-x':'inherit'});
 
-
+function generar_despacho(fecha){
+    vistacargando("m","Espere por favor")
+    $.get("detalle-despachos-manual/"+fecha, function(data){
+        console.log(data)
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+      
+        alertNotificar(data.mensaje,"success");
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
 
 function editar_cab(idcabecera_despacho){
     vistacargando("m","Espere por favor")

@@ -109,7 +109,7 @@
 
                             <label for="inputPassword3" class="col-sm-3 control-label">Gasolinera</label>
                             <div class="col-sm-8">
-                                <select data-placeholder="Seleccione Un Vehículo" style="width: 100%;"
+                                <select data-placeholder="Seleccione Una Gasolinera" style="width: 100%;"
                                     class="form-control select2" name="cmb_gasolinera" id="cmb_gasolinera" ">
                                     
                                         @foreach ($gasolinera as $dato)
