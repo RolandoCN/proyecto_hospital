@@ -333,12 +333,13 @@ class MovimientoVehController extends Controller
                 }
 
                 $fecha_salida=date('Y-m-d',strtotime($request->fecha_h_salida_patio));
+                $fecha_llega=date('Y-m-d',strtotime($request->fecha_h_llegada_patio));
 
                 //validar que la fecha de salida este dentro del rango de despacho ticket
                 $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
                 ->where('estado','A')
-                // ->whereBetween('f_despacho', [$request->fecha_h_salida_patio, $request->fecha_h_llegada_patio])
-                ->whereDate('f_despacho','=',$fecha_salida)
+                // ->whereBetween('f_despacho', [$fecha_salida, $fecha_llega])
+                //->whereDate('f_despacho','=',$fecha_salida)
                 ->first(); 
 
                 if(is_null($valida_rango)){

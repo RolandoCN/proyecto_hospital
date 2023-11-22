@@ -5,9 +5,9 @@ function mayus(e) {
 function validaValoresKmSalidaPatio(){
     let km_salida_patio= $('#km_salida_patio').val()
     if(parseFloat(km_salida_patio) < parseFloat(ValorMinimoKm_Hm)){
-        alertNotificar("El kilometraje de salida no puede ser menor a "+ValorMinimoKm_Hm,"error")
-        $('#km_salida_patio').focus()
-        return
+        // alertNotificar("El kilometraje de salida no puede ser menor a "+ValorMinimoKm_Hm,"error")
+        // $('#km_salida_patio').focus()
+        // return
     }
 }
 function lugardestino(){
