@@ -418,10 +418,10 @@ class MovimientoVehController extends Controller
                 ->where('estado','!=','Eliminada')
                 ->first();
                 if(!is_null($verificaFecha)){
-                    return response()->json([
-                        'error'=>true,
-                        'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionadoxx'
-                    ]);
+                    // return response()->json([
+                    //     'error'=>true,
+                    //     'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionadoxx'
+                    // ]);
                 }
 
 
@@ -435,10 +435,10 @@ class MovimientoVehController extends Controller
                 ->first();
                 if(!is_null($verificaFecha)){
                     DB::Rollback();
-                    return response()->json([
-                        'error'=>true,
-                        'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
-                    ]);
+                    // return response()->json([
+                    //     'error'=>true,
+                    //     'mensaje'=>'El vehículo se encuentra asociado a un movimiento en el rango de fecha seleccionado'
+                    // ]);
                 }
                 
                 $cod=null;
