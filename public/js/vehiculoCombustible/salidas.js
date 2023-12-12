@@ -1,4 +1,118 @@
 
+function buscarSalidas(){
+    let desde=$('#fecha_ini').val()
+    let hasta=$('#fecha_fin').val()
+    if(desde=="" || desde==null){
+        alertNotificar("Seleccione la fecha de inicio", "error")
+        $('#fecha_ini').focus()
+        return
+    }
+    if(hasta=="" || hasta==null){
+        alertNotificar("Seleccione la fecha final", "error")
+        $('#hasta').focus()
+        return
+    }
+
+    if(desde > hasta){
+        alertNotificar("La fecha final debe ser superior o igual a la inicial", "error")
+        $('#hasta').focus()
+        return
+    }
+    
+    var num_col = $("#tabla_consolidado thead tr th").length; //obtenemos el numero de columnas de la tabla
+	$("#tabla_consolidado tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
+
+    vistacargando("m","Espere por favor")
+    $.get("obtener-salidas/"+desde+"/"+hasta, function(data){
+        vistacargando("")
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            $("#tabla_salidas tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
+            return;   
+        }
+        if(data.error==false){
+            
+            if(data.resultado.length <= 0){
+                $("#tabla_salidas tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
+                alertNotificar("No se encontró datos","error");
+                return;  
+            }
+         
+            $('#tabla_salidas').DataTable({
+                "destroy":true,
+                pageLength: 10,
+                autoWidth : true,
+                order: [[ 1, "desc" ]],
+                sInfoFiltered:false,
+                language: {
+                    url: 'json/datatables/spanish.json',
+                },
+                columnDefs: [
+                    { "width": "10%", "targets": 0 },
+                    { "width": "15%", "targets": 1 },
+                    { "width": "30%", "targets": 2 },
+                    { "width": "30%", "targets": 3 },
+                    { "width": "15%", "targets": 4 },
+                    { "width": "10%", "targets": 5 },
+                   
+                ],
+                data: data.resultado,
+                columns:[
+                        {data: "vehiculo.placa"},
+                        {data: "fecha_registro" },
+                        {data: "fecha_registro"},
+                        {data: "fecha_registro"},
+                        {data: "nro_ticket"},
+                        {data: "fecha_registro"},
+                ],    
+                "rowCallback": function( row, data ) {
+                    $('td',row).eq(0).html(data.vehiculo.descripcion +" ["+data.vehiculo.placa+"]")
+                    $('td',row).eq(1).html(data.chofer.nombres +" "+data.chofer.apellidos)
+
+                    $('td',row).eq(2).html(`<li> <b>Lugar:</b> ${data.lugar_salida_patio} </li>
+                                            <li> <b>Fecha Salida:</b> ${data.fecha_hora_salida_patio} </li>
+                                            <li> <b>Km Salida:</b> ${data.km_salida_patio} </li>
+
+                                            <li>  <b>Fecha Llegada:</b> ${data.fecha_hora_llega_patio}</li>
+                                            <li>  <b>Km Llegada:</b> ${data.km_llegada_patio}</li>
+
+                                            `)
+                    $('td',row).eq(3).html(`<li> <b>Lugar:</b> ${data.lugar_llegada_destino} </li>
+
+                                            <li>  <b>Fecha Llegada:</b> ${data.fecha_hora_llega_destino}</li>
+                                            <li>  <b>Km Llegada:</b> ${data.km_llegada_destino}</li>
+                                            <li> <b>Fecha Salida:</b> ${data.fecha_hora_salida_destino} </li>
+                                            <li> <b>Km Salida:</b> ${data.km_salida_destino} </li>
+
+                                           
+
+                                            `)
+
+                    $('td', row).eq(5).html(`
+                                  
+                                            <a onclick="verpdf(${data.idmovimiento })" class="btn btn-success btn-xs"
+                                            style="margin-top:3px"> Reporte </a>
+                                       
+                                    
+                    `); 
+                }             
+            });
+            $('#content_consulta').hide()
+            $('#listado').show()
+        }
+    }).fail(function(){
+        vistacargando("")
+        $("#tabla_salidas tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });   
+       
+}
+
+function regresarBusqueda(){
+    $('#content_consulta').show()
+    $('#listado').hide()
+}
+
 function limpiarCampos(){
 
     $('#kilometraje').val('')

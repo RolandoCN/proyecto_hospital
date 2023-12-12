@@ -82,10 +82,11 @@ class MovimientoVehController extends Controller
         return view('combustible.salidas');
     }
 
-    public function obtenerSalidas(){
+    public function obtenerSalidas($ini, $fin){
         try{
 
             $mov=Movimiento::with('vehiculo','chofer')->where('estado','!=','Eliminada')
+            ->whereBetween('fecha_salida_patio',[$ini, $fin])
             ->get();
             return response()->json([
                 'error'=>false,

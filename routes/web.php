@@ -148,7 +148,8 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     
 
     Route::get('/listado-salidas', [MovimientoVehController::class, 'vistaSalidas'])->middleware('validarRuta');
-    Route::get('/obtener-salidas', [MovimientoVehController::class, 'obtenerSalidas']);
+    Route::get('/obtener-salidas_', [MovimientoVehController::class, 'obtenerSalidas_']);
+    Route::get('/obtener-salidas/{desde}/{hasta}', [MovimientoVehController::class, 'obtenerSalidas']);
 
     //GASOLINERAS
     Route::get('/gasolinera', [GasolineraController::class, 'index'])->middleware('validarRuta');
