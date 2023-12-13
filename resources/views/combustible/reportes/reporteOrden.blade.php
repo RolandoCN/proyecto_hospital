@@ -106,8 +106,7 @@
                 <tr style="font-size: 12px" class="fuenteSubtitulo ">
                     <td class="pad"
                         style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="8"
-                        width="100%"><b>Sirvase a entregar al SR: </b>{{$datos[0]->chofer->nombres}}
-                        {{$datos[0]->chofer->apellidos}}
+                        width="100%"><b>Sirvase a entregar al SR: </b> {{ $movimientodata[0]->nombres }}  {{ $movimientodata[0]->apellidos }}
                     </td>
 
                 
@@ -289,8 +288,7 @@
                 <tr style="font-size: 12px" class="fuenteSubtitulo ">
                     <td class="pad"
                         style="height:20px;text-align: left;border-top: 0px;border-bottom: 0px;border-color:white"colspan="4"
-                        width="100%"><b>Chofer: </b>{{$datos[0]->chofer->nombres}}
-                        {{$datos[0]->chofer->apellidos}}
+                        width="100%"><b>Chofer: </b> {{ $movimiento->nombres }}  {{ $movimiento->apellidos }}
                     </td>
 
                     <td class="pad"

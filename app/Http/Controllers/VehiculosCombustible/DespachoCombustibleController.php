@@ -555,6 +555,7 @@ class DespachoCombustibleController extends Controller
             ->where('nro_ticket',$nro)
             ->select('*', 'a.abreviacion_titulo', 'a.nombres as autorizador', 'p.nombres', 'p.apellidos')
             ->get();
+          
 
             $nombrePDF="orden_".$movimiento[0]->idmovimiento.".pdf";
 

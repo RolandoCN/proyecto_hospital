@@ -119,7 +119,7 @@ function llenar_tabla_reportes(data){
             $('td', row).eq(4).html(data.chofer.apellidos+" "+data.chofer.nombres)
             $('td', row).eq(5).html(`
                             
-                                    <button type="button" class="btn btn-success btn-xs" onclick="visualizarOrden('${data.pdf_orden}')">Visualizar</button>
+                <button type="button" class="btn btn-success btn-xs" onclick="generarOrden('${data.idcabecera_despacho}','${data.num_factura_ticket}','${data.iddetalle_despacho}','${data.iddetalle_despacho}')">Visualizar</button>
 
                                 
                             
@@ -132,6 +132,8 @@ function llenar_tabla_reportes(data){
 
 
 }
+
+
 
 //permite visualizarr el pdf en una modal
 function visualizarOrden(nombre_pdf){
@@ -155,6 +157,22 @@ $('#descargar').click(function(){
 });
 
 
+function generarOrden(idcab,nro,iddetalle){    
+    vistacargando("m","Espere por favor")
+    $.get("genera-orden-pdf/"+idcab+"/"+nro+"/"+iddetalle+"/"+"N", function(data){
+        vistacargando("")
+        
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+        visualizarOrden(data.pdf)
+        
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
 
 function reporteDescargar1(id, nroTicket){
     

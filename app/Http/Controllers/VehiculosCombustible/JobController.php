@@ -93,6 +93,7 @@ class JobController extends Controller
                         'mensaje'=>'No existen tickets con despachos del dia '.date('d-m-Y')
                     ]);
                 }
+                
                 foreach($movimientoHoy as $data){
                     $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();
                    
@@ -125,7 +126,7 @@ class JobController extends Controller
 
                     $ver=DetalleDespacho::where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
                     ->where('estado','!=',"Eliminado")->first();
-                  
+                    
                     if(is_null($ver)){
                         if($guarda_det_des->save()){
                             //generamos el documento
@@ -134,7 +135,11 @@ class JobController extends Controller
                             $contador=$contador+1;
                         }
                     }
+
+                    // $genera=$this->pdfOrden($guarda_det_des->idcabecera_despacho,$guarda_det_des->num_factura_ticket, $guarda_det_des->iddetalle_despacho, 'N');
+
                     $contador=$contador+1;
+                    log::info($guarda_det_des->num_factura_ticket);
                 }
                 if($contador>0){
                     return response()->json([
@@ -251,6 +256,7 @@ class JobController extends Controller
             ->get();
 
             $nombrePDF="orden_".$movimiento[0]->idmovimiento.".pdf";
+           
 
             $act_det_des=DetalleDespacho::find($iddet);
             $act_det_des->pdf_orden=$nombrePDF;
