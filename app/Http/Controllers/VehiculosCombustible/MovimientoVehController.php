@@ -153,13 +153,13 @@ class MovimientoVehController extends Controller
         $nombrePDF="movimiento_".$movimiento[0]->idmovimiento.".pdf"; 
         $numero_ticket=$movimiento[0]->nro_ticket;
 
-        $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF); 
-        if($exists_destino){   
-            return response()->json([
-                'error'=>false,
-                'pdf'=>$nombrePDF
-            ]);
-        }
+        // $exists_destino = Storage::disk('OrdenesCombustible')->exists($nombrePDF); 
+        // if($exists_destino){   
+        //     return response()->json([
+        //         'error'=>false,
+        //         'pdf'=>$nombrePDF
+        //     ]);
+        // }
 
         $ticket=Ticket::where('estado','A')
         ->where('numero_ticket',$numero_ticket )
