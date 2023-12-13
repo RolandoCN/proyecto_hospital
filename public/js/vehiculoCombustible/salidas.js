@@ -90,7 +90,7 @@ function buscarSalidas(){
 
                     $('td', row).eq(5).html(`
                                   
-                                            <a onclick="verpdf(${data.idmovimiento })" class="btn btn-success btn-xs"
+                                            <a onclick="reporte_movimiento(${data.idmovimiento })" class="btn btn-success btn-xs"
                                             style="margin-top:3px"> Reporte </a>
                                        
                                     
@@ -264,6 +264,7 @@ $('.table-responsive').css({'padding-top':'12px','padding-bottom':'12px', 'borde
 
 function reporte_movimiento(id){
 //    window.location.href='reporte-mov-ind/'+id
+
    vistacargando("m","Espere por favor")
    $.get("reporte-mov-ind/"+id, function(data){
         vistacargando("")
@@ -272,7 +273,7 @@ function reporte_movimiento(id){
             alertNotificar(data.mensaje,"error");
             return;   
         }
-        verpdf(data.pdf)
+        verpdf(id)
      
    }).fail(function(){
        vistacargando("")
