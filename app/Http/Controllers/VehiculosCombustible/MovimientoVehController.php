@@ -18,6 +18,7 @@ use DB;
 use SplFileInfo;
 use App\Http\Controllers\VehiculosCombustible\TareasController;
 use App\Http\Controllers\VehiculosCombustible\DespachoCombustibleController;
+use App\Http\Controllers\VehiculosCombustible\JobController;
 
 class MovimientoVehController extends Controller
 {
@@ -25,6 +26,7 @@ class MovimientoVehController extends Controller
         try {       
             $this->objTareas = new TareasController();
             $this->objDespacho = new DespachoCombustibleController();
+            $this->ordenes = new JobController();
                            
         } catch (\Throwable $e) {
             Log::error(__CLASS__." => ".__FUNCTION__." => Mensaje =>".$e->getMessage());
@@ -87,13 +89,73 @@ class MovimientoVehController extends Controller
 
             $mov=Movimiento::with('vehiculo','chofer')->where('estado','!=','Eliminada')
             ->whereBetween('fecha_salida_patio',[$ini, $fin])
+            ->orderby('fecha_salida_patio','asc')
             ->get();
+           
             return response()->json([
                 'error'=>false,
                 'resultado'=>$mov
             ]);
         }catch (\Throwable $e) {
             Log::error('MovimientoVehController => listar => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
+
+    public function actualizaSalidas(){
+        return view('combustible.actualiza_salidas');
+    }
+
+    public function actualizarSalidasMes($fecha){
+        try{
+            $separa=explode("-", $fecha);
+            $anio=$separa[0];
+            $mes=$separa[1];
+            $mov=Movimiento::where('estado','!=','Eliminada')
+            ->whereYear('fecha_salida_patio',$anio)
+            ->whereMonth('fecha_salida_patio',$mes)
+            ->orderby('fecha_salida_patio','asc')
+            ->select('idmovimiento','nro_ticket','fecha_salida_patio')
+            ->get();
+            #agrupamos los despachos por departamento
+            $lista_final_agrupada=[];
+            foreach ($mov as $key => $item){                
+                if(!isset($lista_final_agrupada[$item->nro_ticket])) {
+                    $lista_final_agrupada[$item->nro_ticket]=array($item);
+            
+                }else{
+                    array_push($lista_final_agrupada[$item->nro_ticket], $item);
+                }
+            }
+          
+            //actualizamos el codigo_orden segun la fecha
+            $codigo=0;
+            foreach($lista_final_agrupada as $data){
+                $codigo=$codigo+1;
+                foreach($data as $item){
+                    $actualizaNumeroCod=Movimiento::where('idmovimiento',$item->idmovimiento)
+                    ->first();
+                    $actualizaNumeroCod->codigo_orden='HGNDC-'.$anio.'-'.$mes.'-'.sprintf("%'.05d",$codigo);
+                    $actualizaNumeroCod->save();
+
+                }
+
+                //mandamos a actualizar las ordenes
+                $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($data[0]->fecha_salida_patio);
+                log::info("FECHA ORDENES A ACTUALIZAR --- ".$data[0]->fecha_salida_patio);
+              
+            }
+           
+            return response()->json([
+                'error'=>false,
+                'resultado'=>"Informacion actualizada exitosamente"
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('MovimientoVehController => actualizarSalidasMes => mensaje => '.$e->getMessage());
             return response()->json([
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error'

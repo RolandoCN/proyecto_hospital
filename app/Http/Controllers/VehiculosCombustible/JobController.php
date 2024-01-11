@@ -82,22 +82,28 @@ class JobController extends Controller
                        
         $transaction=DB::transaction(function() use($fecha){
             try{
-
+               
                 $fechaDesp=date('Y-m-d', strtotime($fecha));
                 $movimientoHoy=Movimiento::whereDate('fecha_salida_patio',$fechaDesp)
                 ->where('estado','Activo')->get();
                 $contador=0;
                 if(sizeof($movimientoHoy)==0){
-                    return response()->json([
+                    return [
                         'error'=>false,
                         'mensaje'=>'No existen tickets con despachos del dia '.date('d-m-Y')
-                    ]);
+                    ];
                 }
+
+                $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();
+                $idcabecera=$data_cabecera->idcabecera_despacho;
+                $fecha_cabecera=$data_cabecera->fecha;
+
+                //elimino los detalles asociados a esa cabecera
+                $eliminaDetalles=DetalleDespacho::where('idcabecera_despacho',$idcabecera)->delete();
                 
                 foreach($movimientoHoy as $data){
-                    $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();
-                   
-                    $fecha_cabecera=$data_cabecera->fecha;
+                    // $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();                   
+                    // $fecha_cabecera=$data_cabecera->fecha;
 
                     $ticket=Ticket::where('numero_ticket',$data->nro_ticket)->first();
 
@@ -112,7 +118,7 @@ class JobController extends Controller
                     
                     $guarda_det_des=new DetalleDespacho();
                     $guarda_det_des->id_vehiculo=$data->id_vehiculo;
-                    $guarda_det_des->idcabecera_despacho=$data_cabecera->idcabecera_despacho;
+                    $guarda_det_des->idcabecera_despacho=$idcabecera;
                     $guarda_det_des->fecha_cabecera_despacho=$fecha_cabecera;
                   
                     $guarda_det_des->id_tipocombustible=$ticket->id_tipocombustible;
@@ -142,24 +148,24 @@ class JobController extends Controller
                     log::info($guarda_det_des->num_factura_ticket);
                 }
                 if($contador>0){
-                    return response()->json([
+                    return [
                         'error'=>false,
                         'mensaje'=>'Despacho actualizado exitosamente del dia '.date('d-m-Y')
-                    ]);
+                    ];
                 }else{
-                    return response()->json([
-                        'error'=>false,
+                    return [
+                        'error'=>true,
                         'mensaje'=>'No se pudo actualizar los despachos del dia '.date('d-m-Y')
-                    ]);
+                    ];
                 }
 
             }catch (\Throwable $e) {
                 DB::Rollback();
-                Log::error('JobController => guardarDetallexx => mensaje => '.$e->getMessage().' Linea '.$e->getLine());
-                return response()->json([
+                Log::error('JobController => guardarDetalleDespachoManual => mensaje => '.$e->getMessage().' Linea '.$e->getLine());
+                return [
                     'error'=>true,
                     'mensaje'=>'Ocurrió un error'
-                ]);
+                ];
                 
             }
         });
@@ -174,7 +180,7 @@ class JobController extends Controller
                 $fecha = date('Y-m-d');
                 $fecha = date("Y-m-d", strtotime('-1 day', strtotime($fecha)));
                 $fechaDesp=$fecha;
-                // $fechaDesp=date('Y-m-d', strtotime($fecha));
+              
                 $movimientoHoy=Movimiento::whereDate('fecha_salida_patio',$fechaDesp)
                 ->where('estado','Activo')->get();
                 $contador=0;
@@ -182,9 +188,17 @@ class JobController extends Controller
                     Log::error('No existen tickets con despachos del dia '.$fecha);   
                     return 'No existen tickets con despachos del dia '.$fecha;
                 }
+
+                $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();
+                $idcabecera=$data_cabecera->idcabecera_despacho;
+                $fecha_cabecera=$data_cabecera->fecha;
+
+                //elimino los detalles asociados a esa cabecera
+                $eliminaDetalles=DetalleDespacho::where('idcabecera_despacho',$idcabecera)->delete();
+
                 foreach($movimientoHoy as $data){
-                    $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();                   
-                    $fecha_cabecera=$data_cabecera->fecha;
+                    // $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();                   
+                    // $fecha_cabecera=$data_cabecera->fecha;
 
                     $ticket=Ticket::where('numero_ticket',$data->nro_ticket)->first();
 
@@ -196,10 +210,11 @@ class JobController extends Controller
                     ->first();
 
                     $galones=$ticket->total / $gasoli_comb->precio_x_galon;
-                    
+
+                                        
                     $guarda_det_des=new DetalleDespacho();
                     $guarda_det_des->id_vehiculo=$data->id_vehiculo;
-                    $guarda_det_des->idcabecera_despacho=$data_cabecera->idcabecera_despacho;
+                    $guarda_det_des->idcabecera_despacho=$idcabecera;
                     $guarda_det_des->fecha_cabecera_despacho=$fecha_cabecera;
                   
                     $guarda_det_des->id_tipocombustible=$ticket->id_tipocombustible;
@@ -213,7 +228,8 @@ class JobController extends Controller
 
                     $ver=DetalleDespacho::where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
                     ->where('estado','!=',"Eliminado")->first();
-                  
+                    
+                    
                     if(is_null($ver)){
                         if($guarda_det_des->save()){
                             //generamos el documento
@@ -246,7 +262,7 @@ class JobController extends Controller
     public function pdfOrden($id, $nro, $iddet, $tipo){
 
         try{
-               
+           
             $movimiento=DB::table('vc_movimiento as m')
             ->leftJoin('vc_autorizado_salida as a', 'a.id_autorizado_salida', 'm.id_autorizado_salida')
             ->leftJoin('persona as p', 'p.idpersona', 'm.id_chofer')

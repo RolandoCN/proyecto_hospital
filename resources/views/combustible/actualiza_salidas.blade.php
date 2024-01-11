@@ -14,7 +14,7 @@
     
     <section class="content-header">
         <h1>
-            Listado Salidas Vehicular
+            Actualizar Salidas Vehicular
         </h1>
 
     </section>
@@ -46,19 +46,10 @@
                             <div class="box-body">
 
                                 <div class="form-group">
-                                    <label for="inputEmail3" id="label_crit" class="col-sm-2 control-label" >Fecha Inicio:</label>
+                                    <label for="inputEmail3" id="label_crit" class="col-sm-2 control-label" >Fecha:</label>
                                     
                                     <div class="col-sm-10" style="font-weight: normal;">                     
-                                        <input type="date"  class="form-control" id="fecha_ini"  name="fecha_ini" >
-                                    </div>
-                                            
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="inputEmail3" id="label_crit" class="col-sm-2 control-label" >Fecha Fin:</label>
-                                    
-                                    <div class="col-sm-10" style="font-weight: normal;">                     
-                                        <input type="date"  class="form-control" id="fecha_fin"  name="fecha_fin" >
+                                        <input type="month"  class="form-control" id="fecha_ini"  name="fecha_ini" >
                                     </div>
                                             
                                 </div>
@@ -154,7 +145,7 @@
     <script src="{{asset('canvasLibrary/js/jquery.signaturepad.js')}}"></script> 
     <script type='text/javascript' src="{{asset('canvasLibrary/js/html2canvas.js')}}"></script>
 
-    <script src="{{ asset('js/vehiculoCombustible/salidas.js?v='.rand())}}"></script>
+    <script src="{{ asset('js/vehiculoCombustible/actualiza_salidas.js?v='.rand())}}"></script>
 
     <script>
         //cargamos el datos del chofer el usuario logueado

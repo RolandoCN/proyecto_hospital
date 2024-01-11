@@ -328,10 +328,10 @@
                 
                 </td>
                 <td width="25%" style="border:0px">
-                    <div style="text-align: center">
+                    {{-- <div style="text-align: center">
                         <img src="data:image/png;base64,'.{{ $movimiento->firma_persona }}.'" class="img_firma-" style="width: 90px">
-                    </div>
-                        
+                    </div> --}}
+                    <br><br><br><br><br>
                     <hr style="color:black !important">
                     <p style="text-align: center">
                         {{ $movimiento->nombres }}  {{ $movimiento->apellidos }}<br>

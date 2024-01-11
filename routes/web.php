@@ -18,7 +18,7 @@ use App\Http\Controllers\VehiculosCombustible\CombustibleController;
 use App\Http\Controllers\VehiculosCombustible\ReportesCombustibleController;
 use App\Http\Controllers\VehiculosCombustible\TicketController;
 use App\Http\Controllers\VehiculosCombustible\JobController;
-
+use App\Http\Controllers\FirmaDocumentos\FirmaDocumentoController;
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 
@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+ 
 
     //*****************************VEHICULOS COMBUSTIBLES****************//
 
@@ -150,6 +151,10 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/listado-salidas', [MovimientoVehController::class, 'vistaSalidas'])->middleware('validarRuta');
     Route::get('/obtener-salidas_', [MovimientoVehController::class, 'obtenerSalidas_']);
     Route::get('/obtener-salidas/{desde}/{hasta}', [MovimientoVehController::class, 'obtenerSalidas']);
+
+
+    Route::get('/actualiza-salidas', [MovimientoVehController::class, 'actualizaSalidas'])->middleware('validarRuta');
+    Route::get('/actualiza-salidas/{fecha}', [MovimientoVehController::class, 'actualizarSalidasMes']);
 
     //GASOLINERAS
     Route::get('/gasolinera', [GasolineraController::class, 'index'])->middleware('validarRuta');
