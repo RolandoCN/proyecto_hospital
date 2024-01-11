@@ -146,7 +146,7 @@ class MovimientoVehController extends Controller
 
                 //mandamos a actualizar las ordenes
                 $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($data[0]->fecha_salida_patio);
-                log::info("FECHA ORDENES A ACTUALIZAR --- ".$data[0]->fecha_salida_patio);
+                log::info("FECHA ORDENES A ACTUALIZAR".$data[0]->fecha_salida_patio);
               
             }
            
