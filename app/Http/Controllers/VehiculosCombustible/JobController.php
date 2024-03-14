@@ -40,7 +40,7 @@ class JobController extends Controller
       
         try{
             $guarda_cabec_des=new CabeceraDespacho();
-            $guarda_cabec_des->id_gasolinera=1;
+            $guarda_cabec_des->id_gasolinera=6;
             $guarda_cabec_des->fecha=date('Y-m-d');
             $guarda_cabec_des->fecha_registro=date('Y-m-d H:i:s');
             $guarda_cabec_des->estado="Activo";
