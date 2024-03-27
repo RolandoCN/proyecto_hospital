@@ -46,8 +46,8 @@ function validaFechaHoraLlegadaPatio(){
     let fecha_h_llegada_patio=$('#fecha_h_llegada_patio').val()
 
     if(fecha_h_llegada_patio <= fecha_h_destino_salida){
-        alertNotificar("La fecha hora llegada a patio no puede ser menor o igual a la fecha hora salida de destino","error")
-        $('#fecha_h_llegada_patio').focus()
+        // alertNotificar("La fecha hora llegada a patio no puede ser menor o igual a la fecha hora salida de destino","error")
+        // $('#fecha_h_llegada_patio').focus()
         return
     }
 }
@@ -162,8 +162,8 @@ $("#form_registro_tarea").submit(function(e){
     }
 
     if(fecha_h_llegada_patio <= fecha_h_destino_salida){
-        alertNotificar("La fecha hora llegada a patio no puede ser menor o igual a la fecha hora salida de destino","error")
-        $('#fecha_h_llegada_patio').focus()
+        // alertNotificar("La fecha hora llegada a patio no puede ser menor o igual a la fecha hora salida de destino","error")
+        // $('#fecha_h_llegada_patio').focus()
         return
     }
 

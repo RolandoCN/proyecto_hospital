@@ -113,7 +113,9 @@ class JobController extends Controller
                     ->where('estado','A')
                     ->select('precio_x_galon')
                     ->first();
-
+                    if(is_null($gasoli_comb)){
+                        // dd($ticket);
+                    }
                     $galones=$ticket->total / $gasoli_comb->precio_x_galon;
                     
                     $guarda_det_des=new DetalleDespacho();
