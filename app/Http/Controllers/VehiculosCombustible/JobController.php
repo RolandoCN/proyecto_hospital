@@ -105,7 +105,9 @@ class JobController extends Controller
                     // $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();                   
                     // $fecha_cabecera=$data_cabecera->fecha;
 
-                    $ticket=Ticket::where('numero_ticket',$data->nro_ticket)->first();
+                    $ticket=Ticket::where('numero_ticket',$data->nro_ticket)
+                    ->where('estado','A')
+                    ->first();
 
                     $gasoli_comb=DB::table('vc_gasolinera_comb')
                     ->where('id_gasolinera',$ticket->id_gasolinera)
@@ -202,7 +204,9 @@ class JobController extends Controller
                     // $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();                   
                     // $fecha_cabecera=$data_cabecera->fecha;
 
-                    $ticket=Ticket::where('numero_ticket',$data->nro_ticket)->first();
+                    $ticket=Ticket::where('numero_ticket',$data->nro_ticket)
+                    >where('estado','A')
+                    ->first();
 
                     $gasoli_comb=DB::table('vc_gasolinera_comb')
                     ->where('id_gasolinera',$ticket->id_gasolinera)
