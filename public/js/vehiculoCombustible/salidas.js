@@ -59,11 +59,11 @@ function buscarSalidas(){
                 data: data.resultado,
                 columns:[
                         {data: "vehiculo.placa"},
-                        {data: "fecha_registro" },
-                        {data: "fecha_registro"},
-                        {data: "fecha_registro"},
+                        {data: "chofer.nombres" },
+                        {data: "chofer.apellidos"},
+                        {data: "lugar_llegada_destino"},
                         {data: "nro_ticket"},
-                        {data: "fecha_registro"},
+                        {data: "vehiculo.descripcion"},
                 ],    
                 "rowCallback": function( row, data ) {
                     $('td',row).eq(0).html(data.vehiculo.descripcion +" ["+data.vehiculo.placa+"]")
