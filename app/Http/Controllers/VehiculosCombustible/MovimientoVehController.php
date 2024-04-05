@@ -401,7 +401,7 @@ class MovimientoVehController extends Controller
                 //validar que la fecha de salida este dentro del rango de despacho ticket
                 $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
                 ->where('estado','A')
-                // ->whereBetween('f_despacho', [$fecha_salida, $fecha_llega])
+                ->whereBetween('f_despacho', [$fecha_salida, $fecha_llega])
                 //->whereDate('f_despacho','=',$fecha_salida)
                 ->first(); 
 
@@ -421,10 +421,16 @@ class MovimientoVehController extends Controller
                 if($valida_rango->idchofer!=auth()->user()->id_persona){
                     return response()->json([
                         'error'=>true,
-                        'mensaje'=>'El chofer seleccionado no esta asociado al ticket #'.$valida_rango->numero_ticket
+                        'mensaje'=>'El chofer seleccionado no esta asociado al ticket. #'.$valida_rango->numero_ticket
                     ]);
                 }
                 
+                if(strtotime($request->fecha_h_llegada_patio) <= strtotime($request->fecha_h_destino_salida)){
+                    return response()->json([
+                        'error'=>true,
+                        'mensaje'=>'La fecha hora llegada a patio no puede ser menor o igual a la fecha hora salida de destino.'
+                    ]);
+                }
 
                 $guarda_movi=new Movimiento();
                 $guarda_movi->id_vehiculo=$request->vehiculo_tarea;
