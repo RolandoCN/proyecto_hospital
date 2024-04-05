@@ -551,11 +551,13 @@ class DespachoCombustibleController extends Controller
             $movimiento=DB::table('vc_movimiento as m')
             ->leftJoin('vc_autorizado_salida as a', 'a.id_autorizado_salida', 'm.id_autorizado_salida')
             ->leftJoin('persona as p', 'p.idpersona', 'm.id_chofer')
-            ->where('m.estado','!=','Eliminado')
+            ->where('m.estado','!=','Eliminada')
             ->where('nro_ticket',$nro)
-            ->select('*', 'a.abreviacion_titulo', 'a.nombres as autorizador', 'p.nombres', 'p.apellidos')
+            ->select('*', 'a.abreviacion_titulo', 'a.nombres as autorizador', 'p.nombres', 'p.apellidos','m.estado')
             ->get();
-          
+
+            // dd($movimiento);
+                  
 
             $nombrePDF="orden_".$movimiento[0]->idmovimiento.".pdf";
 
@@ -566,7 +568,10 @@ class DespachoCombustibleController extends Controller
             $detalle = DetalleDespacho::with('vehiculo','tipocombustible','cabecera','chofer')
             ->where('estado','Aprobado')
             ->where('idcabecera_despacho',$id)
+            ->where('num_factura_ticket',$nro)
             ->orderBy('id_vehiculo', 'asc')->get();
+
+            // dd($detalle);
 
 
             $fechaw=$detalle[0]->fecha_cabecera_despacho;
@@ -754,7 +759,7 @@ class DespachoCombustibleController extends Controller
                 $elim_detalle->estado="Eliminado";
                 if($elim_detalle->save()){
 
-                    $movimiento=Movimiento::where('estado','!=','Eliminado')
+                    $movimiento=Movimiento::where('estado','!=','Eliminada')
                     ->where('nro_ticket',$elim_detalle->num_factura_ticket)
                     ->first();
                     $movimiento->codigo_orden=null;

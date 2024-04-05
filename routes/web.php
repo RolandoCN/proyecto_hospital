@@ -211,7 +211,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::get('/reporte-ordenes', [ReportesCombustibleController::class, 'vistaOrdenes'])->middleware('validarRuta');
     Route::get('/listado-reporte-orden', [ReportesCombustibleController::class, 'listadoOrden']);
     Route::post('/buscar-ordenes', [ReportesCombustibleController::class, 'buscarOrden']);
-    Route::get('/genera-orden-pdf/{id}/{nro}', [ReportesCombustibleController::class, 'pdfOrden']);
+    Route::get('/genera-orden-pdf-/{id}/{nro}', [ReportesCombustibleController::class, 'pdfOrden']);
     Route::get('/visualizar-documento-orden/{documentName}',[ReportesCombustibleController::class, 'visualizarDocumentoOrden']);
     Route::get('/descargar-doc-orden/{documentName}', [ReportesCombustibleController::class, 'descargarOrden']);
 

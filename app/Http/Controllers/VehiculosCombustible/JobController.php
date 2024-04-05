@@ -272,7 +272,7 @@ class JobController extends Controller
             $movimiento=DB::table('vc_movimiento as m')
             ->leftJoin('vc_autorizado_salida as a', 'a.id_autorizado_salida', 'm.id_autorizado_salida')
             ->leftJoin('persona as p', 'p.idpersona', 'm.id_chofer')
-            ->where('m.estado','!=','Eliminado')
+            ->where('m.estado','!=','Eliminada')
             ->where('nro_ticket',$nro)
             ->select('*', 'a.abreviacion_titulo', 'a.nombres as autorizador', 'p.nombres', 'p.apellidos')
             ->get();

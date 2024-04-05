@@ -268,7 +268,7 @@ class ReportesCombustibleController extends Controller
         $fecha= $fechaw;
         $fecha = strftime("%d de %B de %Y", strtotime($fecha));
         $movimiento=DB::table('vc_movimiento')
-        ->where('estado','!=','Eliminado')
+        ->where('estado','!=','Eliminada')
         ->where('nro_ticket',$nro)
         ->first();
 
