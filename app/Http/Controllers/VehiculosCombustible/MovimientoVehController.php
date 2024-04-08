@@ -401,7 +401,7 @@ class MovimientoVehController extends Controller
                 //validar que la fecha de salida este dentro del rango de despacho ticket
                 $valida_rango=Ticket::where('numero_ticket',$request->n_ticket)
                 ->where('estado','A')
-                ->whereBetween('f_despacho', [$fecha_salida, $fecha_llega])
+                // ->whereBetween('f_despacho', [$fecha_salida, $fecha_llega])
                 //->whereDate('f_despacho','=',$fecha_salida)
                 ->first(); 
 
