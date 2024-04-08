@@ -406,10 +406,10 @@ class MovimientoVehController extends Controller
                 ->first(); 
 
                 if(is_null($valida_rango)){
-                    return response()->json([
-                        'error'=>true,
-                        'mensaje'=>'La fecha de despacho del ticket, esta fuera del rango de fecha del movimiento ingresado'
-                    ]);
+                    // return response()->json([
+                    //     'error'=>true,
+                    //     'mensaje'=>'La fecha de despacho del ticket, esta fuera del rango de fecha del movimiento ingresado'
+                    // ]);
                 }
                 if($valida_rango->id_vehiculo!=$request->vehiculo_tarea){
                     return response()->json([
