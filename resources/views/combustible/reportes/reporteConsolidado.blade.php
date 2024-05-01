@@ -415,7 +415,9 @@
                                 {{-- {{$eco}}   --}}
 
                             @endif
-                            {{$eco}}
+                            @if($eco>0)
+                                {{number_format(($eco),2,'.', '')}} 
+                            @endif
                            
                         </td>
 
@@ -425,7 +427,11 @@
                                 {{-- {{number_format(($total_veh),2,'.', '')}}    --}}                                
                                 {{-- {{$supe}}   --}}
                             @endif
-                            {{$super}} 
+
+                            @if($super>0)
+                                {{number_format(($super),2,'.', '')}} 
+                            @endif
+                            
 
                            
                         </td>
@@ -435,7 +441,10 @@
                                 {{-- {{number_format(($total_veh),2,'.', '')}}    --}}
                                 {{-- {{$diesel}}   --}}
                             @endif
-                            {{$diesel}} 
+                           
+                            @if($diesel>0)
+                                {{number_format(($diesel),2,'.', '')}} 
+                            @endif
                         </td>
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1" width="10%">
@@ -449,7 +458,11 @@
                                 $total_comb=$total_comb + $super + $diesel + $eco;
                                 $total_pagado=$total_pagado + $total_comb;
                             @endphp
-                            {{$total_comb}}
+
+                            @if($diesel>0)
+                                {{number_format(($total_comb),2,'.', '')}} 
+                            @endif
+                            
                         </td>
 
                     
