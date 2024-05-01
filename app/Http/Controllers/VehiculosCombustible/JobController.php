@@ -84,8 +84,15 @@ class JobController extends Controller
             try{
                
                 $fechaDesp=date('Y-m-d', strtotime($fecha));
-                $movimientoHoy=Movimiento::whereDate('fecha_salida_patio',$fechaDesp)
+              
+                $movimientoHoy=Movimiento::with('ticket')
+                ->whereHas('ticket', function ($query) use ($fechaDesp){
+                    $query->whereDate('f_despacho',$fechaDesp);
+                })
+                // ->whereDate('fecha_salida_patio',$fechaDesp)
                 ->where('estado','Activo')->get();
+              
+                // dd($movimientoHoy);
                 $contador=0;
                 if(sizeof($movimientoHoy)==0){
                     return [
@@ -97,6 +104,8 @@ class JobController extends Controller
                 $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();
                 $idcabecera=$data_cabecera->idcabecera_despacho;
                 $fecha_cabecera=$data_cabecera->fecha;
+
+                // dd($fecha_cabecera);
 
                 //elimino los detalles asociados a esa cabecera
                 $eliminaDetalles=DetalleDespacho::where('idcabecera_despacho',$idcabecera)->delete();
@@ -117,6 +126,8 @@ class JobController extends Controller
                     ->first();
                     if(is_null($gasoli_comb)){
                         // dd($ticket);
+                        log::info("erorss ".$ticket->numero_ticket);
+                        
                     }
                     $galones=$ticket->total / $gasoli_comb->precio_x_galon;
                     
@@ -136,7 +147,7 @@ class JobController extends Controller
 
                     $ver=DetalleDespacho::where('num_factura_ticket',$guarda_det_des->num_factura_ticket)
                     ->where('estado','!=',"Eliminado")->first();
-                    
+                                       
                     if(is_null($ver)){
                         if($guarda_det_des->save()){
                             //generamos el documento

@@ -24,6 +24,10 @@ class Movimiento extends Model
         return $this->belongsTo('App\Models\Persona', 'id_chofer', 'idpersona');
     }
 
+    public function ticket(){
+        return $this->belongsTo('App\Models\VehiculoCombustible\Ticket', 'nro_ticket', 'numero_ticket')->where('estado','A');
+    }
+
     public function autoriza(){
         return $this->belongsTo('App\Models\VehiculoCombustible\Autoriza', 'id_autorizado_salida', 'id_autorizado_salida');
     }

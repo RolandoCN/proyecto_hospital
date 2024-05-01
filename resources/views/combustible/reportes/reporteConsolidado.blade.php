@@ -315,28 +315,81 @@
                     $comb="";
                     $id_veh=0;
                     $total_final_veh=0;
+                    $total_pagado=0;
                 @endphp
                 @foreach ($data_vehiculo as $veh)
 
                     @php
-                        $despacho_veh=\DB::table('vc_detalle_despacho as d')
-                        ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 'd.id_tipocombustible')
-                        ->where('d.estado','Aprobado')
-                        ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
-                        ->where('d.id_vehiculo',$veh->id_vehiculo)
+                        // $despacho_veh=\DB::table('vc_detalle_despacho as d')
+                        // ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 'd.id_tipocombustible')
+                        // ->where('d.estado','Aprobado')
+                        // ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
+                        // ->where('d.id_vehiculo',$veh->id_vehiculo)
 
-                        ->select(DB::raw('id_vehiculo, sum(total) as total, c.detalle as combustible'))
+                        // ->select(DB::raw('id_vehiculo, sum(total) as total, c.detalle as combustible'))
+                        // ->groupBy('id_vehiculo', 'combustible') 
+                        // ->first();  
+
+                        $desde = date('Y-m-d 00:00:00', strtotime($desde));
+                        $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
+                        
+                        // $despacho_veh=\DB::table('vc_ticket as t')
+                        // ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 't.id_tipocombustible')
+                        // ->where('t.estado','A')
+                        // ->whereBetween('f_despacho', [$desde, $hasta])
+                        // ->where('t.id_vehiculo',$veh->id_vehiculo)
+
+                        // ->select(DB::raw('id_vehiculo, sum(total) as total, c.detalle as combustible'))
+                        // ->groupBy('id_vehiculo', 'combustible') 
+                        // ->get();  
+
+
+                        $despacho_veh=\DB::table('vc_ticket as t')
+                        ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 't.id_tipocombustible')
+                        ->leftJoin('vc_movimiento as m', 'm.nro_ticket', 't.numero_ticket')
+                        ->where('t.estado','A')
+                        ->where('m.estado','Activo')
+                        ->whereBetween('f_despacho', [$desde, $hasta])
+                        ->where('t.id_vehiculo',$veh->id_vehiculo)
+                        ->select(DB::raw('t.id_vehiculo, sum(total) as total, c.detalle as combustible'))
                         ->groupBy('id_vehiculo', 'combustible') 
-                        ->first();   
+                        ->distinct('t.numero_ticket')
+                        ->get(); 
 
-                        if(!is_null($despacho_veh)){
-                           
-                            $total_veh=$despacho_veh->total;
-                            $id_veh=$despacho_veh->id_vehiculo;
-                            $comb=$despacho_veh->combustible;
+                        $super=0;
+                        $diesel=0;
+                        $eco=0;
+                        $total_comb=0;
+                        foreach($despacho_veh as $desp){
+                            $tipo=$desp->combustible;
+                            switch ($tipo) { 
+                            case 'Diesel': 
+                                $super=$desp->total;
+                                $super=number_format(($super),2,'.', '');
+                                break; 
+                            case 'Super':     
+                                $diesel=$desp->total;
+                                $diesel=number_format(($diesel),2,'.', '');
+                                break;
+                            
+                            case 'Eco':     
+                                $eco=$desp->total;
+                                $eco=number_format(($eco),2,'.', '');
+                                break;
+                            }
 
-                            $total_final_veh=$total_final_veh + $total_veh;
+                            $id_veh=$desp->id_vehiculo;
+                            
                         }
+
+                        // if(!is_null($despacho_veh)){
+                           
+                        //     $total_veh=$despacho_veh->total;
+                        //     $id_veh=$despacho_veh->id_vehiculo;
+                        //     $comb=$despacho_veh->combustible;
+
+                        //     $total_final_veh=$total_final_veh + $total_veh;
+                        // }
 
                     @endphp
                     <tr style="border-color:blue">
@@ -356,37 +409,47 @@
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1" width="15%">
                             
-                            @if($veh->id_vehiculo == $id_veh && $comb == "Eco")
-                                {{number_format(($total_veh),2,'.', '')}}   
+                            {{-- @if($veh->id_vehiculo == $id_veh && $comb == "Eco") --}}
+                            @if($veh->id_vehiculo == $id_veh )
+                                {{-- {{number_format(($total_veh),2,'.', '')}}    --}}
+                                {{-- {{$eco}}   --}}
 
                             @endif
-
+                            {{$eco}}
                            
                         </td>
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1"
                         width="15%">
                             @if($veh->id_vehiculo == $id_veh && $comb == "Super")
-                                {{number_format(($total_veh),2,'.', '')}}   
-
+                                {{-- {{number_format(($total_veh),2,'.', '')}}    --}}                                
+                                {{-- {{$supe}}   --}}
                             @endif
+                            {{$super}} 
 
                            
                         </td>
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1" width="15%">
                             @if($veh->id_vehiculo == $id_veh && $comb == "Diesel")
-                                {{number_format(($total_veh),2,'.', '')}}   
+                                {{-- {{number_format(($total_veh),2,'.', '')}}    --}}
+                                {{-- {{$diesel}}   --}}
                             @endif
+                            {{$diesel}} 
                         </td>
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1" width="10%">
-                            @if($veh->id_vehiculo == $id_veh)
+                            {{-- @if($veh->id_vehiculo == $id_veh)
                                 {{number_format(($total_veh),2,'.', '')}}  
                             @else 
 
                                 {{number_format((0),2,'.', '')}}  
-                            @endif
+                            @endif --}}
+                            @php
+                                $total_comb=$total_comb + $super + $diesel + $eco;
+                                $total_pagado=$total_pagado + $total_comb;
+                            @endphp
+                            {{$total_comb}}
                         </td>
 
                     
@@ -407,7 +470,7 @@
                     </td>
 
                     <td style="height:25px;text-align: right;border-color:black;border-left:0px;border-bottom:0px; border-right:0px  " rowspan="1" colspan="1">
-                        $ {{number_format(($total_final),2,'.', '')}}   
+                        $ {{number_format(($total_pagado),2,'.', '')}}   
                     </td>
                 </tr>
             </tfoot>

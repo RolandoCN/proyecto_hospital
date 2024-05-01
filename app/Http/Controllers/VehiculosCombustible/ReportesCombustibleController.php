@@ -296,6 +296,51 @@ class ReportesCombustibleController extends Controller
     }
 
     public function vistaConsolidado(){
+        $desde="2024-03-12";
+        $hasta="2024-03-12";
+
+        $desde = date('Y-m-d 00:00:00', strtotime($desde));
+        $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
+
+        $despacho_veh=\DB::table('vc_ticket as t')
+        ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 't.id_tipocombustible')
+        ->leftJoin('vc_movimiento as m', 'm.nro_ticket', 't.numero_ticket')
+        ->where('t.estado','A')
+        ->where('m.estado','Activo')
+        ->whereBetween('f_despacho', [$desde, $hasta])
+        // ->where('t.id_vehiculo',13)
+
+        // ->select(DB::raw('id_vehiculo, sum(total) as total, c.detalle as combustible'))
+        // ->groupBy('id_vehiculo', 'combustible') 
+
+        ->select(DB::raw('t.id_vehiculo, sum(total) as total, c.detalle as combustible'),'t.numero_ticket')
+        ->groupBy('id_vehiculo', 'combustible','t.numero_ticket') 
+        // ->distinct('t.numero_ticket')
+        ->get(); 
+
+        // dd($despacho_veh);
+
+        // $super="";
+        // $diesel="";
+        // $eco="";
+        // foreach($despacho_veh as $desp){
+        //     $tipo=$desp->combustible;
+        //     switch ($tipo) { 
+        //     case 'Diesel': 
+        //         $super=$desp->total;
+        //         break; 
+        //     case 'Super':     
+        //         $diesel=$desp->total;
+        //         break;
+            
+        //     case 'Eco':     
+        //         $eco=$desp->total;
+        //         break;
+        //     }
+        // }
+        
+        // dd("super => ".$super. " .diesel => ".$diesel. " eco => ".$eco);
+
         return view ('combustible.reportes.vistaConsolidado');
     }
 
@@ -303,9 +348,14 @@ class ReportesCombustibleController extends Controller
     public function listarConsolidado($desde, $hasta){
     
         try{
-
-            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','movimiento','chofer')
-            ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
+            $desde = date('Y-m-d 00:00:00', strtotime($desde));
+            $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
+            $detalle = DetalleDespacho::with('vehiculo','tipocombustible','movimiento','chofer','ticket')
+            ->whereHas('ticket', function ($query) use ($desde, $hasta){
+                $query->whereBetween('f_despacho', [$desde, $hasta]);
+            })
+            // ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
+            // ->where('estado','Aprobado')
             ->orderBy('id_vehiculo', 'asc')->get();
             
             return response()->json([

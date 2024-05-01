@@ -304,7 +304,7 @@
                     width="35%">Chone</td>
 
                     <td style="height:25px;text-align: center;border-color:black; "colspan="2"
-                    width="35%">{{$ticket->fecha_registro}}</td>
+                    width="35%">{{$ticket->f_despacho}}</td>
 
                     <td style="height:25px;text-align: center;border-color:black; "colspan="2"
                     width="35%">{{$ticket->total}}</td>
