@@ -114,8 +114,8 @@ function llenar_tabla_usuario(){
                 data: data.resultado,
                 columns:[
                         {data: "id"},
-                        {data: "id" },
-                        {data: "id"},
+                        {data: "persona.nombres" },
+                        {data: "persona.apellidos"},
                         {data: "id"},
                         {data: "id"},
                 ],    

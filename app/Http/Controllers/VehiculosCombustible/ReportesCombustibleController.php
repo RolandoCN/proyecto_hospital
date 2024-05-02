@@ -296,25 +296,28 @@ class ReportesCombustibleController extends Controller
     }
 
     public function vistaConsolidado(){
-        $desde="2024-03-12";
-        $hasta="2024-03-12";
+        $desde="2024-03-20";
+        $hasta="2024-03-20";
 
         $desde = date('Y-m-d 00:00:00', strtotime($desde));
         $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
 
         $despacho_veh=\DB::table('vc_ticket as t')
         ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 't.id_tipocombustible')
-        ->leftJoin('vc_movimiento as m', 'm.nro_ticket', 't.numero_ticket')
+        ->leftJoin('vc_detalle_despacho as m', 'm.num_factura_ticket', 't.numero_ticket')
         ->where('t.estado','A')
-        ->where('m.estado','Activo')
+        ->where('m.estado','Aprobado')
         ->whereBetween('f_despacho', [$desde, $hasta])
         // ->where('t.id_vehiculo',13)
 
-        // ->select(DB::raw('id_vehiculo, sum(total) as total, c.detalle as combustible'))
-        // ->groupBy('id_vehiculo', 'combustible') 
+        // ->select(DB::raw('t.id_vehiculo, sum(total) as total, c.detalle as combustible'))
+        // ->groupBy('t.id_vehiculo', 'combustible') 
 
-        ->select(DB::raw('t.id_vehiculo, sum(total) as total, c.detalle as combustible'),'t.numero_ticket')
-        ->groupBy('id_vehiculo', 'combustible','t.numero_ticket') 
+        // ->select(DB::raw('t.id_vehiculo, sum(total) as total, c.detalle as combustible'),'t.numero_ticket')
+        // ->groupBy('id_vehiculo', 'combustible','t.numero_ticket') 
+
+        ->select(DB::raw('t.id_vehiculo, sum(t.total) as total, c.detalle as combustible'))
+        ->groupBy('id_vehiculo', 'combustible') 
         // ->distinct('t.numero_ticket')
         ->get(); 
 
@@ -355,7 +358,7 @@ class ReportesCombustibleController extends Controller
                 $query->whereBetween('f_despacho', [$desde, $hasta]);
             })
             // ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
-            // ->where('estado','Aprobado')
+            ->where('estado','Aprobado')
             ->orderBy('id_vehiculo', 'asc')->get();
             
             return response()->json([
@@ -377,10 +380,17 @@ class ReportesCombustibleController extends Controller
     public function pdfConsolidado($desde, $hasta){
     
         try{
+            $desde = date('Y-m-d 00:00:00', strtotime($desde));
+            $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
 
             $detalle = DetalleDespacho::with('vehiculo','tipocombustible','movimiento','chofer', 'ticket')
-            ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])->where('estado','Aprobado')
+            ->whereHas('ticket', function ($query) use ($desde, $hasta){
+                $query->whereBetween('f_despacho', [$desde, $hasta]);
+            })
+            // ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
+            ->where('estado','Aprobado')
             ->orderBy('fecha_cabecera_despacho', 'asc')->get();
+            // dd($detalle);
 
             $data_vehiculo=DB::table('vc_vehiculo as v')
             ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 'v.id_tipocombustible')

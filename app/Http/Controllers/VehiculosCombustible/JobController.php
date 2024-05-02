@@ -90,9 +90,9 @@ class JobController extends Controller
                     $query->whereDate('f_despacho',$fechaDesp);
                 })
                 // ->whereDate('fecha_salida_patio',$fechaDesp)
-                ->where('estado','Activo')->get();
+                ->where('estado','Activo')
+                ->get();
               
-                // dd($movimientoHoy);
                 $contador=0;
                 if(sizeof($movimientoHoy)==0){
                     return [

@@ -346,12 +346,13 @@
 
                         $despacho_veh=\DB::table('vc_ticket as t')
                         ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 't.id_tipocombustible')
-                        ->leftJoin('vc_movimiento as m', 'm.nro_ticket', 't.numero_ticket')
+                        // ->leftJoin('vc_movimiento as m', 'm.nro_ticket', 't.numero_ticket')
+                        ->leftJoin('vc_detalle_despacho as m', 'm.num_factura_ticket', 't.numero_ticket')
                         ->where('t.estado','A')
-                        ->where('m.estado','Activo')
+                        ->where('m.estado','Aprobado')
                         ->whereBetween('f_despacho', [$desde, $hasta])
                         ->where('t.id_vehiculo',$veh->id_vehiculo)
-                        ->select(DB::raw('t.id_vehiculo, sum(total) as total, c.detalle as combustible'))
+                        ->select(DB::raw('t.id_vehiculo, sum(t.total) as total, c.detalle as combustible'))
                         ->groupBy('id_vehiculo', 'combustible') 
                         ->distinct('t.numero_ticket')
                         ->get(); 
@@ -459,7 +460,7 @@
                                 $total_pagado=$total_pagado + $total_comb;
                             @endphp
 
-                            @if($diesel>0)
+                            @if($total_comb>0)
                                 {{number_format(($total_comb),2,'.', '')}} 
                             @endif
                             

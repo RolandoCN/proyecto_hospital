@@ -47,7 +47,7 @@ class User extends Authenticatable
     ];
 
     public function persona(){
-        return $this->belongsTo('App\Models\Persona', 'id_persona', 'idpersona')->where('estado','A');
+        return $this->belongsTo('App\Models\Persona', 'id_persona', 'idpersona');
     }
 
     public function perfil(){
