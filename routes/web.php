@@ -140,6 +140,8 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
     Route::post('/guardar-movimiento', [MovimientoVehController::class, 'guardar']);
     Route::get('/listado-movimiento', [MovimientoVehController::class, 'listar']);
     Route::get('/eliminar-movimiento/{id}', [MovimientoVehController::class, 'eliminar']);
+    Route::get('/editar-mov-ind/{id}', [MovimientoVehController::class, 'editar']);
+    Route::put('/actualizar-movimiento/{id}', [MovimientoVehController::class, 'actualizar']);
     Route::get('/reporte-mov-ind/{idmov}', [MovimientoVehController::class, 'reporteIndividual']);
     Route::get('/visualizar-documento/{documentName}',[MovimientoVehController::class, 'visualizarDocumento']);
     Route::get('/descargar-doc/{documentName}', [MovimientoVehController::class, 'descargar']);

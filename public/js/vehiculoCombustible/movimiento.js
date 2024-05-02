@@ -260,22 +260,27 @@ $("#form_registro_tarea").submit(function(e){
         url_form="guardar-movimiento"
     }else{
         tipo="PUT"
-        url_form="actualizar-tarea/"+IdTareaEditar
+        url_form="actualizar-movimiento/"+idMovimientoEditar
     }
 
-    var FrmData = new FormData(this);
-
+    // var FrmData = new FormData(this);
+    var FrmData=$("#form_registro_tarea").serialize();
   
     $.ajax({
             
+        // type: tipo,
+        // url: url_form,
+        // method: tipo,             
+        // data: FrmData,
+        // dataType: 'json',
+        // contentType:false,
+        // cache:false,
+        // processData:false,
+
         type: tipo,
         url: url_form,
         method: tipo,             
-        data: FrmData,
-        dataType: 'json',
-        contentType:false,
-        cache:false,
-        processData:false,
+		data: FrmData,     
     
 
         success: function(data){
@@ -303,7 +308,7 @@ $("#form_registro_tarea").submit(function(e){
 })
 
 function limpiarCampos(){
-
+   
     $('#kilometraje').val('')
     $('#horometro').val('')
     $('#entrada_salida').val('').trigger('change.select2')
@@ -447,7 +452,7 @@ function llenar_tabla_tarea(){
 
                     $('td', row).eq(4).html(`
                                   
-                                            
+                                            <a onclick="btn_editar_movimi(${data.idmovimiento })" class="btn btn-primary btn-xs"> Editar </a><br>
                                             <a onclick="btn_eliminar_movimi(${data.idmovimiento })" class="btn btn-danger btn-xs"> Eliminar </a><br>
 
                                             <a onclick="reporte_movimiento(${data.idmovimiento })" class="btn btn-success btn-xs"
@@ -512,7 +517,7 @@ $('#documentopdf').on('hidden.bs.modal', function (e) {
 $('#descargar').click(function(){
     $('#documentopdf').modal("hide");
 });
-
+globalThis.MostarSmS="N";
 function visualizarForm(tipo){
     $('#chofer').val($('#idchofer_loguea').val()).trigger('change.select2')
     $('#form_ing').show(200)
@@ -522,10 +527,12 @@ function visualizarForm(tipo){
         $('#titulo_form').html("Registro Movimiento")
         $('#nombre_btn_form').html('Registrar')
         AccionForm="R"
+        MostarSmS="S"
     }else{
-        $('#titulo_form').html("Actualización Tarea")
+        $('#titulo_form').html("Actualización Movimiento")
         $('#nombre_btn_form').html('Actualizar')
         AccionForm="E"
+        MostarSmS="N"
     }
     $('#signArea').signaturePad({drawOnly:true, drawBezierCurves:true, lineTop:190});
     $('#signArea_edit').signaturePad({drawOnly:true, drawBezierCurves:true, lineTop:190});
@@ -660,13 +667,15 @@ function cargartarea(){
            
           
             ValorMinimoKm_Hm=resp
-            $('#msmDetalledos').html(`
-                                        <div class="alert alert-info alert-dismissible">
-                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                                        El valor del último ${TipoMedi} fué ${resp}.
-                                        </div>
-                                    `);
-            $('#msmDetalledos').show(200);
+            if(MostarSmS=="S"){
+                $('#msmDetalledos').html(`
+                                            <div class="alert alert-info alert-dismissible">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                            El valor del último ${TipoMedi} fué ${resp}.
+                                            </div>
+                                        `);
+                $('#msmDetalledos').show(200);
+            }
         }
 
 
@@ -722,6 +731,63 @@ function cargaInfoTicket(){
       
       
        
+    }).fail(function(){
+        vistacargando("")
+        alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
+    });
+}
+
+function btn_editar_movimi(id){
+    vistacargando("m","Espere por favor")
+    $.get("editar-mov-ind/"+id, function(data){
+        console.log(data)
+        vistacargando("")
+        
+        if(data.error==true){
+            alertNotificar(data.mensaje,"error");
+            return;   
+        }
+
+        $('#vehiculo_tarea').val(data.resultado.id_vehiculo).trigger('change.select2')
+
+        $('#n_ticket').html('');
+            
+        $('#n_ticket').append(`<option value="${data.resultado.nro_ticket}">${data.resultado.nro_ticket}</option>`).change();
+        $("#n_ticket").trigger("chosen:updated"); 
+
+       
+    
+
+        $('#fecha_h_salida_patio').val(data.resultado.fecha_hora_salida_patio)
+        $('#km_salida_patio').val(data.resultado.km_salida_patio)
+        $('#l_destino_ll').val(data.resultado.lugar_llegada_destino)
+        $('#fecha_h_destino').val(data.resultado.fecha_hora_llega_destino)
+
+        $('#km_destino_ll').val(data.resultado.km_llegada_destino)
+        $('#l_sal_destino').val(data.resultado.lugar_llegada_destino)
+        $('#fecha_h_destino_salida').val(data.resultado.fecha_hora_salida_destino)
+        $('#km_salida_dest').val(data.resultado.km_salida_destino)
+
+        $('#fecha_h_llegada_patio').val(data.resultado.fecha_hora_llega_patio)
+        $('#km_llegada_patio').val(data.resultado.km_llegada_patio)
+        $('#motivo').val(data.resultado.motivo)
+        $('#acompanante').val(data.resultado.acompanante)
+        $('#solicitante').val(data.resultado.persona_solicita)
+        // $('#area_sol').val(data.resultado.km_llegada_patio)
+        $('#area_sol').val(data.resultado.id_area_solicita).trigger('change.select2')
+        $('#autorizado').val(data.resultado.id_autorizado_salida).trigger('change.select2')
+        
+        $('#div_novedad').hide()
+
+        $('#tiene_novedad').val(data.resultado.tiene_novedad).trigger('change.select2')
+        $('#txt_novedad').val(data.resultado.novedad)
+
+        globalThis.idMovimientoEditar=id
+
+       visualizarForm('A')
+       
+    //    MostarSmS="N";
+        
     }).fail(function(){
         vistacargando("")
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
