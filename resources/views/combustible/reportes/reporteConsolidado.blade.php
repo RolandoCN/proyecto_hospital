@@ -354,23 +354,24 @@
                         ->where('t.id_vehiculo',$veh->id_vehiculo)
                         ->select(DB::raw('t.id_vehiculo, sum(t.total) as total, c.detalle as combustible'))
                         ->groupBy('id_vehiculo', 'combustible') 
-                        ->distinct('t.numero_ticket')
+                        // ->distinct('t.numero_ticket')
                         ->get(); 
 
                         $super=0;
                         $diesel=0;
                         $eco=0;
                         $total_comb=0;
+                        $total_veh=0;
                         foreach($despacho_veh as $desp){
                             $tipo=$desp->combustible;
                             switch ($tipo) { 
                             case 'Diesel': 
-                                $super=$desp->total;
-                                $super=number_format(($super),2,'.', '');
+                                $total_veh=$desp->total;
+                                $total_veh=number_format(($total_veh),2,'.', '');
                                 break; 
                             case 'Super':     
-                                $diesel=$desp->total;
-                                $diesel=number_format(($diesel),2,'.', '');
+                                $total_veh=$desp->total;
+                                $total_veh=number_format(($total_veh),2,'.', '');
                                 break;
                             
                             case 'Eco':     
@@ -380,6 +381,7 @@
                             }
 
                             $id_veh=$desp->id_vehiculo;
+                            $comb=$desp->combustible;
                             
                         }
 
@@ -416,21 +418,24 @@
                                 {{-- {{$eco}}   --}}
 
                             @endif
-                            @if($eco>0)
-                                {{number_format(($eco),2,'.', '')}} 
+                            {{-- @if($eco>0) --}}
+                            @if($veh->id_vehiculo == $id_veh && $comb == "Eco")
+                                {{number_format(($total_veh),2,'.', '')}} 
                             @endif
                            
                         </td>
 
                         <td style="height:25px;text-align: right;border-color:black; " rowspan="1" colspan="1"
                         width="15%">
-                            @if($veh->id_vehiculo == $id_veh && $comb == "Super")
+                            @if($veh->id_vehiculo == $id_veh )
                                 {{-- {{number_format(($total_veh),2,'.', '')}}    --}}                                
                                 {{-- {{$supe}}   --}}
                             @endif
 
-                            @if($super>0)
-                                {{number_format(($super),2,'.', '')}} 
+                            {{-- @if($super>0) --}}
+                            @if($veh->id_vehiculo == $id_veh && $comb == "Super")
+                                {{number_format(($total_veh),2,'.', '')}} 
+                               
                             @endif
                             
 
@@ -443,8 +448,9 @@
                                 {{-- {{$diesel}}   --}}
                             @endif
                            
-                            @if($diesel>0)
-                                {{number_format(($diesel),2,'.', '')}} 
+                            {{-- @if($diesel>0) --}}
+                            @if($veh->id_vehiculo == $id_veh && $comb == "Diesel")
+                                {{number_format(($total_veh),2,'.', '')}} 
                             @endif
                         </td>
 
@@ -456,7 +462,8 @@
                                 {{number_format((0),2,'.', '')}}  
                             @endif --}}
                             @php
-                                $total_comb=$total_comb + $super + $diesel + $eco;
+                                // $total_comb=$total_comb + $super + $diesel + $eco;
+                                $total_comb=$total_comb + $total_veh;
                                 $total_pagado=$total_pagado + $total_comb;
                             @endphp
 

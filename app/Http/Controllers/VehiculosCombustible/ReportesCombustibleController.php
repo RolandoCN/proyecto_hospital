@@ -296,8 +296,8 @@ class ReportesCombustibleController extends Controller
     }
 
     public function vistaConsolidado(){
-        $desde="2024-03-20";
-        $hasta="2024-03-20";
+        $desde="2024-03-01";
+        $hasta="2024-03-31";
 
         $desde = date('Y-m-d 00:00:00', strtotime($desde));
         $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
