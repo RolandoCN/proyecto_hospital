@@ -387,10 +387,9 @@ class ReportesCombustibleController extends Controller
             ->whereHas('ticket', function ($query) use ($desde, $hasta){
                 $query->whereBetween('f_despacho', [$desde, $hasta]);
             })
-            // ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
             ->where('estado','Aprobado')
             ->orderBy('fecha_cabecera_despacho', 'asc')->get();
-            // dd($detalle);
+          
 
             $data_vehiculo=DB::table('vc_vehiculo as v')
             ->leftJoin('vc_tipocombustible as c', 'c.id_tipocombustible', 'v.id_tipocombustible')
@@ -398,6 +397,7 @@ class ReportesCombustibleController extends Controller
             ->select('v.id_vehiculo', 'm.detalle as marca', 'v.descripcion as tipo', 'c.detalle as combustible', 'v.estado as estado', 'v.estado_vehiculo as estado_vehiculo','v.codigo_institucion')
             ->where('v.estado','A')
             ->get();
+          
 
             $responsable=DB::table('vc_responsable_servicios')
             ->first();

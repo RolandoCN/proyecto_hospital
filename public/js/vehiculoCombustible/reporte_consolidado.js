@@ -24,10 +24,10 @@ function buscarDespachos(){
 	$("#tabla_consolidado tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center><span class="spinner-border" role="status" aria-hidden="true"></span><b> Obteniendo información</b></center></td></tr>`);
 
     
-
+    vistacargando("m", "Espere por favor")
     $.get("listado-consolidado/"+desde+"/"+hasta, function(data){
         console.log(data)
-       
+        vistacargando("")
         if(data.error==true){
             alertNotificar(data.mensaje,"error");
             $("#tabla_consolidado tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
@@ -85,6 +85,7 @@ function buscarDespachos(){
             })   
         }
     }).fail(function(){
+        vistacargando("")
         $("#tabla_consolidado tbody").html(`<tr><td colspan="${num_col}" style="padding:40px; 0px; font-size:20px;"><center>No se encontraron datos</center></td></tr>`);
         alertNotificar("Se produjo un error, por favor intentelo más tarde","error");  
         visualizarListado()

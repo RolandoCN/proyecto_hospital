@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use App\Models\VehiculoCombustible\TipoCombustible;
 use App\Models\VehiculoCombustible\Vehiculo;
 use App\Models\VehiculoCombustible\Gasolinera;
+use App\Models\VehiculoCombustible\Movimiento;
+use App\Models\VehiculoCombustible\DetalleDespacho;
 use App\Models\VehiculoCombustible\Ticket;
 use \Log;
 use DB;
@@ -270,26 +272,29 @@ class TicketController extends Controller
             $consulta_ticket_ingresado=Ticket::find($id);
             $numero_ticket_ingresado=$consulta_ticket_ingresado->numero_ticket;
 
-            $veri_Movimiento=DB::table('vc_movimiento')
-            ->where('nro_ticket',$numero_ticket_ingresado)
+            $veri_Movimiento=Movimiento::where('nro_ticket',$numero_ticket_ingresado)
             ->where('estado','!=', 'Eliminada')
             ->first();
             if(!is_null($veri_Movimiento)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El ticket #'.$numero_ticket_ingresado. ' está asociado a una orden de salida y no se puede actualizar'
-                ]);
+                // return response()->json([
+                //     'error'=>true,
+                //     'mensaje'=>'El ticket #'.$numero_ticket_ingresado. ' está asociado a una orden de salida y no se puede actualizar'
+                // ]);
+
+                $veri_Movimiento->estado="Eliminada";
+                $veri_Movimiento->save();
             }
 
-            $veri_Despacho=DB::table('vc_detalle_despacho')
-            ->where('num_factura_ticket',$numero_ticket_ingresado)
+            $veri_Despacho=DetalleDespacho::where('num_factura_ticket',$numero_ticket_ingresado)
             ->where('estado','!=', 'Eliminado')
             ->first();
             if(!is_null($veri_Despacho)){
-                return response()->json([
-                    'error'=>true,
-                    'mensaje'=>'El ticket #'.$numero_ticket_ingresado. ' está asociado a un despacho de combustible y no se puede actualizar'
-                ]);
+                // return response()->json([
+                //     'error'=>true,
+                //     'mensaje'=>'El ticket #'.$numero_ticket_ingresado. ' está asociado a un despacho de combustible y no se puede actualizar'
+                // ]);
+                $veri_Despacho->estado='Eliminado';
+                $veri_Despacho->save();
             }
            
             if($actualiza_ticket->save()){
@@ -306,7 +311,7 @@ class TicketController extends Controller
     
     
         }catch (\Throwable $e) {
-            Log::error('TicketController => actualizar => mensaje => '.$e->getMessage());
+            Log::error('TicketController => actualizar => mensaje => '.$e->getMessage().' => Linea => '.$e->getLine());
             return response()->json([
                 'error'=>true,
                 'mensaje'=>'Ocurrió un error, intentelo más tarde'
