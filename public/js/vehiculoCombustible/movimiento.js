@@ -667,6 +667,7 @@ function cargartarea(){
            
           
             ValorMinimoKm_Hm=resp
+            MostarSmS='N'
             if(MostarSmS=="S"){
                 $('#msmDetalledos').html(`
                                             <div class="alert alert-info alert-dismissible">

@@ -26,25 +26,88 @@
 
               
             </div>
-            <div class="box-body">
+
+            <div class="box-body" id="content_consulta">
+                <div class="row">
 
 
-                <div class="table-responsive">
+                    <div class="col-md-12">
+                        <form id="frm_buscarPersona" class="form-horizontal" action="" autocomplete="off">
+                            {{ csrf_field() }}
+                            <div class="box-body">
+
+                                <div class="form-group">
+                                    <label for="inputEmail3" id="label_crit" class="col-sm-2 control-label" >Fecha Inicio:</label>
+                                    
+                                    <div class="col-sm-10" style="font-weight: normal;">                     
+                                        <input type="date"  class="form-control" id="fecha_ini"  name="fecha_ini" >
+                                    </div>
+                                            
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputEmail3" id="label_crit" class="col-sm-2 control-label" >Fecha Fin:</label>
+                                    
+                                    <div class="col-sm-10" style="font-weight: normal;">                     
+                                        <input type="date"  class="form-control" id="fecha_fin"  name="fecha_fin" >
+                                    </div>
+                                            
+                                </div>
+
+                              
+
+                                <div class="form-group">
+                                    <div class="col-sm-12 col-md-offset-2" >
+                                    
+                                        <button type="button" onclick="buscarTickets()" class="btn btn-success btn-sm">
+                                            Buscar
+                                        </button>
+                                      
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>
+
+                 
+                </div>
+            </div>
+
+            <div class="box-body" id="listado_tickets" style="display: none">
+                <div class="col-md-6">
+                    <ul class="nav nav-pills nav-stacked"style="margin-left:0px">
+                        <li style="border-color: white"><a><i class="fa fa-calendar text-red"></i> <b class="text-black" style="font-weight: 650 !important">Desde</b>: <span  id="desde_detalle"></span></a></li>
+
+                        <li style="border-color: white"><a><i class="fa fa-sort-numeric-asc text-red"></i> <b class="text-black" style="font-weight: 650 !important">Cantidad</b>: <span  id="cantidad_detalle"></span></a></li>
+                       
+                    </ul>
+                </div>     
+                <div class="col-md-6">
+                    <ul class="nav nav-pills nav-stacked" style="margin-left:12px">
+                        <li style="border-color: white"><a><i class="fa fa-calendar text-red"></i> <b class="text-black" style="font-weight: 650 !important">Hasta:</b> <span  id="hasta_detalle"></span></a></li>
+                        <li style="border-color: white"><a><i class="fa fa-money text-red"></i> <b class="text-black" style="font-weight: 650 !important">Total:</b> <span  id="total_detalle"></span></a></li>
+                        
+                    </ul>
+                </div>  
+
+                <div class="table-responsive" style="margin-top_12px">
                     <table id="tabla_ticket" width="100%"class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Número Ticket</th>
+                                <th># Ticket</th>
                                 <th>Vehículo</th>
                                 <th>Chofer</th>
                                 <th>Gasolinera</th>
                                 <th>Combustible</th>
+                                <th>Fecha Despacho</th>
                                 <th>Valor</th>
                                 <th style="min-width: 30%">Opciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="7"><center>No hay Datos Disponibles</td>
+                                <td colspan="8"><center>No hay Datos Disponibles</td>
                             </tr>
                             
                         </tbody>

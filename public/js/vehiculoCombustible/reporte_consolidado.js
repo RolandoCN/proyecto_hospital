@@ -25,6 +25,7 @@ function buscarDespachos(){
 
     
     vistacargando("m", "Espere por favor")
+    let total_valor=0
     $.get("listado-consolidado/"+desde+"/"+hasta, function(data){
         console.log(data)
         vistacargando("")
@@ -43,7 +44,7 @@ function buscarDespachos(){
                 visualizarListado()
                 return;  
             }
-            
+           
             $('#listado_turno').show()
             $('#content_consulta').hide(200)
             $('#tabla_consolidado').DataTable({
@@ -80,9 +81,15 @@ function buscarDespachos(){
                     $('td', row).eq(2).html(data.vehiculo.descripcion+" "+data.vehiculo.codigo_institucion)
                     $('td', row).eq(3).html(data.chofer.apellidos+" "+data.chofer.nombres)
                     $('td', row).eq(4).html(data.movimiento.autoriza.nombres)
+                                  
                   
                 } 
-            })   
+            }) 
+
+            $.each(data.resultado, function(i,item){
+                total_valor=total_valor + Number(item.total)
+            })
+            console.log("TOTAL => "+total_valor)  
         }
     }).fail(function(){
         vistacargando("")

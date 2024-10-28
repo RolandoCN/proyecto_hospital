@@ -124,6 +124,7 @@ Route::middleware(['auth'])->group(function() { //middleware autenticacion
 
     Route::get('/listado-ticket', [TicketController::class, 'listado'])->middleware('validarRuta');
     Route::get('/listado-ticket-todos', [TicketController::class, 'listarGeneral']);
+    Route::get('/listado-ticket-fecha/{fini}/{ffin}', [TicketController::class, 'listarFechaTicket']);
 
 
     //TAREAS

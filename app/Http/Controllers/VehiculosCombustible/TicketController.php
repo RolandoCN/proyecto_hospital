@@ -49,6 +49,29 @@ class TicketController extends Controller
         }
     }
 
+    public function listarFechaTicket($desde, $hasta){
+        try{
+            $desde = date('Y-m-d 00:00:00', strtotime($desde));
+            $hasta = date('Y-m-d 23:59:59', strtotime($hasta));
+            $ticket=Ticket::with('vehiculo', 'gasolinera', 'combustible', 'chofer')
+            ->where('estado','A')
+            ->whereBetween('f_despacho', [$desde, $hasta])
+            ->get();
+           
+            return response()->json([
+                'error'=>false,
+                'resultado'=>$ticket
+            ]);
+        }catch (\Throwable $e) {
+            Log::error('TicketController => listarGeneral => mensaje => '.$e->getMessage());
+            return response()->json([
+                'error'=>true,
+                'mensaje'=>'Ocurrió un error'
+            ]);
+            
+        }
+    }
+
     public function index(){
        
         $tipo_combust=TipoCombustible::where('estado','A')->get();
