@@ -112,6 +112,7 @@ class MovimientoVehController extends Controller
 
     public function actualizarSalidasMes($fecha){
         try{
+                      
             set_time_limit(0);
             ini_set("memory_limit",-1);
             ini_set('max_execution_time', 0);
@@ -134,6 +135,7 @@ class MovimientoVehController extends Controller
                     array_push($lista_final_agrupada[$item->nro_ticket], $item);
                 }
             }
+            // dd($lista_final_agrupada);
           
             //actualizamos el codigo_orden segun la fecha
             $codigo=0;
@@ -147,12 +149,26 @@ class MovimientoVehController extends Controller
 
                 }
 
-                //mandamos a actualizar las ordenes
-                $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($data[0]->fecha_salida_patio);
-                log::info("FECHA ORDENES A ACTUALIZAR".$data[0]->fecha_salida_patio);
+                // //mandamos a actualizar las ordenes
+                // $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($data[0]->fecha_salida_patio);
+                // log::info("FECHA ORDENES A ACTUALIZAR".$data[0]->fecha_salida_patio);
               
             }
+
+            $fechaInicial = new \DateTime($fecha . '-01');
+            $ultimoDia = new \DateTime($fecha . '-01');
+            $ultimoDia->modify('last day of this month');
+
+            for ($fecha = $fechaInicial; $fecha <= $ultimoDia; $fecha->modify('+1 day')) {
+                // log::info($fecha->format('Y-m-d') ); // Muestra la fecha en formato 'Y-m-d'
+                log::info("FECHA ORDENES A ACTUALIZAR".$fecha->format('Y-m-d'));
+                //mandamos a actualizar las ordenes
+                $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($fecha->format('Y-m-d'));
+               
            
+            }
+
+            
             return response()->json([
                 'error'=>false,
                 'resultado'=>"Informacion actualizada exitosamente"

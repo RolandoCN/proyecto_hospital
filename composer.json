@@ -13,7 +13,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
-        "league/flysystem-ftp": "3.0",
+        "league/flysystem-ftp": "^3.29",
         "league/flysystem-sftp-v3": "3.0",
         "phpseclib/phpseclib": "~3.0",
         "rap2hpoutre/laravel-log-viewer": "^2.3"
