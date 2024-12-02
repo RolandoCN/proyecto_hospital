@@ -119,48 +119,50 @@ class MovimientoVehController extends Controller
             $separa=explode("-", $fecha);
             $anio=$separa[0];
             $mes=$separa[1];
+
             $mov=Movimiento::where('estado','!=','Eliminada')
             ->whereYear('fecha_salida_patio',$anio)
             ->whereMonth('fecha_salida_patio',$mes)
             ->orderby('fecha_salida_patio','asc')
             ->select('idmovimiento','nro_ticket','fecha_salida_patio')
             ->get();
-            #agrupamos los despachos por departamento
-            $lista_final_agrupada=[];
-            foreach ($mov as $key => $item){                
-                if(!isset($lista_final_agrupada[$item->nro_ticket])) {
-                    $lista_final_agrupada[$item->nro_ticket]=array($item);
             
-                }else{
-                    array_push($lista_final_agrupada[$item->nro_ticket], $item);
-                }
-            }
-            // dd($lista_final_agrupada);
-          
-            //actualizamos el codigo_orden segun la fecha
             $codigo=0;
-            foreach($lista_final_agrupada as $data){
+            foreach($mov as $info){
                 $codigo=$codigo+1;
-                foreach($data as $item){
-                    $actualizaNumeroCod=Movimiento::where('idmovimiento',$item->idmovimiento)
-                    ->first();
-                    $actualizaNumeroCod->codigo_orden='HGNDC-'.$anio.'-'.$mes.'-'.sprintf("%'.05d",$codigo);
-                    $actualizaNumeroCod->save();
-
-                }
-
-                // //mandamos a actualizar las ordenes
-                // $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($data[0]->fecha_salida_patio);
-                // log::info("FECHA ORDENES A ACTUALIZAR".$data[0]->fecha_salida_patio);
-              
+                $info->codigo_orden='HGNDC-'.$anio.'-'.$mes.'-'.sprintf("%'.05d",$codigo);
+                $info->save();
             }
+
+            // $lista_final_agrupada=[];
+            // foreach ($mov as $key => $item){                
+            //     if(!isset($lista_final_agrupada[$item->nro_ticket])) {
+            //         $lista_final_agrupada[$item->nro_ticket]=array($item);
+            
+            //     }else{
+            //         array_push($lista_final_agrupada[$item->nro_ticket], $item);
+            //     }
+            // }
+                      
+            // //actualizamos el codigo_orden segun la fecha
+            // $codigo=0;
+            // foreach($lista_final_agrupada as $data){
+            //     $codigo=$codigo+1;
+            //     foreach($data as $item){
+            //         $actualizaNumeroCod=Movimiento::where('idmovimiento',$item->idmovimiento)
+            //         ->first();
+            //         $actualizaNumeroCod->codigo_orden='HGNDC-'.$anio.'-'.$mes.'-'.sprintf("%'.05d",$codigo);
+            //         $actualizaNumeroCod->save();
+
+            //     }
+              
+            // }
 
             $fechaInicial = new \DateTime($fecha . '-01');
             $ultimoDia = new \DateTime($fecha . '-01');
             $ultimoDia->modify('last day of this month');
 
             for ($fecha = $fechaInicial; $fecha <= $ultimoDia; $fecha->modify('+1 day')) {
-                // log::info($fecha->format('Y-m-d') ); // Muestra la fecha en formato 'Y-m-d'
                 log::info("FECHA ORDENES A ACTUALIZAR".$fecha->format('Y-m-d'));
                 //mandamos a actualizar las ordenes
                 $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($fecha->format('Y-m-d'));
