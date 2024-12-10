@@ -277,7 +277,7 @@ class TicketController extends Controller
             $actualiza_ticket->total=$request->total;
             $actualiza_ticket->f_despacho=$request->f_despacho;
             $actualiza_ticket->idchofer=auth()->user()->id_persona;
-            $actualiza_ticket->fecha_registro=date('Y-m-d H:i:s');
+            $actualiza_ticket->fecha_actualizacion=date('Y-m-d H:i:s');
             $actualiza_ticket->estado="A";
             
             //comprobamos si no existe otra ticket con el mismo numero
@@ -305,6 +305,8 @@ class TicketController extends Controller
                 // ]);
 
                 $veri_Movimiento->estado="Eliminada";
+                $veri_Movimiento->id_usuario_actualiza=auth()->user()->id;
+                $veri_Movimiento->fecha_act=date('Y-m-d H:i:s');
                 $veri_Movimiento->save();
             }
 
