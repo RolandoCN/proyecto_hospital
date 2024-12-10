@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <link rel="stylesheet" href="{{asset('plugins/sweetalert/sweetalert.css')}}">
     <section class="content-header">
         <h1>
             Reporte Consolidado
@@ -109,7 +110,7 @@
 @section('scripts')
 
 {{-- <script src="/js/vehiculoCombustible/reporte_consolidado.js"></script> --}}
-
+<script src="{{asset('plugins/sweetalert/sweetalert.js')}}"></script>
 <script src="{{ asset('js/vehiculoCombustible/reporte_consolidado.js?v='.rand())}}"></script>
     
 <script>

@@ -90,6 +90,29 @@ function buscarDespachos(){
                 total_valor=total_valor + Number(item.total)
             })
             console.log("TOTAL => "+total_valor)  
+
+            var missingTicketsArray = Object.values(data.missing_in_detalle);
+            console.log(missingTicketsArray.length)
+            if(missingTicketsArray.length>0){
+                
+                // var ticketList = "<ul>";
+                // $.each(missingTicketsArray, function(i2,ticket){
+                //     ticketList += "<li>" + ticket + "</li>";
+                //     console.log(ticketList)
+                // });
+                // ticketList += "</ul>";
+            
+                // Mostrar el listado de tickets faltantes en la alerta
+                // swal(ticketList, "¡Tickets faltantes!", "error");
+                var ticketList = missingTicketsArray.join(", ");  // Separamos por coma y espacio
+
+                swal({
+                    title: "¡Tickets faltantes!",
+                    text: ticketList,  // Usamos 'html' en lugar de 'text'
+                    icon: "error",
+                    buttons: "Cerrar"
+                });
+            }
         }
     }).fail(function(){
         vistacargando("")

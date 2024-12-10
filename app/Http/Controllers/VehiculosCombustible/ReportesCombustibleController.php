@@ -360,10 +360,35 @@ class ReportesCombustibleController extends Controller
             // ->whereBetween('fecha_cabecera_despacho', [$desde, $hasta])
             ->where('estado','Aprobado')
             ->orderBy('id_vehiculo', 'asc')->get();
+
+            $tickets_detalle = $detalle->pluck('num_factura_ticket')->unique();
+
+            // Obtener tickets de la segunda consulta
+            $tickets_ticket = DB::table('vc_ticket')->where('estado', 'A')
+            ->select('numero_ticket as ticket')
+            ->whereBetween('f_despacho', [$desde, $hasta])
+            ->distinct()
+            ->orderBy('numero_ticket', 'asc')
+            ->get()
+            ->pluck('ticket');
             
+            // Asegurémonos de que ambos conjuntos sean cadenas de texto
+            $tickets_detalle = $tickets_detalle->map(function($ticket) {
+                return (string) trim($ticket); // Convertimos a string y eliminamos espacios
+            });
+
+            $tickets_ticket = $tickets_ticket->map(function($ticket) {
+                return (string) trim($ticket); // Convertimos a string y eliminamos espacios
+            });
+
+            // Mostrar los tickets de la segunda consulta que no están en la primera
+            $missing_in_detalle = $tickets_ticket->diff($tickets_detalle);
+
+
             return response()->json([
                 'error'=>false,
-                'resultado'=>$detalle
+                'resultado'=>$detalle,
+                'missing_in_detalle'=>$missing_in_detalle
             ]);
 
         }catch (\Throwable $e) {
