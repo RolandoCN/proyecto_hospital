@@ -162,13 +162,13 @@ class MovimientoVehController extends Controller
             $ultimoDia = new \DateTime($fecha . '-01');
             $ultimoDia->modify('last day of this month');
 
-            /*for ($fecha = $fechaInicial; $fecha <= $ultimoDia; $fecha->modify('+1 day')) {
+            for ($fecha = $fechaInicial; $fecha <= $ultimoDia; $fecha->modify('+1 day')) {
                 log::info("FECHA ORDENES A ACTUALIZAR".$fecha->format('Y-m-d'));
                 //mandamos a actualizar las ordenes
                 $actualizaOrden=$this->ordenes->guardarDetalleDespachoManual($fecha->format('Y-m-d'));
                
            
-            }*/
+            }
 
             
             return response()->json([
@@ -594,7 +594,7 @@ class MovimientoVehController extends Controller
                     }else{
                         $fecha_despacho=DB::table('vc_ticket')->where('numero_ticket',$movim->nro_ticket)
                         ->select('f_despacho')->first();
-                        $guardaDespacho=$this->ordenes->guardarDetalleDespachoManual($fecha_despacho->f_despacho);
+                        // $guardaDespacho=$this->ordenes->guardarDetalleDespachoManual($fecha_despacho->f_despacho);
                     }
                         
                     return response()->json([
