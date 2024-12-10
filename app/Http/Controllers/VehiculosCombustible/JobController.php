@@ -89,7 +89,6 @@ class JobController extends Controller
                 ->whereHas('ticket', function ($query) use ($fechaDesp){
                     $query->whereDate('f_despacho',$fechaDesp);
                 })
-                // ->whereDate('fecha_salida_patio',$fechaDesp)
                 ->where('estado','Activo')
                 ->get();
               
@@ -105,15 +104,11 @@ class JobController extends Controller
                 $idcabecera=$data_cabecera->idcabecera_despacho;
                 $fecha_cabecera=$data_cabecera->fecha;
 
-                // dd($fecha_cabecera);
-
                 //elimino los detalles asociados a esa cabecera
                 $eliminaDetalles=DetalleDespacho::where('idcabecera_despacho',$idcabecera)->delete();
                 
                 foreach($movimientoHoy as $data){
-                    // $data_cabecera=CabeceraDespacho::whereDate('fecha',$fechaDesp)->first();                   
-                    // $fecha_cabecera=$data_cabecera->fecha;
-
+                    
                     $ticket=Ticket::where('numero_ticket',$data->nro_ticket)
                     ->where('estado','A')
                     ->first();
@@ -125,9 +120,7 @@ class JobController extends Controller
                     ->select('precio_x_galon')
                     ->first();
                     if(is_null($gasoli_comb)){
-                        // dd($ticket);
                         log::info("erorss ".$ticket->numero_ticket);
-                        
                     }
                     $galones=$ticket->total / $gasoli_comb->precio_x_galon;
                     
@@ -151,13 +144,12 @@ class JobController extends Controller
                     if(is_null($ver)){
                         if($guarda_det_des->save()){
                             //generamos el documento
-                            $genera=$this->pdfOrden($guarda_det_des->idcabecera_despacho,$guarda_det_des->num_factura_ticket, $guarda_det_des->iddetalle_despacho, 'N');
+                            
+                            // $genera=$this->pdfOrden($guarda_det_des->idcabecera_despacho,$guarda_det_des->num_factura_ticket, $guarda_det_des->iddetalle_despacho, 'N');
     
                             $contador=$contador+1;
                         }
                     }
-
-                    // $genera=$this->pdfOrden($guarda_det_des->idcabecera_despacho,$guarda_det_des->num_factura_ticket, $guarda_det_des->iddetalle_despacho, 'N');
 
                     $contador=$contador+1;
                     log::info($guarda_det_des->num_factura_ticket);
